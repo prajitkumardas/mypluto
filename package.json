@@ -1,0 +1,44 @@
+{
+  "name": "mypluto",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint src scripts *.config.*",
+    "typecheck": "next typegen && tsc --noEmit",
+    "import:xlsx": "node scripts/import-ai-tools.mjs",
+    "import:supabase": "node scripts/import-plutos-library-to-supabase.mjs",
+    "import:library": "npm run import:xlsx -- \"C:/Users/ASUS/Downloads/AI_Tools_Directory (6).xlsx\" && npm run import:supabase"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-navigation-menu": "^1.2.14",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@supabase/supabase-js": "^2.112.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "exceljs": "^4.4.0",
+    "lucide-react": "^0.468.0",
+    "motion": "^12.0.0",
+    "next": "^16.3.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.5.5",
+    "zustand": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "^16.3.1",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  }
+}

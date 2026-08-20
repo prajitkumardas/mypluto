@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-heading: "Bricolage Grotesque";
+  --font-body: "Inter";
+  color: #202124;
+  background: #f7f7f2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 16% 8%, rgba(216, 208, 255, 0.45), transparent 24rem),
+    linear-gradient(180deg, #f7f7f2 0%, #ffffff 48%, #f8f8f9 100%);
+  font-family: var(--font-body), Inter, Arial, sans-serif;
+  letter-spacing: 0;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+::selection {
+  background: #c8ff5a;
+  color: #151515;
+}
+
+.focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 3px;
+}
+
+.focus-ring:focus-visible {
+  outline-color: #c8ff5a;
+}
+
+.orbit-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+.number {
+  font-variant-numeric: tabular-nums;
+}
+
+.nav-link {
+  min-height: 44px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 14px;
+  font-weight: 500;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid #c8ff5a;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
