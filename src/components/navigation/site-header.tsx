@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import {
   ArrowRight,
@@ -19,10 +20,15 @@ import { cn } from "@/lib/utils";
 import { SearchOverlay } from "./search-overlay";
 
 export function SiteHeader() {
+  const pathname = usePathname();
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [discoverOpen, setDiscoverOpen] = useState(false);
   const compareCount = useCompareStore((state) => state.selected.length);
+
+  if (pathname === "/") {
+    return null;
+  }
 
   return (
     <>

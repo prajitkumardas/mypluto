@@ -2,17 +2,15 @@ import {
   ArrowRight,
   CheckCircle2,
   CircleDollarSign,
-  Compass,
   ExternalLink,
   Filter,
   Library,
   Plus,
-  Search,
   ShieldCheck,
-  Sparkles,
   TrendingUp
 } from "lucide-react";
 import Link from "next/link";
+import { PlutoHero } from "@/components/home/pluto-hero";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RecentlyViewed } from "@/components/tools/recently-viewed";
@@ -25,18 +23,10 @@ import {
 } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
-const chips = [
-  "Create cinematic product videos",
-  "Design a professional logo",
-  "Summarize research papers",
-  "Build an app without coding",
-  "Automate customer support"
-];
-
 export default function Home() {
   return (
     <main>
-      <Hero />
+      <PlutoHero />
       <Categories />
       <LibraryPreview />
       <Trending />
@@ -45,111 +35,6 @@ export default function Home() {
       <RecentlyViewed />
       <SubmitCta />
     </main>
-  );
-}
-
-function Hero() {
-  return (
-    <section className="relative overflow-hidden bg-ink-950 text-white">
-      <div className="orbit-grid absolute inset-0 opacity-75" aria-hidden="true" />
-      <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-canvas to-transparent" />
-      <div className="relative mx-auto grid min-h-[calc(100svh-80px)] max-w-site content-center gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[1.02fr_0.98fr] lg:py-20 xl:px-0">
-        <div className="max-w-3xl">
-          <Badge className="border border-white/10 bg-white/8 text-white" tone="neutral">
-            The intelligent AI-tool universe
-          </Badge>
-          <h1 className="mt-6 max-w-3xl font-heading text-5xl font-bold leading-[1.02] text-white sm:text-6xl lg:text-7xl">
-            Find the right AI tool for anything.
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-white/72">
-            Describe what you want to accomplish. Pluto will find, compare and
-            explain the best tools for your needs.
-          </p>
-
-          <div className="mt-8 max-w-3xl rounded-[2rem] border border-white/14 bg-white p-3 shadow-overlay">
-            <label className="flex min-h-16 items-center gap-3 rounded-3xl bg-neutral-50 px-4 text-neutral-900">
-              <Search aria-hidden="true" className="h-5 w-5 shrink-0 text-violet-600" />
-              <span className="sr-only">Describe your goal</span>
-              <input
-                className="w-full bg-transparent text-base outline-none placeholder:text-neutral-500 sm:text-lg"
-                placeholder="What are you trying to create, solve or automate?"
-              />
-            </label>
-            <div className="mt-3 flex flex-col gap-3 sm:flex-row">
-              <Button asChild className="sm:flex-1" size="lg">
-                <Link href="/search?q=Create%20product%20videos">
-                  <Sparkles aria-hidden="true" className="h-5 w-5" />
-                  Find my tools
-                </Link>
-              </Button>
-              <Button asChild className="sm:flex-1" size="lg" variant="secondary">
-                <Link href="/categories">
-                  <Compass aria-hidden="true" className="h-5 w-5" />
-                  Browse categories
-                </Link>
-              </Button>
-            </div>
-          </div>
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            {chips.map((chip) => (
-              <Link
-                className="focus-ring min-h-10 rounded-lg border border-white/14 bg-white/8 px-3 text-sm font-medium text-white/78 transition hover:border-lime-400 hover:text-lime-400"
-                href={`/search?q=${encodeURIComponent(chip)}`}
-                key={chip}
-              >
-                {chip}
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        <div aria-label="Orbital tool map" className="relative min-h-[420px] lg:min-h-[560px]">
-          <div className="absolute left-1/2 top-1/2 h-72 w-72 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/14 sm:h-96 sm:w-96" />
-          <div className="absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full border border-lime-400/40 sm:h-72 sm:w-72" />
-          <div className="absolute left-1/2 top-1/2 grid h-36 w-36 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-lime-400 text-center text-ink-950 shadow-overlay">
-            <div>
-              <Sparkles aria-hidden="true" className="mx-auto h-7 w-7" />
-              <p className="mt-2 font-heading text-xl font-bold">Pluto</p>
-            </div>
-          </div>
-          <OrbitalNode className="left-[5%] top-[16%]" label="Video" tone="bg-coral" />
-          <OrbitalNode className="right-[8%] top-[18%]" label="Code" tone="bg-violet-600" />
-          <OrbitalNode className="bottom-[18%] left-[10%]" label="Research" tone="bg-[#55E6D4]" />
-          <OrbitalNode className="bottom-[12%] right-[16%]" label="Workflow" tone="bg-lime-400" />
-          <div className="absolute right-[18%] top-[45%] rounded-2xl border border-white/12 bg-white/10 p-4 backdrop-blur">
-            <Badge icon tone="success">
-              Verified
-            </Badge>
-            <p className="mt-3 max-w-48 text-sm leading-6 text-white/78">
-              Recommendations show why each tool fits and where it falls short.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function OrbitalNode({
-  label,
-  tone,
-  className
-}: {
-  label: string;
-  tone: string;
-  className: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "absolute flex min-h-16 items-center gap-3 rounded-2xl border border-white/12 bg-white/10 px-4 backdrop-blur",
-        className
-      )}
-    >
-      <span className={cn("h-9 w-9 rounded-xl", tone)} />
-      <span className="text-sm font-semibold text-white">{label}</span>
-    </div>
   );
 }
 

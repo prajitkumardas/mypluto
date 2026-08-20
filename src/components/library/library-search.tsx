@@ -48,9 +48,6 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < 2) {
-      setSuggestions([]);
-      setOpen(false);
-      setLoading(false);
       return;
     }
 
@@ -119,7 +116,15 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
               aria-expanded={open}
               className="w-full bg-transparent text-base outline-none placeholder:text-neutral-500"
               name="q"
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => {
+                const value = event.target.value;
+                setQuery(value);
+                if (value.trim().length < 2) {
+                  setSuggestions([]);
+                  setOpen(false);
+                  setLoading(false);
+                }
+              }}
               onFocus={() => query.trim().length >= 2 && setOpen(true)}
               onKeyDown={(event) => {
                 if (!open || suggestions.length === 0) return;
@@ -140,6 +145,7 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
                 }
               }}
               placeholder="What do you want to create, solve or automate?"
+              role="combobox"
               value={query}
             />
           </label>
