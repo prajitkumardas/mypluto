@@ -7,7 +7,7 @@ type CategoryShortcutProps = {
   href: string;
   label: string;
   icon: LucideIcon;
-  className: string;
+  className?: string;
 };
 
 export function CategoryShortcut({

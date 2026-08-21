@@ -1,27 +1,44 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronDown, Menu, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import styles from "./pluto-hero.module.css";
 
 const navItems = [
   ["Discover", "/tools"],
   ["Pluto's Library", "/plutos-library"],
   ["Trending", "/trending"],
-  ["Compare", "/compare"],
-  ["About", "/verification"]
+  ["Compare", "/compare"]
 ];
 
 export function HeroNavigation() {
+  const [hasScrolled, setHasScrolled] = useState(false);
+
+  useEffect(() => {
+    const updateScrolled = () => setHasScrolled(window.scrollY > 8);
+
+    updateScrolled();
+    window.addEventListener("scroll", updateScrolled, { passive: true });
+
+    return () => window.removeEventListener("scroll", updateScrolled);
+  }, []);
+
   return (
-    <header className={styles.heroHeader}>
+    <header className={cn(styles.heroHeader, hasScrolled && styles.heroHeaderScrolled)}>
       <Link className={styles.logo} href="/" aria-label="PlutoFinds home">
-        <span className={styles.logoMark} aria-hidden="true" />
-        <span className={styles.logoText}>
-          Pluto<span>Finds</span>
-        </span>
+        <Image
+          alt="PlutoFinds"
+          className={styles.logoImage}
+          height={120}
+          priority
+          src="/images/plutofinds-logo.png"
+          width={450}
+        />
       </Link>
 
       <nav aria-label="Primary" className={styles.desktopNav}>

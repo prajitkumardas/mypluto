@@ -1,4 +1,8 @@
 .hero {
+  --pluto-stage-gap: clamp(30px, 4vh, 52px);
+  --pluto-stage-height: clamp(430px, 48svh, 540px);
+  --pluto-width: clamp(320px, 21vw, 390px);
+
   position: relative;
   isolation: isolate;
   min-height: max(900px, 100svh);
@@ -7,8 +11,13 @@
   color: #11111a;
 }
 
-.backgroundImage {
+.backgroundVideo {
+  position: absolute;
+  inset: 0;
   z-index: -5;
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   object-position: center bottom;
 }
@@ -95,24 +104,88 @@
   padding: max(24px, env(safe-area-inset-top)) clamp(18px, 3.4vw, 52px) 0;
 }
 
+.heroExperience {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex: 1 0 auto;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(18px, 3vh, 44px);
+}
+
+.heroExperienceHidden {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(24px) scale(0.98);
+}
+
+.heroExperienceVisible {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+  transition:
+    opacity 720ms ease,
+    transform 720ms cubic-bezier(0.16, 1, 0.3, 1),
+    visibility 0s linear 0s;
+}
+
+.heroExperienceVisible .trustLine,
+.heroExperienceVisible .headline,
+.heroExperienceVisible .heroControls,
+.heroExperienceVisible .plutoStage {
+  animation: heroContentReveal 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.heroExperienceVisible .headline {
+  animation-delay: 90ms;
+}
+
+.heroExperienceVisible .heroControls {
+  animation-delay: 170ms;
+}
+
+.heroExperienceVisible .plutoStage {
+  animation-delay: 330ms;
+}
+
 .heroHeader {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 50;
   display: grid;
   grid-template-columns: minmax(180px, 1fr) auto minmax(220px, 1fr);
   align-items: center;
   gap: 24px;
-  width: 100%;
-  max-width: 1480px;
+  width: min(calc(100% - clamp(36px, 6.8vw, 104px)), 1480px);
   min-height: 58px;
-  margin: 0 auto;
+  border: 1px solid transparent;
+  border-radius: 24px;
+  padding: 7px 12px;
+  transform: translateX(-50%);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    backdrop-filter 180ms ease;
+}
+
+.heroHeaderScrolled {
+  border-color: rgba(17, 17, 26, 0.1);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 46px rgba(17, 17, 26, 0.14);
+  backdrop-filter: blur(18px) saturate(140%);
 }
 
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
   width: fit-content;
-  border-radius: 999px;
-  color: #0e1220;
+  border-radius: 10px;
   outline: 2px solid transparent;
   outline-offset: 4px;
 }
@@ -121,27 +194,10 @@
   outline-color: #6c4dff;
 }
 
-.logoMark {
-  width: 44px;
-  height: 44px;
-  border: 2px solid rgba(255, 255, 255, 0.86);
-  border-radius: 999px;
-  background:
-    radial-gradient(circle at 54% 48%, rgba(255, 255, 255, 0.1), transparent 24%),
-    url("/images/home/hero/pluto-wave.png") center 17% / 165% auto no-repeat,
-    #ffffff;
-  box-shadow: 0 8px 24px rgba(17, 17, 26, 0.12);
-}
-
-.logoText {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.5rem, 2vw, 1.9rem);
-  font-weight: 700;
-  line-height: 1;
-}
-
-.logoText span {
-  color: #6c4dff;
+.logoImage {
+  display: block;
+  width: clamp(166px, 15vw, 214px);
+  height: auto;
 }
 
 .desktopNav {
@@ -298,8 +354,10 @@
 }
 
 .heroCopy {
+  position: relative;
+  z-index: 8;
   width: min(100%, 1060px);
-  margin: clamp(44px, 8vh, 76px) auto 0;
+  margin: 0 auto;
   text-align: center;
 }
 
@@ -368,12 +426,9 @@
   font-style: italic;
 }
 
-.subhead {
-  margin: 14px auto 0;
-  color: #626775;
-  font-size: clamp(1.12rem, 1.8vw, 1.55rem);
-  font-weight: 700;
-  line-height: 1.4;
+.heroControls {
+  width: min(100%, 690px);
+  margin: 22px auto 0;
 }
 
 .searchForm {
@@ -383,7 +438,7 @@
   align-items: center;
   width: min(100%, 690px);
   min-height: 78px;
-  margin: 22px auto 0;
+  margin: 0 auto;
   border: 1px solid rgba(255, 255, 255, 0.74);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.94);
@@ -561,33 +616,62 @@
 
 .plutoStage {
   position: relative;
-  width: min(100%, 920px);
-  height: clamp(350px, 40vh, 435px);
-  margin: clamp(26px, 5vh, 48px) auto 0;
+  z-index: 3;
+  flex: 0 0 auto;
+  width: min(100%, 980px);
+  height: var(--pluto-stage-height);
+  margin: var(--pluto-stage-gap) auto 0;
 }
-
 .plutoFrame {
   position: absolute;
   left: 50%;
-  bottom: 0;
-  z-index: 5;
-  width: clamp(210px, 22vw, 310px);
+  bottom: clamp(-26px, -1.7svh, -8px);
+  z-index: 2;
+  width: var(--pluto-width);
+  max-width: calc(100vw - 36px);
   aspect-ratio: 543 / 760;
-  translate: -50% 0;
+  transform: translateX(-50%) translate3d(var(--pluto-offset-x, 0), var(--pluto-offset-y, 0), 0);
   transform-origin: center bottom;
+  pointer-events: none;
+  will-change: transform;
   outline: 0;
 }
-
-.plutoFrame:focus-visible {
-  filter: drop-shadow(0 0 0 #6c4dff) drop-shadow(0 0 16px rgba(108, 77, 255, 0.6));
-}
-
-.plutoImage {
+.plutoCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
+  object-position: center bottom;
+  background: transparent;
   pointer-events: none;
   user-select: none;
   filter: drop-shadow(0 24px 38px rgba(40, 54, 35, 0.22));
+  transition: opacity 280ms ease;
 }
+.plutoVideo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.plutoVideo::-webkit-media-controls {
+  display: none !important;
+}
+
+.plutoCanvas {
+  z-index: 2;
+  opacity: 0;
+}
+
+
+.plutoFrameReady .plutoCanvas {
+  opacity: 1;
+}
+
 
 .speechBubble {
   position: absolute;
@@ -634,75 +718,84 @@
   animation: blinkSoft 6.5s ease-in-out infinite;
 }
 
+.shortcutChips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  width: min(100%, 690px);
+  margin: 14px auto 0;
+}
+
 .shortcut {
-  position: absolute;
-  z-index: 6;
-  display: grid;
-  min-width: 94px;
-  justify-items: center;
+  position: static;
+  z-index: 1;
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
   gap: 8px;
-  border-radius: 16px;
+  border: 1px solid rgba(17, 17, 26, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
   color: #11111a;
-  font-weight: 750;
+  padding: 0 14px 0 12px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-align: center;
   text-decoration: none;
+  box-shadow: 0 10px 26px rgba(17, 17, 26, 0.08);
+  backdrop-filter: blur(12px);
   transition:
     transform 160ms ease,
-    color 160ms ease;
+    color 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
 }
 
 .shortcut:hover {
+  border-color: rgba(108, 77, 255, 0.28);
+  background: rgba(255, 255, 255, 0.88);
   color: #4f35e8;
-  transform: translateY(-4px);
+  transform: translateY(-1px);
 }
 
 .shortcut:focus-visible {
   outline: 2px solid #6c4dff;
-  outline-offset: 6px;
+  outline-offset: 3px;
 }
 
 .shortcutIcon {
   display: grid;
-  width: 74px;
-  height: 74px;
+  width: 22px;
+  height: 22px;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.78);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.46);
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.38),
-    0 18px 36px rgba(55, 74, 92, 0.12);
-  backdrop-filter: blur(10px);
+  background: rgba(108, 77, 255, 0.12);
 }
 
 .shortcutIcon svg {
-  width: 32px;
-  height: 32px;
+  width: 14px;
+  height: 14px;
   color: #6c4dff;
-  stroke-width: 2.1;
+  stroke-width: 2.3;
 }
 
 .shortcutLabel {
-  font-size: 0.98rem;
+  width: auto;
+  line-height: 1;
+  white-space: nowrap;
 }
 
-.shortcutImage {
-  left: 9%;
-  top: 12%;
-}
-
-.shortcutWriting {
-  left: 22%;
-  top: 36%;
-}
-
-.shortcutVideo {
-  right: 24%;
-  top: 36%;
-}
-
-.shortcutCode {
-  right: 9%;
-  top: 12%;
+@keyframes heroContentReveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes cloudTravelFar {
@@ -763,6 +856,14 @@
   }
 }
 
+@media (max-width: 1439px) {
+  .hero {
+    --pluto-stage-gap: clamp(26px, 3.5vh, 44px);
+    --pluto-stage-height: clamp(390px, 44svh, 500px);
+    --pluto-width: clamp(292px, 23vw, 360px);
+  }
+}
+
 @media (max-width: 1180px) {
   .heroHeader {
     grid-template-columns: auto 1fr auto;
@@ -782,8 +883,49 @@
   }
 }
 
+@media (max-height: 800px) and (min-width: 1024px) {
+  .hero {
+    --pluto-stage-gap: clamp(18px, 2.4vh, 28px);
+    --pluto-stage-height: clamp(300px, 42svh, 360px);
+    --pluto-width: clamp(220px, 16vw, 290px);
+  }
+
+  .heroInner {
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+
+  .heroCopy {
+    margin: 0 auto;
+  }
+
+  .headline {
+    font-size: clamp(2.85rem, 4.6vw, 3.85rem);
+  }
+
+  .heroControls {
+  width: min(100%, 690px);
+  margin: 22px auto 0;
+}
+
+.searchForm {
+    min-height: 68px;
+    margin-top: 18px;
+  }
+
+  .searchField {
+    padding-inline: 18px;
+  }
+
+  .searchButton {
+    min-height: 50px;
+  }
+}
+
 @media (max-width: 980px) {
   .hero {
+    --pluto-stage-gap: clamp(24px, 3vh, 36px);
+    --pluto-stage-height: clamp(340px, 42svh, 430px);
+    --pluto-width: clamp(248px, 34vw, 320px);
     min-height: 100svh;
   }
 
@@ -791,6 +933,9 @@
     display: flex;
     justify-content: space-between;
     gap: 10px;
+    width: min(calc(100% - 32px), 760px);
+    border-radius: 20px;
+    padding-inline: 10px;
   }
 
   .desktopNav,
@@ -803,7 +948,7 @@
   }
 
   .heroCopy {
-    margin-top: clamp(38px, 7vh, 64px);
+    margin: 0 auto;
   }
 
   .headline {
@@ -812,15 +957,7 @@
   }
 
   .plutoStage {
-    width: min(100%, 720px);
-  }
-
-  .shortcutImage {
-    left: 4%;
-  }
-
-  .shortcutCode {
-    right: 4%;
+    width: min(100%, 760px);
   }
 }
 
@@ -830,7 +967,7 @@
     overflow-x: hidden;
   }
 
-  .backgroundImage {
+  .backgroundVideo {
     object-position: center bottom;
   }
 
@@ -839,20 +976,18 @@
     padding-bottom: 28px;
   }
 
-  .heroHeader,
+  .heroExperience {
+    padding-block: clamp(12px, 2.5vh, 28px);
+  }
+
   .heroCopy {
     width: min(100%, 358px);
-    margin-right: 0;
-    margin-left: 0;
+    margin-right: auto;
+    margin-left: auto;
   }
 
-  .logoMark {
-    width: 38px;
-    height: 38px;
-  }
-
-  .logoText {
-    font-size: 1.45rem;
+  .logoImage {
+    width: 154px;
   }
 
   .headerActions {
@@ -874,9 +1009,7 @@
   }
 
   .heroCopy {
-    margin-top: 36px;
-    margin-right: 0;
-    margin-left: 0;
+    margin: 0 auto;
   }
 
   .trustLine {
@@ -901,16 +1034,16 @@
     line-height: 1.02;
   }
 
-  .subhead {
-    margin-top: 10px;
-    font-size: 1.08rem;
-  }
+  .heroControls {
+  width: min(100%, 690px);
+  margin: 22px auto 0;
+}
 
-  .searchForm {
+.searchForm {
     grid-template-columns: 1fr;
     width: min(100%, 358px);
-    margin-right: 0;
-    margin-left: 0;
+    margin-right: auto;
+    margin-left: auto;
     min-height: auto;
     border-radius: 28px;
     padding: 9px;
@@ -942,19 +1075,15 @@
   }
 
   .plutoStage {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
     width: min(100%, 420px);
-    height: auto;
-    margin-top: 28px;
-    padding-top: 275px;
+    height: clamp(286px, 84vw, 390px);
+    margin-top: 24px;
   }
 
   .plutoFrame {
     top: 0;
     bottom: auto;
-    width: 205px;
+    width: clamp(190px, 58vw, 280px);
   }
 
   .speechBubble {
@@ -963,29 +1092,23 @@
     font-size: 0.82rem;
   }
 
+  .shortcutChips {
+    justify-content: center;
+    width: min(100%, 358px);
+    margin-right: auto;
+    margin-left: auto;
+  }
+
   .shortcut {
-    position: static;
-    min-width: 0;
-  }
-
-  .shortcutIcon {
-    width: 60px;
-    height: 60px;
-  }
-
-  .shortcutIcon svg {
-    width: 26px;
-    height: 26px;
-  }
-
-  .shortcutLabel {
-    font-size: 0.92rem;
+    min-height: 38px;
+    padding-inline: 11px 12px;
+    font-size: 0.86rem;
   }
 }
 
 @media (max-width: 390px) {
   .heroCopy {
-    margin-top: 28px;
+    margin: 0 auto;
   }
 
   .headline {
@@ -998,11 +1121,11 @@
   }
 
   .plutoStage {
-    padding-top: 248px;
+    height: clamp(276px, 86vw, 360px);
   }
 
   .plutoFrame {
-    width: 184px;
+    width: clamp(184px, 56vw, 248px);
   }
 }
 
@@ -1012,7 +1135,15 @@
   .rainbowShimmer,
   .windLayerBack,
   .windLayerFront,
-  .eyeGlint {
+  .eyeGlint,
+  .heroExperienceVisible .trustLine,
+  .heroExperienceVisible .headline,
+  .heroExperienceVisible .heroControls,
+  .heroExperienceVisible .plutoStage {
     animation: none;
+  }
+
+  .heroExperienceVisible {
+    transition: none;
   }
 }

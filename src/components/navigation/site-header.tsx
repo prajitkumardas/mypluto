@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -8,7 +9,6 @@ import {
   ChevronDown,
   Compass,
   Menu,
-  Orbit,
   Search,
   Send,
   X
@@ -34,11 +34,19 @@ export function SiteHeader() {
     <>
       <header className="sticky top-0 z-30 border-b border-white/10 bg-ink-950/95 text-white backdrop-blur">
         <div className="mx-auto flex h-20 max-w-site items-center gap-4 px-5 sm:px-8 xl:px-0">
-          <Link className="focus-ring flex items-center gap-2 rounded-xl" href="/">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-lime-400 text-ink-950">
-              <Orbit aria-hidden="true" className="h-5 w-5" />
-            </span>
-            <span className="font-heading text-xl font-bold">Pluto</span>
+          <Link
+            aria-label="PlutoFinds home"
+            className="focus-ring flex items-center rounded-xl bg-white px-2 py-1 shadow-sm"
+            href="/"
+          >
+            <Image
+              alt="PlutoFinds"
+              className="h-auto w-[150px] sm:w-[180px]"
+              height={120}
+              priority
+              src="/images/plutofinds-logo.png"
+              width={450}
+            />
           </Link>
 
           <nav aria-label="Primary" className="ml-6 hidden items-center gap-1 lg:flex">
