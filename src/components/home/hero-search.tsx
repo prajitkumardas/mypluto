@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Loader2, Search, Sparkles } from "lucide-react";
+import { ArrowRight, Loader2, Search } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
@@ -103,7 +103,7 @@ export function HeroSearch() {
       ref={wrapperRef}
     >
       <label className={styles.searchField}>
-        <Sparkles aria-hidden="true" className={styles.searchSparkle} />
+        <Search aria-hidden="true" className={styles.searchSparkle} />
         <span className="sr-only">Describe your task</span>
         <input
           aria-activedescendant={activeIndex >= 0 ? `${activeOptionId}-${activeIndex}` : undefined}
@@ -143,13 +143,13 @@ export function HeroSearch() {
               selectResult(results[activeIndex]);
             }
           }}
-          placeholder="Describe your task..."
+          placeholder="Search your AI tools"
           role="combobox"
           value={query}
         />
       </label>
       <button className={styles.searchButton} type="submit">
-        Find tools
+        Find Tools
       </button>
 
       {open ? (
@@ -157,7 +157,7 @@ export function HeroSearch() {
           {status === "loading" ? (
             <div className={styles.panelState}>
               <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />
-              Searching Pluto&apos;s Library
+              Searching Discover
             </div>
           ) : null}
           {status === "success"
@@ -207,3 +207,4 @@ export function HeroSearch() {
     </form>
   );
 }
+

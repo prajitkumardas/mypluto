@@ -8,17 +8,17 @@ export default function TrendingPage() {
   return (
     <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
       <Badge tone="lime">Trending</Badge>
-      <h1 className="mt-4 font-heading text-5xl font-bold text-neutral-900">
+      <h1 className="mt-4 type-h1 text-neutral-900">
         Meaningful attention, not fabricated popularity.
       </h1>
-      <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-700">
+      <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
         Trending uses platform signals such as search growth, tool-page views,
         comparison activity, outbound clicks and recent update interest.
       </p>
       <div className="mt-8 flex flex-wrap gap-2">
         {["Today", "This week", "This month", "Video", "New releases", "Recently updated"].map((item, index) => (
           <button
-            className={`focus-ring min-h-11 rounded-xl border px-4 text-sm font-semibold ${
+            className={`focus-ring min-h-11 rounded-xl border px-4 type-label-md ${
               index === 1 ? "border-violet-600 bg-violet-100 text-violet-600" : "border-neutral-200 bg-white"
             }`}
             key={item}
@@ -33,14 +33,14 @@ export default function TrendingPage() {
             className="grid gap-4 border-b border-neutral-200 p-5 last:border-b-0 lg:grid-cols-[72px_1fr_1fr_140px_140px] lg:items-center"
             key={tool.slug}
           >
-            <div className="number font-heading text-3xl font-bold text-neutral-300">
+            <div className="number type-h3 text-neutral-300">
               {String(tool.rank).padStart(2, "0")}
             </div>
             <div>
-              <h2 className="font-heading text-2xl font-bold text-neutral-900">{tool.name}</h2>
-              <p className="text-sm text-neutral-500">{tool.category} / {tool.pricing}</p>
+              <h2 className="type-h4 text-neutral-900">{tool.name}</h2>
+              <p className="type-body-sm text-neutral-500">{tool.category} / {tool.pricing}</p>
             </div>
-            <p className="text-sm leading-6 text-neutral-700">{tool.trendingReason}</p>
+            <p className="type-body-sm text-neutral-700">{tool.trendingReason}</p>
             <Badge tone="success">
               <TrendingUp aria-hidden="true" className="h-3.5 w-3.5" />
               {tool.movement}

@@ -1,0 +1,254 @@
+.storySection {
+  position: relative;
+  z-index: 20;
+  height: 320svh;
+  margin-top: -145svh;
+  overflow-x: clip;
+  background: transparent;
+  color: #ffffff;
+  pointer-events: none;
+}
+
+.storySticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.storyFrame {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 20;
+  background-color: #080817;
+  transform-origin: center bottom;
+  will-change: transform, border-radius, box-shadow;
+  pointer-events: auto;
+}
+
+.videoShell,
+.posterFallback,
+.video,
+.overlay {
+  position: absolute;
+  inset: 0;
+}
+
+.videoShell {
+  overflow: hidden;
+  background-color: #080817;
+}
+
+.posterFallback {
+  z-index: 0;
+  background-image:
+    linear-gradient(180deg, rgba(8, 8, 23, 0.18), rgba(8, 8, 23, 0.54)),
+    url("/images/home/hero/pluto-valley-background.webp");
+  background-position: center;
+  background-size: cover;
+  transform: scale(1.03);
+}
+
+.video {
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 700ms ease;
+  will-change: transform, opacity;
+}
+
+.videoReady {
+  opacity: 1;
+}
+
+.videoFailed {
+  opacity: 0;
+}
+
+.overlay {
+  z-index: 30;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(112, 71, 255, 0.16), rgba(10, 8, 24, 0.48) 58%, rgba(8, 7, 18, 0.72)),
+    linear-gradient(180deg, rgba(8, 7, 18, 0.14), rgba(8, 7, 18, 0.42) 52%, rgba(8, 7, 18, 0.7));
+  pointer-events: none;
+}
+
+.copyLayer {
+  position: relative;
+  z-index: 40;
+  display: flex;
+  min-height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: calc(max(1.35rem, env(safe-area-inset-top)) + 4.75rem) clamp(1.25rem, 5vw, 5.5rem) calc(max(1.35rem, env(safe-area-inset-bottom)) + 3rem);
+  pointer-events: none;
+}
+
+.copyInner {
+  width: min(100%, 64rem);
+  margin-inline: auto;
+}
+
+.eyebrow {
+  margin: 0 0 clamp(1rem, 2.4vh, 1.55rem);
+  color: rgba(201, 190, 255, 0.78);
+  font-size: var(--text-overline);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-overline);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.revealText {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.6vw, 5.5rem);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.11;
+  letter-spacing: 0;
+  opacity: 1;
+  text-align: left;
+  text-wrap: balance;
+}
+
+.revealText[data-split-state="pending"] {
+  opacity: 0;
+}
+
+.word,
+.revealText :global(.split-char) {
+  display: inline-block;
+  color: #ffffff;
+  will-change: opacity, transform;
+}
+
+.revealText :global(.split-word) {
+  display: inline-block;
+}
+
+.reducedMotion {
+  height: auto;
+  min-height: 100svh;
+  margin-top: 0;
+  background: #080817;
+}
+
+.reducedMotion .storySticky {
+  position: relative;
+  height: auto;
+  min-height: 100svh;
+}
+
+.reducedMotion .storyFrame {
+  position: relative;
+  min-height: 100svh;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.reducedMotion .video,
+.reducedMotion .posterFallback {
+  transform: scale(1.03) !important;
+}
+
+.reducedMotion .copyLayer {
+  opacity: 1 !important;
+}
+
+.reducedMotion .word {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
+}
+
+
+@media (max-width: 1180px) {
+  .storySection {
+    margin-top: -138svh;
+  }
+}
+@media (max-width: 1024px) {
+  .storySection {
+    height: 290svh;
+    margin-top: -138svh;
+  }
+
+  .copyInner {
+    width: min(100%, 54rem);
+  }
+
+  .revealText {
+    font-size: clamp(2.15rem, 6.2vw, 4.4rem);
+    line-height: 1.12;
+  }
+}
+
+@media (max-width: 980px) {
+  .storySection {
+    margin-top: -132svh;
+  }
+}
+
+@media (max-width: 767px) {
+  .storySection {
+    height: 255svh;
+    margin-top: -127svh;
+  }
+
+  .copyLayer {
+    align-items: center;
+    padding: calc(max(1rem, env(safe-area-inset-top)) + 4.25rem) 1.25rem calc(max(1rem, env(safe-area-inset-bottom)) + 2.75rem);
+  }
+
+  .copyInner {
+    width: min(100%, 28rem);
+  }
+
+  .eyebrow {
+    margin-bottom: 0.9rem;
+    font-size: 0.7rem;
+  }
+
+  .revealText {
+    font-size: clamp(2rem, 10.2vw, 3.35rem);
+    line-height: 1.13;
+    text-wrap: pretty;
+  }
+
+  .video {
+    object-position: center;
+  }
+}
+
+@media (max-width: 390px) {
+  .storySection {
+    height: 240svh;
+    margin-top: -127svh;
+  }
+
+  .revealText {
+    font-size: clamp(1.85rem, 10vw, 3rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .storySection {
+    height: auto;
+    min-height: 100svh;
+    margin-top: 0;
+  }
+
+  .storySticky {
+    position: relative;
+    height: auto;
+    min-height: 100svh;
+  }
+}

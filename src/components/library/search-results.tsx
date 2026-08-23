@@ -32,11 +32,11 @@ export function SearchResults({ result, basePath = "/plutos-library/search" }: S
             <Filter aria-hidden="true" className="h-3.5 w-3.5" />
             Results
           </Badge>
-          <h2 className="mt-3 font-heading text-4xl font-bold text-neutral-900">
+          <h2 className="mt-3 type-h2 text-neutral-900">
             {result.total} matching tools
           </h2>
           <p className="sr-only" aria-live="polite">
-            {result.total} Pluto&apos;s Library results are available.
+            {result.total} Discover results are available.
           </p>
         </div>
         <form action={basePath} className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -49,7 +49,7 @@ export function SearchResults({ result, basePath = "/plutos-library/search" }: S
             Sort tools
           </label>
           <select
-            className="min-h-11 rounded-xl border border-neutral-200 bg-white px-3 text-sm font-semibold shadow-card"
+            className="min-h-11 rounded-xl border border-neutral-200 bg-white px-3 type-label-md shadow-card"
             defaultValue={result.filters.sort}
             id="library-sort"
             name="sort"
@@ -70,7 +70,7 @@ export function SearchResults({ result, basePath = "/plutos-library/search" }: S
         <div className="mt-5 flex flex-wrap items-center gap-2">
           {activeFilters.map((filter) => (
             <span
-              className="rounded-lg bg-violet-100 px-3 py-2 text-sm font-semibold text-violet-700"
+              className="rounded-lg bg-violet-100 px-3 py-2 type-label-md text-violet-700"
               key={`${filter.key}-${filter.value}`}
             >
               {filter.label}: {filter.value}
@@ -85,7 +85,7 @@ export function SearchResults({ result, basePath = "/plutos-library/search" }: S
         </div>
       ) : null}
 
-      <div className="mt-5 rounded-2xl bg-[#FFF3D1] p-4 text-sm font-semibold text-[#976500]">
+      <div className="mt-5 rounded-2xl bg-[#FFF3D1] p-4 type-label-md text-[#976500]">
         <ShieldAlert aria-hidden="true" className="mb-2 h-5 w-5" />
         Some records are not fully verified. Confirm pricing on official websites before buying.
       </div>
@@ -131,7 +131,7 @@ function Pagination({ result, basePath }: { result: LibrarySearchResult; basePat
 
   return (
     <nav className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" aria-label="Results pagination">
-      <p className="number text-sm font-semibold text-neutral-500">
+      <p className="number type-label-md text-neutral-500">
         Page {result.page} of {result.pageCount}
       </p>
       <div className="flex gap-2">
@@ -161,3 +161,4 @@ function getActiveFilters(filters: LibrarySearchResult["filters"]) {
     { key: "verification", label: "Verification", value: filters.verification }
   ].filter((filter) => filter.value);
 }
+

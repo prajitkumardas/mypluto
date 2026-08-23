@@ -60,23 +60,23 @@ export default async function LibraryCategoryPage({ params, searchParams }: Cate
   return (
     <main className="bg-canvas">
       <section className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-        <nav className="text-sm font-semibold text-neutral-500">
+        <nav className="type-label-md text-neutral-500">
           <Link className="hover:text-violet-600" href="/">
             Home
           </Link>{" "}
           /{" "}
           <Link className="hover:text-violet-600" href="/plutos-library">
-            Pluto&apos;s Library
+            Discover
           </Link>{" "}
           / {category.name}
         </nav>
         <div className="mt-6 grid gap-8 lg:grid-cols-[0.85fr_0.65fr] lg:items-start">
           <div>
             <Badge tone="violet">{category.name}</Badge>
-            <h1 className="mt-4 font-heading text-5xl font-bold text-neutral-900">
+            <h1 className="mt-4 type-h1 text-neutral-900">
               {category.name} tools
             </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-700">
+            <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
               {category.description}
             </p>
             <dl className="mt-6 grid gap-3 sm:grid-cols-2">
@@ -85,13 +85,13 @@ export default async function LibraryCategoryPage({ params, searchParams }: Cate
             </dl>
           </div>
           <section className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-card">
-            <h2 className="font-heading text-2xl font-bold text-neutral-900">
+            <h2 className="type-h4 text-neutral-900">
               Subcategories
             </h2>
             <div className="mt-4 grid gap-2 sm:grid-cols-2">
               {subcategories.slice(0, 12).map((subcategory) => (
                 <Link
-                  className="focus-ring flex min-h-12 items-center justify-between rounded-xl bg-neutral-50 px-3 text-sm font-semibold hover:text-violet-600"
+                  className="focus-ring flex min-h-12 items-center justify-between rounded-xl bg-neutral-50 px-3 type-label-md hover:text-violet-600"
                   href={buildLibraryHref(`/plutos-library/${category.slug}`, {
                     ...query,
                     subcategory: subcategory.slug,
@@ -115,7 +115,7 @@ export default async function LibraryCategoryPage({ params, searchParams }: Cate
             <SlidersHorizontal aria-hidden="true" className="h-5 w-5 text-violet-600" />
             <span className="sr-only">Search within {category.name}</span>
             <input
-              className="w-full bg-transparent text-base outline-none placeholder:text-neutral-500"
+              className="w-full bg-transparent type-body-md outline-none placeholder:text-neutral-500"
               defaultValue={query.q}
               name="q"
               placeholder={`Search ${category.name}`}
@@ -168,8 +168,8 @@ export default async function LibraryCategoryPage({ params, searchParams }: Cate
 function Metric({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-card">
-      <dt className="text-sm font-semibold text-neutral-500">{label}</dt>
-      <dd className="number mt-1 font-heading text-3xl font-bold text-neutral-900">
+      <dt className="type-label-md text-neutral-500">{label}</dt>
+      <dd className="number mt-1 type-h3 text-neutral-900">
         {value}
       </dd>
     </div>
@@ -188,10 +188,10 @@ function FilterSelect({
   value: string;
 }) {
   return (
-    <label className="grid gap-1 text-xs font-semibold text-neutral-500">
+    <label className="grid gap-1 type-label-sm text-neutral-500">
       <span className="sr-only">{label}</span>
       <select
-        className="min-h-14 rounded-2xl border border-neutral-200 bg-white px-3 text-sm font-semibold text-neutral-900"
+        className="min-h-14 rounded-2xl border border-neutral-200 bg-white px-3 type-label-md text-neutral-900"
         defaultValue={value}
         name={name}
       >
@@ -200,3 +200,4 @@ function FilterSelect({
     </label>
   );
 }
+

@@ -73,10 +73,10 @@ export function CompareExperience() {
       <Badge tone="info">Saved on this device</Badge>
       <div className="mt-4 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="font-heading text-5xl font-bold text-neutral-900">
+          <h1 className="type-h1 text-neutral-900">
             Compare tools without forcing a fake winner.
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-700">
+          <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
             Compare two to four tools. Pluto highlights contextual strengths so
             the decision matches the requirement.
           </p>
@@ -105,10 +105,10 @@ export function CompareExperience() {
         <section className="mt-10 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
           <div className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-card">
             <Badge tone="violet">One selected tool</Badge>
-            <h2 className="mt-4 font-heading text-3xl font-bold text-neutral-900">
+            <h2 className="mt-4 type-h3 text-neutral-900">
               Add another tool to unlock comparison.
             </h2>
-            <p className="mt-3 text-sm leading-6 text-neutral-700">
+            <p className="mt-3 type-body-sm text-neutral-700">
               Your current choice is preserved locally. Recommended comparable
               tools are shown on the right.
             </p>
@@ -138,7 +138,7 @@ export function CompareExperience() {
               className="grid min-w-[760px]"
               style={{ gridTemplateColumns: `180px repeat(${selectedTools.length}, minmax(190px, 1fr))` }}
             >
-              <div className="border-b border-r border-neutral-200 p-4 text-sm font-bold text-neutral-500">
+              <div className="border-b border-r border-neutral-200 p-4 type-label-md text-neutral-500">
                 Attribute
               </div>
               {selectedTools.map((tool) =>
@@ -147,15 +147,15 @@ export function CompareExperience() {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <span
-                          className="grid h-11 w-11 place-items-center rounded-xl font-heading font-bold text-ink-950"
+                          className="grid h-11 w-11 place-items-center rounded-xl type-h6 text-ink-950"
                           style={{ backgroundColor: tool.accent }}
                         >
                           {tool.name.charAt(0)}
                         </span>
-                        <h2 className="mt-3 font-heading text-xl font-bold text-neutral-900">
+                        <h2 className="mt-3 type-h5 text-neutral-900">
                           {tool.name}
                         </h2>
-                        <p className="text-sm text-neutral-500">{tool.category}</p>
+                        <p className="type-body-sm text-neutral-500">{tool.category}</p>
                       </div>
                       <button
                         aria-label={`Remove ${tool.name}`}
@@ -176,7 +176,7 @@ export function CompareExperience() {
           <div className="grid gap-4 border-t border-neutral-200 p-5 md:grid-cols-4">
             {["Best for beginners", "Best free option", "Best for API integration", "Best for teams"].map(
               (label) => (
-                <div className="rounded-2xl bg-lime-100 p-4 text-sm font-semibold text-ink-950" key={label}>
+                <div className="rounded-2xl bg-lime-100 p-4 type-label-md text-ink-950" key={label}>
                   <CheckCircle2 aria-hidden="true" className="mb-2 h-5 w-5" />
                   {label}
                 </div>
@@ -200,11 +200,11 @@ function ComparisonRow({
 }) {
   return (
     <>
-      <div className="border-b border-r border-neutral-200 bg-neutral-50 p-4 text-sm font-bold text-neutral-700">
+      <div className="border-b border-r border-neutral-200 bg-neutral-50 p-4 type-label-md text-neutral-700">
         {label}
       </div>
       {selectedTools.map((tool) => (
-        <div className="border-b border-r border-neutral-200 p-4 text-sm leading-6 text-neutral-800 last:border-r-0" key={`${tool?.slug}-${field}`}>
+        <div className="border-b border-r border-neutral-200 p-4 type-body-sm text-neutral-800 last:border-r-0" key={`${tool?.slug}-${field}`}>
           {tool ? formatValue(tool[field]) : null}
         </div>
       ))}
@@ -228,7 +228,7 @@ function RecommendedTools({
 }) {
   return (
     <section className="mt-6 rounded-3xl border border-neutral-200 bg-white p-5 shadow-card">
-      <h2 className="font-heading text-2xl font-bold text-neutral-900">
+      <h2 className="type-h4 text-neutral-900">
         Recommended comparable tools
       </h2>
       <div className="mt-4 grid gap-3 md:grid-cols-4">
@@ -239,15 +239,15 @@ function RecommendedTools({
             onClick={() => addTool(tool.slug)}
           >
             <span
-              className="grid h-10 w-10 place-items-center rounded-xl font-heading font-bold text-ink-950"
+              className="grid h-10 w-10 place-items-center rounded-xl type-h6 text-ink-950"
               style={{ backgroundColor: tool.accent }}
             >
               {tool.name.charAt(0)}
             </span>
-            <span className="mt-3 block font-heading text-lg font-bold text-neutral-900">
+            <span className="mt-3 block type-h6 text-neutral-900">
               {tool.name}
             </span>
-            <span className="mt-1 block text-sm text-neutral-500">{tool.bestFor}</span>
+            <span className="mt-1 block type-body-sm text-neutral-500">{tool.bestFor}</span>
           </button>
         ))}
       </div>

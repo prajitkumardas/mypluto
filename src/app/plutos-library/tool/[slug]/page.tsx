@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AlertCircle, ArrowRight, CheckCircle2, ExternalLink, Flag } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LibraryBadge } from "@/components/library/library-badge";
 import { LibraryToolCard } from "@/components/library/library-tool-card";
-import { getLibraryTool, getSimilarLibraryTools, plutosLibrary, slugify, type LibraryTool } from "@/lib/plutos-library";
+import { getLibraryTool, getSimilarLibraryTools, plutosLibrary, slugify } from "@/lib/plutos-library";
 
 type ToolDetailProps = {
   params: Promise<{ slug: string }>;
@@ -34,13 +33,13 @@ export default async function LibraryToolDetailPage({ params }: ToolDetailProps)
       <section className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
           <div>
-            <nav className="text-sm font-medium text-neutral-500">
+            <nav className="type-label-md text-neutral-500">
               <Link className="hover:text-violet-600" href="/">
                 Home
               </Link>{" "}
               /{" "}
               <Link className="hover:text-violet-600" href="/plutos-library">
-                Pluto&apos;s Library
+                Discover
               </Link>
               {primaryCategory ? (
                 <>
@@ -55,23 +54,23 @@ export default async function LibraryToolDetailPage({ params }: ToolDetailProps)
             </nav>
 
             <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center">
-              <span className="grid h-20 w-20 place-items-center rounded-3xl bg-violet-100 font-heading text-3xl font-bold text-violet-600">
+              <span className="grid h-20 w-20 place-items-center rounded-3xl bg-violet-100 type-h3 text-violet-600">
                 {tool.name.charAt(0)}
               </span>
               <div>
                 <LibraryBadge status={tool.verification.status} />
-                <h1 className="mt-3 font-heading text-5xl font-bold text-neutral-900">
+                <h1 className="mt-3 type-h1 text-neutral-900">
                   {tool.name}
                 </h1>
-                <p className="mt-3 max-w-2xl text-lg leading-8 text-neutral-700">
+                <p className="mt-3 max-w-2xl type-body-xl text-neutral-700">
                   {tool.shortDescription}
                 </p>
               </div>
             </div>
 
             <section className="mt-8 rounded-3xl border border-neutral-200 bg-lime-100 p-6 text-ink-950 shadow-card">
-              <h2 className="font-heading text-3xl font-bold">Best fit</h2>
-              <p className="mt-3 text-base leading-7">
+              <h2 className="type-h3">Best fit</h2>
+              <p className="mt-3 type-body-lg">
                 {tool.targetAudiences.slice(0, 2).join(" and ") || "Information not yet verified"}
                 {" "}working on {tool.useCases[0] || "the listed use cases"}. Pricing is listed as{" "}
                 {tool.pricing.model || "Information not yet verified"}.
@@ -92,7 +91,7 @@ export default async function LibraryToolDetailPage({ params }: ToolDetailProps)
             <DetailList title="Target audience" items={tool.targetAudiences} />
             <DetailList title="Supported platforms" items={tool.platforms} />
             <DetailSection title="Pricing details">
-              <dl className="grid gap-3 text-sm">
+              <dl className="grid gap-3 type-body-sm">
                 <Fact label="Pricing model" value={tool.pricing.model} />
                 <Fact label="Free-plan status" value={tool.pricing.freePlanRaw || tool.pricing.freePlan} />
                 <Fact label="Starting price" value={tool.pricing.startingPriceRaw} />
@@ -102,7 +101,7 @@ export default async function LibraryToolDetailPage({ params }: ToolDetailProps)
               <p>{tool.limitations || "Information not yet verified"}</p>
             </DetailSection>
             <DetailSection title="Verification">
-              <dl className="grid gap-3 text-sm">
+              <dl className="grid gap-3 type-body-sm">
                 <Fact label="Verification status" value={tool.verification.status} />
                 <Fact label="Last verified" value={tool.verification.lastVerifiedRaw} />
                 <Fact label="Source" value={tool.verification.sourceRaw} />
@@ -111,7 +110,7 @@ export default async function LibraryToolDetailPage({ params }: ToolDetailProps)
             </DetailSection>
 
             <section className="mt-8 rounded-3xl border border-neutral-200 bg-white p-6 shadow-card">
-              <h2 className="font-heading text-3xl font-bold text-neutral-900">
+              <h2 className="type-h3 text-neutral-900">
                 Similar alternatives
               </h2>
               <div className="mt-5 grid gap-5 md:grid-cols-2">
@@ -134,17 +133,17 @@ export default async function LibraryToolDetailPage({ params }: ToolDetailProps)
               </Link>
             </Button>
             <div className="mt-5 rounded-2xl border border-neutral-200 p-4">
-              <h2 className="font-heading text-xl font-bold text-neutral-900">
+              <h2 className="type-h5 text-neutral-900">
                 Directory facts
               </h2>
-              <dl className="mt-4 grid gap-3 text-sm">
+              <dl className="mt-4 grid gap-3 type-body-sm">
                 <Fact label="Category" value={tool.categories.join(", ")} />
                 <Fact label="Subcategory" value={tool.subcategories.join(", ")} />
                 <Fact label="Website" value={tool.domain} />
                 <Fact label="API notes" value={tool.api.notes} />
               </dl>
             </div>
-            <div className="mt-5 rounded-2xl bg-[#FFF3D1] p-4 text-sm leading-6 text-[#976500]">
+            <div className="mt-5 rounded-2xl bg-[#FFF3D1] p-4 type-body-sm text-[#976500]">
               Missing claims are shown as information not yet verified instead
               of being inferred.
             </div>
@@ -162,8 +161,8 @@ export default async function LibraryToolDetailPage({ params }: ToolDetailProps)
 function Summary({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-card">
-      <p className="text-sm font-semibold text-neutral-500">{label}</p>
-      <p className="mt-2 font-heading text-2xl font-bold text-neutral-900">
+      <p className="type-label-md text-neutral-500">{label}</p>
+      <p className="mt-2 type-h4 text-neutral-900">
         {value || "Information not yet verified"}
       </p>
     </div>
@@ -173,8 +172,8 @@ function Summary({ label, value }: { label: string; value: string }) {
 function DetailSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mt-8 rounded-3xl border border-neutral-200 bg-white p-6 shadow-card">
-      <h2 className="font-heading text-3xl font-bold text-neutral-900">{title}</h2>
-      <div className="mt-4 text-base leading-7 text-neutral-700">{children}</div>
+      <h2 className="type-h3 text-neutral-900">{title}</h2>
+      <div className="mt-4 type-body-lg text-neutral-700">{children}</div>
     </section>
   );
 }
@@ -209,8 +208,9 @@ function DetailList({ title, items }: { title: string; items: string[] }) {
 function Fact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="font-semibold text-neutral-500">{label}</dt>
-      <dd className="mt-1 leading-6 text-neutral-900">{value || "Information not yet verified"}</dd>
+      <dt className="type-label-md text-neutral-500">{label}</dt>
+      <dd className="mt-1 type-body-sm text-neutral-900">{value || "Information not yet verified"}</dd>
     </div>
   );
 }
+

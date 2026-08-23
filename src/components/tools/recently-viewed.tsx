@@ -23,12 +23,12 @@ export function RecentlyViewed() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <Badge tone="lime">Saved on this device</Badge>
-            <h2 className="mt-3 flex items-center gap-2 font-heading text-2xl font-bold text-neutral-900">
+            <h2 className="mt-3 flex items-center gap-2 type-h4 text-neutral-900">
               <Clock3 aria-hidden="true" className="h-5 w-5 text-violet-600" />
               Recently viewed
             </h2>
           </div>
-          <p className="max-w-xl text-sm leading-6 text-neutral-600">
+          <p className="max-w-xl type-body-sm text-neutral-600">
             Local history stays in this browser only. It helps returning users continue
             evaluation without an account.
           </p>
@@ -41,7 +41,7 @@ export function RecentlyViewed() {
                 href={`/tools/${tool.slug}`}
                 key={tool.slug}
               >
-                <span className="font-semibold text-neutral-900">{tool.name}</span>
+                <span className="type-label-md text-neutral-900">{tool.name}</span>
                 <ArrowRight aria-hidden="true" className="h-4 w-4 text-neutral-500" />
               </Link>
             ) : null

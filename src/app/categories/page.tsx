@@ -8,7 +8,7 @@ export default function CategoriesPage() {
   return (
     <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
       <Badge tone="violet">Categories</Badge>
-      <h1 className="mt-4 font-heading text-5xl font-bold text-neutral-900">
+      <h1 className="mt-4 type-h1 text-neutral-900">
         Browse the AI ecosystem by work type.
       </h1>
       <label className="mt-8 flex min-h-14 max-w-2xl items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 shadow-card">
@@ -31,11 +31,11 @@ export default function CategoriesPage() {
                 </span>
                 <ArrowRight className="h-5 w-5 text-neutral-500 transition group-hover:translate-x-1 group-hover:text-violet-600" />
               </div>
-              <h2 className="mt-8 font-heading text-3xl font-bold text-neutral-900">
+              <h2 className="mt-8 type-h3 text-neutral-900">
                 {category.name}
               </h2>
-              <p className="mt-3 text-sm leading-6 text-neutral-700">{category.description}</p>
-              <p className="number mt-4 text-sm font-semibold text-neutral-500">
+              <p className="mt-3 type-body-sm text-neutral-700">{category.description}</p>
+              <p className="number mt-4 type-label-md text-neutral-500">
                 {category.count} tools / featured: {featured?.name ?? "Coming soon"}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">

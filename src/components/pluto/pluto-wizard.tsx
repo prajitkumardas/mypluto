@@ -40,15 +40,15 @@ export function PlutoWizard() {
         </Badge>
         <div className="mt-5 grid gap-8 lg:grid-cols-[0.75fr_1.25fr]">
           <div>
-            <h1 className="font-heading text-5xl font-bold">Guided recommendation flow</h1>
-            <p className="mt-4 text-base leading-7 text-white/70">
+            <h1 className="type-h1">Guided recommendation flow</h1>
+            <p className="mt-4 type-body-lg text-white/70">
               Pluto asks only essential questions, preserves progress and returns
               recommendations with match reasons, limitations and verification dates.
             </p>
             <div className="mt-6 grid gap-3">
               {["Understanding your request", "Matching required features", "Checking pricing", "Reviewing verified tools", "Ranking best options"].map(
                 (item, index) => (
-                  <div className="flex items-center gap-3 rounded-2xl bg-white/8 p-3 text-sm" key={item}>
+                  <div className="flex items-center gap-3 rounded-2xl bg-white/8 p-3 type-body-sm" key={item}>
                     {index < step ? (
                       <CheckCircle2 aria-hidden="true" className="h-5 w-5 text-lime-400" />
                     ) : (
@@ -64,14 +64,14 @@ export function PlutoWizard() {
           <section className="rounded-3xl bg-white p-5 text-neutral-900 shadow-overlay">
             {!isComplete ? (
               <>
-                <p className="number text-sm font-bold text-violet-600">
+                <p className="number type-label-md text-violet-600">
                   Step {step + 1} of {steps.length}
                 </p>
-                <h2 className="mt-3 font-heading text-4xl font-bold">{steps[step].title}</h2>
+                <h2 className="mt-3 type-h2">{steps[step].title}</h2>
                 <div className="mt-6 grid gap-3">
                   {steps[step].options.map((option) => (
                     <button
-                      className="focus-ring min-h-14 rounded-2xl border border-neutral-200 px-4 text-left font-semibold transition hover:border-violet-500"
+                      className="focus-ring min-h-14 rounded-2xl border border-neutral-200 px-4 text-left type-label-md transition hover:border-violet-500"
                       key={option}
                       onClick={() => choose(option)}
                     >
@@ -93,8 +93,8 @@ export function PlutoWizard() {
                 <Badge icon tone="success">
                   Recommendations ready
                 </Badge>
-                <h2 className="mt-4 font-heading text-4xl font-bold">Three strong matches</h2>
-                <p className="mt-3 text-sm leading-6 text-neutral-700">
+                <h2 className="mt-4 type-h2">Three strong matches</h2>
+                <p className="mt-3 type-body-sm text-neutral-700">
                   Interpretation: {answers.filter(Boolean).join(" / ") || "cinematic product videos"}.
                 </p>
                 <div className="mt-6 grid gap-5 lg:grid-cols-3">

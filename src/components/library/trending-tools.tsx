@@ -30,10 +30,10 @@ export function TrendingTools({ toolsByRange }: TrendingToolsProps) {
             <TrendingUp aria-hidden="true" className="h-3.5 w-3.5" />
             Trending
           </Badge>
-          <h2 className="mt-3 font-heading text-4xl font-bold text-neutral-900">
+          <h2 className="mt-3 type-h2 text-neutral-900">
             Recently added tools
           </h2>
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-700">
+          <p className="mt-2 max-w-2xl type-body-sm text-neutral-700">
             Live event rankings will take over after Supabase analytics has enough activity.
           </p>
         </div>
@@ -42,7 +42,7 @@ export function TrendingTools({ toolsByRange }: TrendingToolsProps) {
             <button
               aria-selected={range === value}
               className={cn(
-                "focus-ring min-h-11 rounded-xl px-3 text-sm font-semibold transition",
+                "focus-ring min-h-11 rounded-xl px-3 type-label-md transition",
                 range === value ? "bg-violet-600 text-white" : "text-neutral-700 hover:bg-neutral-100"
               )}
               key={value}
@@ -62,7 +62,7 @@ export function TrendingTools({ toolsByRange }: TrendingToolsProps) {
           ))}
         </div>
       ) : (
-        <div className="mt-8 rounded-2xl border border-neutral-200 bg-white p-5 text-sm font-semibold text-neutral-600">
+        <div className="mt-8 rounded-2xl border border-neutral-200 bg-white p-5 type-label-md text-neutral-600">
           No activity is available for this range yet. <ArrowRight aria-hidden="true" className="inline h-4 w-4" />
         </div>
       )}

@@ -52,7 +52,7 @@ export default async function ToolDetailPage({ params }: ToolDetailProps) {
       <section className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
           <div>
-            <nav className="text-sm font-medium text-neutral-500">
+            <nav className="type-label-md text-neutral-500">
               <Link className="hover:text-violet-600" href="/tools">
                 All AI Tools
               </Link>{" "}
@@ -60,7 +60,7 @@ export default async function ToolDetailPage({ params }: ToolDetailProps) {
             </nav>
             <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center">
               <span
-                className="grid h-20 w-20 place-items-center rounded-3xl font-heading text-3xl font-bold text-ink-950"
+                className="grid h-20 w-20 place-items-center rounded-3xl type-h3 text-ink-950"
                 style={{ backgroundColor: tool.accent }}
               >
                 {tool.name.charAt(0)}
@@ -69,10 +69,10 @@ export default async function ToolDetailPage({ params }: ToolDetailProps) {
                 <Badge icon tone="success">
                   {tool.verification.status}
                 </Badge>
-                <h1 className="mt-3 font-heading text-5xl font-bold text-neutral-900">
+                <h1 className="mt-3 type-h1 text-neutral-900">
                   {tool.name}
                 </h1>
-                <p className="mt-3 max-w-2xl text-lg leading-8 text-neutral-700">
+                <p className="mt-3 max-w-2xl type-body-xl text-neutral-700">
                   {tool.tagline}
                 </p>
               </div>
@@ -94,7 +94,7 @@ export default async function ToolDetailPage({ params }: ToolDetailProps) {
             <DetailList title="Limitations" items={tool.limitations} icon="warning" />
 
             <section className="mt-8 rounded-3xl border border-neutral-200 bg-white p-6 shadow-card">
-              <h2 className="font-heading text-3xl font-bold text-neutral-900">
+              <h2 className="type-h3 text-neutral-900">
                 Alternatives
               </h2>
               <div className="mt-5 grid gap-5 md:grid-cols-2">
@@ -116,22 +116,22 @@ export default async function ToolDetailPage({ params }: ToolDetailProps) {
                 Add to Compare <ArrowRight aria-hidden="true" className="h-4 w-4" />
               </Link>
             </Button>
-            <div className="mt-5 rounded-2xl bg-lime-100 p-4 text-sm leading-6 text-ink-950">
+            <div className="mt-5 rounded-2xl bg-lime-100 p-4 type-body-sm text-ink-950">
               Explore Tool opens the official website. Pluto preserves your
               current comparison and recent history on this device.
             </div>
 
             <div className="mt-5 rounded-2xl border border-neutral-200 p-4">
-              <h2 className="flex items-center gap-2 font-heading text-xl font-bold text-neutral-900">
+              <h2 className="flex items-center gap-2 type-h5 text-neutral-900">
                 <ShieldCheck aria-hidden="true" className="h-5 w-5 text-violet-600" />
                 Verification
               </h2>
-              <dl className="mt-4 grid gap-3 text-sm">
+              <dl className="mt-4 grid gap-3 type-body-sm">
                 <CheckRow label="Website verified" value={tool.verification.website} />
                 <CheckRow label="Pricing verified" value={tool.verification.pricing} />
                 <CheckRow label="Features verified" value={tool.verification.features} />
                 <div>
-                  <dt className="font-semibold text-neutral-500">Last checked</dt>
+                  <dt className="type-label-md text-neutral-500">Last checked</dt>
                   <dd className="mt-1 text-neutral-900">{tool.verified}</dd>
                 </div>
               </dl>
@@ -157,30 +157,30 @@ function ImportedToolDetail({ tool }: { tool: LibraryTool }) {
       <section className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
           <div>
-            <nav className="text-sm font-medium text-neutral-500">
+            <nav className="type-label-md text-neutral-500">
               <Link className="hover:text-violet-600" href="/plutos-library">
-                Pluto&apos;s Library
+                Discover
               </Link>{" "}
               / {tool.name}
             </nav>
             <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center">
-              <span className="grid h-20 w-20 place-items-center rounded-3xl bg-violet-100 font-heading text-3xl font-bold text-violet-600">
+              <span className="grid h-20 w-20 place-items-center rounded-3xl bg-violet-100 type-h3 text-violet-600">
                 {tool.name.charAt(0)}
               </span>
               <div>
                 <LibraryBadge status={tool.verification.status} />
-                <h1 className="mt-3 font-heading text-5xl font-bold text-neutral-900">
+                <h1 className="mt-3 type-h1 text-neutral-900">
                   {tool.name}
                 </h1>
-                <p className="mt-3 max-w-2xl text-lg leading-8 text-neutral-700">
+                <p className="mt-3 max-w-2xl type-body-xl text-neutral-700">
                   {tool.shortDescription}
                 </p>
               </div>
             </div>
 
             <section className="mt-8 rounded-3xl border border-neutral-200 bg-lime-100 p-6 text-ink-950 shadow-card">
-              <h2 className="font-heading text-3xl font-bold">Pluto says</h2>
-              <p className="mt-3 text-base leading-7">
+              <h2 className="type-h3">Pluto says</h2>
+              <p className="mt-3 type-body-lg">
                 This tool may suit {tool.targetAudiences.slice(0, 2).join(" and ") || "users"}
                 {" "}working on {tool.useCases[0] || "the listed use cases"}. Pricing is listed as{" "}
                 {tool.pricing.model}; verification is {tool.verification.status.toLowerCase()}, so
@@ -202,7 +202,7 @@ function ImportedToolDetail({ tool }: { tool: LibraryTool }) {
             <DetailList title="Platforms" items={tool.platforms} />
             <DetailList title="Ideal users" items={tool.targetAudiences} />
             <DetailSection title="Pricing">
-              <dl className="grid gap-3 text-sm">
+              <dl className="grid gap-3 type-body-sm">
                 <CompareFact label="Pricing model" value={tool.pricing.model} />
                 <CompareFact label="Free plan" value={tool.pricing.freePlanRaw || tool.pricing.freePlan} />
                 <CompareFact label="Starting price" value={tool.pricing.startingPriceRaw} />
@@ -212,7 +212,7 @@ function ImportedToolDetail({ tool }: { tool: LibraryTool }) {
               <p>{tool.limitations}</p>
             </DetailSection>
             <DetailSection title="Verification and sources">
-              <dl className="grid gap-3 text-sm">
+              <dl className="grid gap-3 type-body-sm">
                 <CompareFact label="Verification status" value={tool.verification.status} />
                 <CompareFact label="Last checked" value={tool.verification.lastVerifiedRaw} />
                 <CompareFact label="Source" value={tool.verification.sourceRaw} />
@@ -221,10 +221,10 @@ function ImportedToolDetail({ tool }: { tool: LibraryTool }) {
             </DetailSection>
 
             <section className="mt-8 rounded-3xl border border-neutral-200 bg-white p-6 shadow-card">
-              <h2 className="font-heading text-3xl font-bold text-neutral-900">
+              <h2 className="type-h3 text-neutral-900">
                 Similar tools
               </h2>
-              <p className="mt-3 text-sm leading-6 text-neutral-700">
+              <p className="mt-3 type-body-sm text-neutral-700">
                 Similarity uses shared category, subcategories, use cases,
                 features, audience, pricing, platforms, API and verification state.
               </p>
@@ -233,7 +233,7 @@ function ImportedToolDetail({ tool }: { tool: LibraryTool }) {
                   item.tool ? (
                     <div key={item.slug}>
                       <LibraryToolCard tool={item.tool} />
-                      <p className="mt-2 text-xs font-semibold text-neutral-500">
+                      <p className="mt-2 type-label-sm text-neutral-500">
                         Similarity score: {item.score}. {item.reason}
                       </p>
                     </div>
@@ -255,13 +255,13 @@ function ImportedToolDetail({ tool }: { tool: LibraryTool }) {
               </Link>
             </Button>
             <div className="mt-5 rounded-2xl border border-neutral-200 p-4">
-              <h2 className="font-heading text-xl font-bold text-neutral-900">
+              <h2 className="type-h5 text-neutral-900">
                 Verification snapshot
               </h2>
               <div className="mt-4">
                 <LibraryBadge status={tool.verification.status} />
               </div>
-              <dl className="mt-4 grid gap-3 text-sm">
+              <dl className="mt-4 grid gap-3 type-body-sm">
                 <CompareFact label="Last checked" value={tool.verification.lastVerifiedRaw} />
                 <CompareFact label="Pricing" value="Confirm on official website" />
                 <CompareFact label="Website status" value={tool.status} />
@@ -282,8 +282,8 @@ function ImportedToolDetail({ tool }: { tool: LibraryTool }) {
 function Summary({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-card">
-      <p className="text-sm font-semibold text-neutral-500">{label}</p>
-      <p className="mt-2 font-heading text-2xl font-bold text-neutral-900">{value}</p>
+      <p className="type-label-md text-neutral-500">{label}</p>
+      <p className="mt-2 type-h4 text-neutral-900">{value}</p>
     </div>
   );
 }
@@ -291,8 +291,8 @@ function Summary({ label, value }: { label: string; value: string }) {
 function DetailSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mt-8 rounded-3xl border border-neutral-200 bg-white p-6 shadow-card">
-      <h2 className="font-heading text-3xl font-bold text-neutral-900">{title}</h2>
-      <div className="mt-4 text-base leading-7 text-neutral-700">{children}</div>
+      <h2 className="type-h3 text-neutral-900">{title}</h2>
+      <div className="mt-4 type-body-lg text-neutral-700">{children}</div>
     </section>
   );
 }
@@ -327,8 +327,8 @@ function DetailList({
 function CheckRow({ label, value }: { label: string; value: boolean }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <dt className="font-semibold text-neutral-500">{label}</dt>
-      <dd className="inline-flex items-center gap-1 font-semibold text-[#157A4A]">
+      <dt className="type-label-md text-neutral-500">{label}</dt>
+      <dd className="inline-flex items-center gap-1 type-label-md text-[#157A4A]">
         <CheckCircle2 aria-hidden="true" className="h-4 w-4" />
         {value ? "Yes" : "No"}
       </dd>
@@ -339,8 +339,9 @@ function CheckRow({ label, value }: { label: string; value: boolean }) {
 function CompareFact({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="font-semibold text-neutral-500">{label}</dt>
-      <dd className="mt-1 leading-6 text-neutral-900">{value || "Information not available"}</dd>
+      <dt className="type-label-md text-neutral-500">{label}</dt>
+      <dd className="mt-1 type-body-sm text-neutral-900">{value || "Information not available"}</dd>
     </div>
   );
 }
+

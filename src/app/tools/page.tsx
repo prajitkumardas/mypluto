@@ -17,9 +17,9 @@ export default function ToolsPage() {
           <aside className="h-fit rounded-3xl border border-neutral-200 bg-white p-5 shadow-card lg:sticky lg:top-28">
             <div className="flex items-center gap-2">
               <SlidersHorizontal aria-hidden="true" className="h-5 w-5 text-violet-600" />
-              <h2 className="font-heading text-2xl font-bold text-neutral-900">Filters</h2>
+              <h2 className="type-h4 text-neutral-900">Filters</h2>
             </div>
-            <p className="mt-2 text-sm leading-6 text-neutral-600">
+            <p className="mt-2 type-body-sm text-neutral-600">
               URL-backed filter state will make every result set shareable.
             </p>
             <div className="mt-5 grid gap-5">
@@ -33,7 +33,7 @@ export default function ToolsPage() {
                 values={["API available", "Beginner", "Teams", "Commercial usage"]}
               />
             </div>
-            <div className="mt-5 rounded-2xl bg-lime-100 p-4 text-sm text-ink-950">
+            <div className="mt-5 rounded-2xl bg-lime-100 p-4 type-body-sm text-ink-950">
               Saved on this device: selected compare tools, saved tools and recently viewed history.
             </div>
           </aside>
@@ -42,16 +42,16 @@ export default function ToolsPage() {
             <Badge tone="violet">All AI Tools</Badge>
             <div className="mt-4 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
               <div>
-                <h1 className="font-heading text-5xl font-bold text-neutral-900">
+                <h1 className="type-h1 text-neutral-900">
                   Find tools by requirement, not by list fatigue.
                 </h1>
-                <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-700">
+                <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
                   Browse the structured directory, then move into evaluation,
                   comparison or Pluto-assisted recommendations.
                 </p>
               </div>
               <Button asChild variant="secondary">
-                <Link href="/pluto/ask">Ask Pluto</Link>
+                <Link href="/pluto-guides">Pluto Guides</Link>
               </Button>
             </div>
 
@@ -60,14 +60,14 @@ export default function ToolsPage() {
                 <Search aria-hidden="true" className="h-5 w-5 text-violet-600" />
                 <span className="sr-only">Search within tools</span>
                 <input
-                  className="w-full bg-transparent text-base outline-none placeholder:text-neutral-500"
+                  className="w-full bg-transparent type-body-md outline-none placeholder:text-neutral-500"
                   placeholder="Search by tool, feature, use case or profession"
                 />
               </label>
             </div>
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="number text-sm font-semibold text-neutral-600">
+              <p className="number type-label-md text-neutral-600">
                 {tools.length} recommended tools shown from mock data
               </p>
               <div className="flex flex-wrap gap-2">
@@ -90,7 +90,7 @@ export default function ToolsPage() {
               <StatePanel
                 action="Relax one filter"
                 copy="When filters produce no strong matches, preserve the user's choices and offer the closest routes back to discovery."
-                secondary="Ask Pluto"
+                secondary="Pluto Guides"
                 title="No tools match every requirement"
               />
             </div>
@@ -105,11 +105,11 @@ export default function ToolsPage() {
 function FilterGroup({ title, values }: { title: string; values: string[] }) {
   return (
     <fieldset>
-      <legend className="text-sm font-bold text-neutral-900">{title}</legend>
+      <legend className="type-label-md text-neutral-900">{title}</legend>
       <div className="mt-3 grid gap-2">
         {values.map((value, index) => (
           <label
-            className="flex min-h-11 items-center gap-3 rounded-xl border border-neutral-200 px-3 text-sm font-medium text-neutral-700"
+            className="flex min-h-11 items-center gap-3 rounded-xl border border-neutral-200 px-3 type-label-md text-neutral-700"
             key={value}
           >
             <input className="h-4 w-4 accent-violet-600" defaultChecked={index === 0} type="checkbox" />
@@ -120,3 +120,4 @@ function FilterGroup({ title, values }: { title: string; values: string[] }) {
     </fieldset>
   );
 }
+

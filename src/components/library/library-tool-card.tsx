@@ -26,14 +26,14 @@ export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
     <article className="group flex h-full flex-col rounded-2xl border border-neutral-200 bg-white p-5 shadow-card transition hover:-translate-y-1 hover:border-violet-500 hover:shadow-elevated">
       <div className="flex items-start justify-between gap-3">
         <Link className="focus-ring flex items-center gap-3 rounded-xl" href={detailHref} onClick={() => track("tool_view")}>
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-violet-100 font-heading text-lg font-bold text-violet-600">
+          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-violet-100 type-h6 text-violet-600">
             {tool.name.charAt(0)}
           </span>
           <span>
-            <span className="block font-heading text-xl font-bold text-neutral-900">
+            <span className="block type-h5 text-neutral-900">
               {tool.name}
             </span>
-            <span className="text-sm text-neutral-500">
+            <span className="type-body-sm text-neutral-500">
               {tool.categories[0] ?? "Uncategorized"}
             </span>
           </span>
@@ -41,11 +41,11 @@ export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
         <LibraryBadge status={tool.verification.status} />
       </div>
 
-      <p className="mt-5 line-clamp-3 text-sm leading-6 text-neutral-700">
+      <p className="mt-5 line-clamp-3 type-body-sm text-neutral-700">
         {tool.shortDescription}
       </p>
 
-      <div className="mt-4 grid gap-2 text-xs font-semibold text-neutral-600">
+      <div className="mt-4 grid gap-2 type-label-sm text-neutral-600">
         <span>Pricing: {tool.pricing.model}</span>
         <span>Free plan: {tool.pricing.freePlan}</span>
         <span>API: {tool.api.normalized}</span>
@@ -54,14 +54,14 @@ export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
 
       <div className="mt-4 flex flex-wrap gap-2">
         {tool.subcategories.slice(0, 2).map((subcategory) => (
-          <span className="rounded-lg bg-neutral-100 px-2.5 py-1 text-xs font-semibold text-neutral-700" key={subcategory}>
+          <span className="rounded-lg bg-neutral-100 px-2.5 py-1 type-label-sm text-neutral-700" key={subcategory}>
             {subcategory}
           </span>
         ))}
       </div>
 
       <div className="mt-auto pt-5">
-        <p className="mb-3 text-xs font-semibold text-neutral-500">
+        <p className="mb-3 type-label-sm text-neutral-500">
           No ratings or trust scores are shown without a reliable source.
         </p>
         <div className="grid gap-2 sm:grid-cols-2">

@@ -96,7 +96,7 @@ function mapSupabaseRow(row: SupabaseToolRow, query: string): HeroSearchResult |
 
   const category = readRelatedName(row.categories) || "AI tool";
   const subcategory = readRelatedName(row.subcategories);
-  const description = readString(row.short_description) || readString(row.full_description) || "AI tool in Pluto's Library.";
+  const description = readString(row.short_description) || readString(row.full_description) || "AI tool in Discover.";
   const pricingLabel = getPricingLabel(readString(row.pricing_type), row.has_free_plan === true);
   const searchableFields = [
     name,

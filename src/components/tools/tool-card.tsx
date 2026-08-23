@@ -26,16 +26,16 @@ export function ToolCard({ tool, variant = "standard" }: ToolCardProps) {
       <div className="flex items-start justify-between gap-3">
         <Link className="focus-ring flex items-center gap-3 rounded-xl" href={`/tools/${tool.slug}`}>
           <span
-            className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl font-heading text-lg font-bold text-ink-950 transition group-hover:scale-105"
+            className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl type-h6 text-ink-950 transition group-hover:scale-105"
             style={{ backgroundColor: tool.accent }}
           >
             {tool.name.charAt(0)}
           </span>
           <span>
-            <span className="block font-heading text-xl font-bold text-neutral-900">
+            <span className="block type-h5 text-neutral-900">
               {tool.name}
             </span>
-            <span className="text-sm text-neutral-500">{tool.category}</span>
+            <span className="type-body-sm text-neutral-500">{tool.category}</span>
           </span>
         </Link>
         <Badge icon tone="success">
@@ -43,7 +43,7 @@ export function ToolCard({ tool, variant = "standard" }: ToolCardProps) {
         </Badge>
       </div>
 
-      <p className="mt-5 text-sm leading-6 text-neutral-700">{tool.tagline}</p>
+      <p className="mt-5 type-body-sm text-neutral-700">{tool.tagline}</p>
 
       {variant !== "compact" ? (
         <div className="mt-4 flex flex-wrap gap-2">
@@ -54,7 +54,7 @@ export function ToolCard({ tool, variant = "standard" }: ToolCardProps) {
       ) : null}
 
       <div className="mt-auto pt-5">
-        <p className="mb-3 text-xs font-semibold text-neutral-500">
+        <p className="mb-3 type-label-sm text-neutral-500">
           Saved on this device for compare and shortlist actions.
         </p>
         <div className="grid gap-2 sm:grid-cols-2">

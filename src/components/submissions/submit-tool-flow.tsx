@@ -31,10 +31,10 @@ export function SubmitToolFlow() {
       <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
         <div className="rounded-3xl border border-neutral-200 bg-white p-8 shadow-elevated">
           <Badge icon tone="success">Submission received</Badge>
-          <h1 className="mt-5 font-heading text-5xl font-bold text-neutral-900">
+          <h1 className="mt-5 type-h1 text-neutral-900">
             Your tool has been submitted for review.
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-700">
+          <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
             Reference PLU-2026-1842. The moderation queue checks duplicates,
             pricing, official links and feature claims before publication.
           </p>
@@ -54,10 +54,10 @@ export function SubmitToolFlow() {
   return (
     <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
       <Badge tone="violet">Submit a Tool</Badge>
-      <h1 className="mt-4 font-heading text-5xl font-bold text-neutral-900">
+      <h1 className="mt-4 type-h1 text-neutral-900">
         Submit an AI tool for verification.
       </h1>
-      <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-700">
+      <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
         No account is required. Your draft is treated as local session progress,
         and submission does not guarantee publication or featured placement.
       </p>
@@ -65,7 +65,7 @@ export function SubmitToolFlow() {
       <div className="mt-8 grid gap-3 md:grid-cols-5">
         {steps.map((label, index) => (
           <div
-            className={`rounded-2xl border p-4 text-sm font-bold ${
+            className={`rounded-2xl border p-4 type-label-md ${
               index === step
                 ? "border-violet-600 bg-violet-100 text-violet-600"
                 : index < step
@@ -95,8 +95,8 @@ export function SubmitToolFlow() {
             {duplicate ? (
               <div className="rounded-2xl bg-[#FFF3D1] p-5 text-[#976500]">
                 <AlertTriangle aria-hidden="true" className="h-6 w-6" />
-                <h2 className="mt-3 font-heading text-2xl font-bold">Possible duplicate found</h2>
-                <p className="mt-2 text-sm leading-6">
+                <h2 className="mt-3 type-h4">Possible duplicate found</h2>
+                <p className="mt-2 type-body-sm">
                   {duplicate.name} already exists. You can view the listing,
                   report incorrect information or continue only if this is a
                   different product.
@@ -108,8 +108,8 @@ export function SubmitToolFlow() {
             ) : (
               <div className="rounded-2xl bg-[#E3F8EC] p-5 text-[#157A4A]">
                 <CheckCircle2 aria-hidden="true" className="h-6 w-6" />
-                <h2 className="mt-3 font-heading text-2xl font-bold">No duplicate detected</h2>
-                <p className="mt-2 text-sm leading-6">Continue with product details.</p>
+                <h2 className="mt-3 type-h4">No duplicate detected</h2>
+                <p className="mt-2 type-body-sm">Continue with product details.</p>
               </div>
             )}
           </div>
@@ -134,14 +134,14 @@ export function SubmitToolFlow() {
         {step === 4 ? (
           <div>
             <Badge tone="lime">Review</Badge>
-            <h2 className="mt-4 font-heading text-3xl font-bold text-neutral-900">
+            <h2 className="mt-4 type-h3 text-neutral-900">
               Confirm submission policy
             </h2>
-            <p className="mt-3 text-sm leading-6 text-neutral-700">
+            <p className="mt-3 type-body-sm text-neutral-700">
               Pluto will verify official website availability, pricing and key
               features before publication. AI-detected changes require admin approval.
             </p>
-            <label className="mt-5 flex min-h-12 items-center gap-3 rounded-xl border border-neutral-200 px-3 text-sm font-semibold">
+            <label className="mt-5 flex min-h-12 items-center gap-3 rounded-xl border border-neutral-200 px-3 type-label-md">
               <input className="h-4 w-4 accent-violet-600" type="checkbox" />
               I confirm this information is accurate to the best of my knowledge.
             </label>
@@ -180,7 +180,7 @@ function Field({
   onChange?: (value: string) => void;
 }) {
   return (
-    <label className="grid gap-2 text-sm font-semibold text-neutral-900">
+    <label className="grid gap-2 type-label-md text-neutral-900">
       {label}
       <input
         className="min-h-12 rounded-xl border border-neutral-200 px-3 text-neutral-900 outline-none focus:border-violet-600 focus:ring-4 focus:ring-violet-100"
@@ -194,7 +194,7 @@ function Field({
 
 function InlineError({ copy }: { copy: string }) {
   return (
-    <div className="flex gap-3 rounded-2xl bg-[#FFE8E8] p-4 text-sm font-semibold text-[#C33838]">
+    <div className="flex gap-3 rounded-2xl bg-[#FFE8E8] p-4 type-label-md text-[#C33838]">
       <AlertTriangle aria-hidden="true" className="h-5 w-5 shrink-0" />
       {copy}
     </div>

@@ -1,157 +1,284 @@
 "use client";
 
-import type { FocusEvent } from "react";
-import { useRef, useState } from "react";
-import { CirclePlay, Code2, Image as ImageIcon, PenLine } from "lucide-react";
-import { CategoryShortcut } from "./category-shortcut";
+import Image from "next/image";
+import type { MotionValue } from "motion/react";
+import {
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform
+} from "motion/react";
+import { Mouse } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { HeroNavigation } from "./hero-navigation";
 import { HeroSearch } from "./hero-search";
-import { InteractivePluto } from "./interactive-pluto";
-import { cn } from "@/lib/utils";
+import LineWaves from "./line-waves";
 import styles from "./pluto-hero.module.css";
 
-const HERO_BACKGROUND_VIDEO_SRC = "/videos/hero-background.mp4";
-const HERO_BACKGROUND_POSTER_SRC = "/images/home/hero/pluto-valley-background.webp";
+type HeroPhase = "brand" | "greeting";
 
-const shortcuts = [
-  {
-    label: "Image",
-    href: "/plutos-library/ai-image-generation-and-design",
-    icon: ImageIcon
-  },
-  {
-    label: "Writing",
-    href: "/plutos-library/ai-writing-and-content",
-    icon: PenLine
-  },
-  {
-    label: "Video",
-    href: "/plutos-library/ai-video",
-    icon: CirclePlay
-  },
-  {
-    label: "Code",
-    href: "/plutos-library/ai-coding-and-development",
-    icon: Code2
-  }
-];
+const HERO_INTRO_STORAGE_KEY = "pluto_intro_seen";
+const heroMotion = {
+  ease: [0.22, 1, 0.36, 1] as const,
+  introDuration: 3.15
+};
 
 export function PlutoHero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const [phase, setPhase] = useState<HeroPhase>("brand");
   const [introComplete, setIntroComplete] = useState(false);
+  const [searchInteractive, setSearchInteractive] = useState(false);
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const smoothX = useSpring(pointerX, { stiffness: 65, damping: 26, mass: 1 });
+  const smoothY = useSpring(pointerY, { stiffness: 65, damping: 26, mass: 1 });
 
-  const playBackgroundVideo = () => {
-    if (!introComplete) return;
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end end"]
+  });
 
-    const video = videoRef.current;
-    if (!video) return;
+  const glowScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
+  const catScale = useTransform(scrollYProgress, [0, 0.28, 0.55, 0.8, 1], [1, 1.03, 1.16, 1.22, 1.26]);
+  const catOpacity = useTransform(scrollYProgress, [0, 0.42, 0.68, 1], [1, 1, 0.72, 0.48]);
+  const catY = useTransform(scrollYProgress, [0, 0.48, 1], [0, 20, 46]);
+  const catFilter = useTransform(
+    scrollYProgress,
+    [0, 0.32, 0.56, 0.78, 1],
+    ["blur(0px) brightness(1)", "blur(3px) brightness(0.94)", "blur(12px) brightness(0.82)", "blur(20px) brightness(0.74)", "blur(26px) brightness(0.7)"]
+  );
+  const greetingOpacity = useTransform(scrollYProgress, [0, 0.1, 0.32, 0.46], [1, 1, 0.55, 0]);
+  const greetingY = useTransform(scrollYProgress, [0, 0.46], [0, -48]);
+  const cueOpacity = useTransform(scrollYProgress, [0, 0.12, 0.28], [1, 0.8, 0]);
+  const searchOpacity = useTransform(scrollYProgress, [0.38, 0.62], [0, 1]);
+  const searchY = useTransform(scrollYProgress, [0.38, 0.62], [64, 0]);
+  const searchScale = useTransform(scrollYProgress, [0.42, 0.62], [0.94, 1]);
 
-    video.loop = true;
-    void video.play().catch(() => {
-      // Autoplay can be blocked in unusual browser states; the next pointer leave can retry.
-    });
-  };
+  const glowAX = useTransform(smoothX, [-1, 1], [-8, 8]);
+  const glowAY = useTransform(smoothY, [-1, 1], [-8, 8]);
+  const glowBX = useTransform(smoothX, [-1, 1], [-18, 18]);
+  const glowBY = useTransform(smoothY, [-1, 1], [-14, 14]);
+  const glowCX = useTransform(smoothX, [-1, 1], [-30, 30]);
+  const glowCY = useTransform(smoothY, [-1, 1], [-22, 22]);
 
-  const pauseBackgroundVideo = () => {
-    if (!introComplete) return;
-
-    videoRef.current?.pause();
-  };
-
-  const revealHeroContent = () => {
+  const finishIntro = useCallback(() => {
+    setPhase("greeting");
     setIntroComplete(true);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(HERO_INTRO_STORAGE_KEY, "true");
+    }
+  }, []);
 
-    const video = videoRef.current;
-    if (!video) return;
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      const timer = window.setTimeout(finishIntro, 0);
+      return () => window.clearTimeout(timer);
+    }
 
-    video.loop = true;
-    video.currentTime = 0;
-    window.setTimeout(() => {
-      void video.play().catch(() => {
-        // Keep the revealed hero usable even if replay is blocked.
-      });
-    }, 0);
-  };
+    const seenIntro = sessionStorage.getItem(HERO_INTRO_STORAGE_KEY) === "true";
+    if (seenIntro) {
+      const timer = window.setTimeout(finishIntro, 0);
+      return () => window.clearTimeout(timer);
+    }
 
-  const resumeBackgroundVideoOnBlur = (event: FocusEvent<HTMLDivElement>) => {
-    if (event.currentTarget.contains(event.relatedTarget)) return;
+    const timers = [
+      window.setTimeout(() => setPhase("greeting"), 2250),
+      window.setTimeout(finishIntro, heroMotion.introDuration * 1000)
+    ];
 
-    playBackgroundVideo();
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [finishIntro, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (introComplete) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (["Enter", " ", "Escape"].includes(event.key)) {
+        finishIntro();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [finishIntro, introComplete]);
+
+  useMotionValueEvent(scrollYProgress, "change", (value) => {
+    setSearchInteractive(value > 0.62);
+    if (!introComplete && value > 0.02) {
+      finishIntro();
+    }
+  });
+
+  const scrollToHeroSearch = useCallback(() => {
+    finishIntro();
+
+    const hero = heroRef.current;
+    if (!hero) return;
+
+    const heroTop = window.scrollY + hero.getBoundingClientRect().top;
+    const scrollDistance = Math.max(hero.offsetHeight - window.innerHeight, 0);
+    const targetY = heroTop + scrollDistance * 0.62;
+
+    window.scrollTo({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      top: targetY
+    });
+  }, [finishIntro, prefersReducedMotion]);
+  const handlePointerMove = (event: React.PointerEvent<HTMLElement>) => {
+    if (event.pointerType === "touch") return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    pointerX.set(((event.clientX - rect.left) / rect.width) * 2 - 1);
+    pointerY.set(((event.clientY - rect.top) / rect.height) * 2 - 1);
   };
 
   return (
-    <section className={styles.hero} aria-labelledby="home-hero-title">
-      <video
-        aria-hidden="true"
-        autoPlay
-        className={styles.backgroundVideo}
-        muted
-        ref={videoRef}
-        onEnded={revealHeroContent}
-        onError={revealHeroContent}
-        playsInline
-        poster={HERO_BACKGROUND_POSTER_SRC}
-        preload="auto"
-      >
-        <source src={HERO_BACKGROUND_VIDEO_SRC} type="video/mp4" />
-      </video>
-      <div className={styles.skyWash} aria-hidden="true" />
-      <div className={styles.cloudsFar} aria-hidden="true" />
-      <div className={styles.cloudsNear} aria-hidden="true" />
-      <div className={styles.rainbowShimmer} aria-hidden="true" />
-      <div className={styles.windLayerBack} aria-hidden="true" />
-      <div className={styles.windLayerFront} aria-hidden="true" />
+    <section className={styles.hero} ref={heroRef} onPointerMove={handlePointerMove} aria-labelledby="home-hero-title">
+      <div className={styles.heroSticky}>
+        <HeroGlow
+          scale={glowScale}
+          layerA={{ x: glowAX, y: glowAY }}
+          layerB={{ x: glowBX, y: glowBY }}
+          layerC={{ x: glowCX, y: glowCY }}
+        />
 
-      <div className={styles.heroInner}>
-        <HeroNavigation />
+        {!prefersReducedMotion ? (
+          <LineWaves
+            className={styles.lineWavesLayer}
+            speed={0.3}
+            innerLineCount={32}
+            outerLineCount={36}
+            warpIntensity={1}
+            rotation={-45}
+            edgeFadeWidth={0}
+            colorCycleSpeed={1}
+            brightness={0.26}
+            color1="#7a4cff"
+            color2="#b9a7ff"
+            color3="#5e35f2"
+            enableMouseInteraction
+            mouseInfluence={2}
+          />
+        ) : null}
 
-        <div
-          aria-hidden={!introComplete}
-          className={cn(
-            styles.heroExperience,
-            introComplete ? styles.heroExperienceVisible : styles.heroExperienceHidden
-          )}
+        {!introComplete ? <HeroIntro phase={phase} onSkip={finishIntro} /> : null}
+
+        <motion.div
+          className={styles.navWrap}
+          initial={false}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.42, ease: heroMotion.ease }}
         >
-          <div className={styles.heroCopy}>
-            <div className={styles.trustLine}>
-              <span className={styles.avatarStack} aria-hidden="true">
-                <span />
-                <span />
-                <span />
-                <span />
-              </span>
-              <span>700+ AI tools - Updated weekly</span>
-            </div>
+          <HeroNavigation onSearchClick={scrollToHeroSearch} />
+        </motion.div>
 
-            <h1 className={styles.headline} id="home-hero-title">
-              Find your perfect <span>AI tool.</span>
-            </h1>
-            <div
-              className={styles.heroControls}
-              onBlur={resumeBackgroundVideoOnBlur}
-              onFocus={pauseBackgroundVideo}
-              onPointerEnter={pauseBackgroundVideo}
-              onPointerLeave={playBackgroundVideo}
-            >
+        <motion.div
+          aria-hidden="true"
+          className={styles.catLayer}
+          initial={false}
+          animate={{ opacity: introComplete ? 1 : 0, y: introComplete ? 0 : 52, scale: introComplete ? 1 : 0.92 }}
+          transition={{ duration: 1.08, ease: heroMotion.ease }}
+          style={{ scale: prefersReducedMotion ? 1 : catScale, opacity: prefersReducedMotion ? 1 : catOpacity, y: prefersReducedMotion ? 0 : catY, filter: prefersReducedMotion ? "none" : catFilter }}
+        >
+          <Image
+            alt=""
+            className={styles.catImage}
+            height={1400}
+            priority
+            sizes="(max-width: 767px) 88vw, (max-width: 1180px) 58vw, 38vw"
+            src="/images/home/hero/pluto-cat-mascot.png"
+            width={1400}
+          />
+        </motion.div>
+
+        <motion.div
+          className={styles.greetingState}
+          initial={false}
+          animate={{ opacity: introComplete ? 1 : 0, y: introComplete ? 0 : 18 }}
+          transition={{ duration: 0.82, delay: 0.22, ease: heroMotion.ease }}
+          style={{ opacity: prefersReducedMotion ? 1 : greetingOpacity, y: prefersReducedMotion ? 0 : greetingY }}
+        >
+          <p className={styles.greetingEyebrow}>Hey buddy,<span aria-hidden="true">{"\uD83D\uDC4B"}</span></p>
+          <h1 className={styles.greetingTitle} id="home-hero-title">Great to have you here!</h1>
+        </motion.div>
+
+        <motion.div
+          className={styles.scrollCue}
+          style={{ opacity: prefersReducedMotion ? 0 : cueOpacity }}
+          aria-hidden="true"
+        >
+          <Mouse className={styles.scrollCueIcon} />
+        </motion.div>
+
+        <motion.div
+          className={styles.searchState}
+          style={{ opacity: prefersReducedMotion ? 1 : searchOpacity, y: prefersReducedMotion ? 0 : searchY, scale: prefersReducedMotion ? 1 : searchScale, pointerEvents: searchInteractive || prefersReducedMotion ? "auto" : "none" }}
+        >
+          <div className={styles.searchContent}>
+            <p className={styles.searchGreeting}>Hey buddy, great to have you here!</p>
+            <h2 className={styles.searchTitle}>Let&apos;s Find your perfect AI tool.</h2>
+            <div className={styles.searchShell}>
               <HeroSearch />
-              <div className={styles.shortcutChips} aria-label="Popular AI tool categories">
-                {shortcuts.map((shortcut) => (
-                  <CategoryShortcut
-                    href={shortcut.href}
-                    icon={shortcut.icon}
-                    key={shortcut.label}
-                    label={shortcut.label}
-                  />
-                ))}
-              </div>
             </div>
           </div>
-
-          <div className={styles.plutoStage}>
-            <InteractivePluto />
-          </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 }
+
+type HeroGlowProps = {
+  scale: MotionValue<number>;
+  layerA: { x: MotionValue<number>; y: MotionValue<number> };
+  layerB: { x: MotionValue<number>; y: MotionValue<number> };
+  layerC: { x: MotionValue<number>; y: MotionValue<number> };
+};
+
+function HeroGlow({ scale, layerA, layerB, layerC }: HeroGlowProps) {
+  return (
+    <motion.div className={styles.glowField} style={{ scale }} aria-hidden="true">
+      <motion.div className={styles.glowA} style={{ x: layerA.x, y: layerA.y }} />
+      <motion.div className={styles.glowB} style={{ x: layerB.x, y: layerB.y }} />
+      <motion.div className={styles.glowC} style={{ x: layerC.x, y: layerC.y }} />
+    </motion.div>
+  );
+}
+
+function HeroIntro({ phase, onSkip }: { phase: HeroPhase; onSkip: () => void }) {
+  const isBrand = phase === "brand";
+  const isGreeting = phase === "greeting";
+
+  return (
+    <motion.div
+      className={styles.introLayer}
+      initial={{ opacity: 1 }}
+      animate={{ opacity: isGreeting ? 0 : 1 }}
+      transition={{ duration: 0.55, ease: heroMotion.ease }}
+      aria-hidden="true"
+      onPointerDown={onSkip}
+    >
+      <motion.div
+        className={styles.brandReveal}
+        initial={{ clipPath: "inset(0 42% 0 42%)", filter: "blur(22px)", opacity: 0, scale: 0.74, y: 26 }}
+        animate={{
+          clipPath: isBrand || isGreeting ? "inset(0 0% 0 0)" : "inset(0 100% 0 0)",
+          filter: isGreeting ? "blur(20px)" : "blur(0px)",
+          opacity: isBrand ? 1 : 0,
+          scale: isGreeting ? 1.18 : 1,
+          y: isGreeting ? -44 : 0
+        }}
+        transition={{ duration: isGreeting ? 0.82 : 1.05, ease: heroMotion.ease }}
+      >
+        Pluto Finds
+      </motion.div>
+
+      <button className={styles.skipIntro} type="button" onClick={(event) => { event.stopPropagation(); onSkip(); }}>
+        Skip intro
+      </button>
+    </motion.div>
+  );
+}
+

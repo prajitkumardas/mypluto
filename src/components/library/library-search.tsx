@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2, Search } from "lucide-react";
+import { ArrowRight, Loader2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { buildLibraryHref, quickSearches, type LibraryCategory, type LibrarySuggestion } from "@/lib/plutos-library";
 import { cn } from "@/lib/utils";
@@ -109,12 +109,12 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
         <div className="relative">
           <label className="flex min-h-14 items-center gap-3 rounded-2xl bg-neutral-50 px-4">
             <Search aria-hidden="true" className="h-5 w-5 text-violet-600" />
-            <span className="sr-only">Search Pluto&apos;s Library</span>
+            <span className="sr-only">Search Discover</span>
             <input
               aria-autocomplete="list"
               aria-controls={listboxId}
               aria-expanded={open}
-              className="w-full bg-transparent text-base outline-none placeholder:text-neutral-500"
+              className="w-full bg-transparent type-body-md outline-none placeholder:text-neutral-500"
               name="q"
               onChange={(event) => {
                 const value = event.target.value;
@@ -144,10 +144,26 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
                   setOpen(false);
                 }
               }}
-              placeholder="What do you want to create, solve or automate?"
+              placeholder="Search tools or describe what you want to do..."
               role="combobox"
               value={query}
             />
+                      {query ? (
+              <button
+                aria-label="Clear search"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-neutral-500 transition hover:bg-white hover:text-violet-600"
+                onClick={() => {
+                  setQuery("");
+                  setSuggestions([]);
+                  setActiveIndex(-1);
+                  setOpen(false);
+                  setLoading(false);
+                }}
+                type="button"
+              >
+                <X aria-hidden="true" className="h-5 w-5" />
+              </button>
+            ) : null}
           </label>
           {open ? (
             <div
@@ -157,7 +173,7 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
               role="listbox"
             >
               {loading ? (
-                <div className="flex items-center gap-2 px-4 py-3 text-sm font-semibold text-neutral-600">
+                <div className="flex items-center gap-2 px-4 py-3 type-label-md text-neutral-600">
                   <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />
                   Loading suggestions
                 </div>
@@ -166,7 +182,7 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
                   <button
                     aria-selected={activeIndex === index}
                     className={cn(
-                      "flex min-h-12 w-full items-center justify-between gap-3 px-4 text-left text-sm transition hover:bg-neutral-50",
+                      "flex min-h-12 w-full items-center justify-between gap-3 px-4 text-left type-label-md transition hover:bg-neutral-50",
                       activeIndex === index && "bg-violet-50"
                     )}
                     key={`${suggestion.type}-${suggestion.href}`}
@@ -176,8 +192,8 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
                     type="button"
                   >
                     <span>
-                      <span className="block font-semibold text-neutral-900">{suggestion.label}</span>
-                      <span className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                      <span className="block type-label-md text-neutral-900">{suggestion.label}</span>
+                      <span className="type-overline text-neutral-500">
                         {suggestion.type} {suggestion.meta ? `- ${suggestion.meta}` : ""}
                       </span>
                     </span>
@@ -185,7 +201,7 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
                   </button>
                 ))
               ) : (
-                <div className="px-4 py-3 text-sm font-semibold text-neutral-600">No matches found</div>
+                <div className="px-4 py-3 type-label-md text-neutral-600">No matches found</div>
               )}
             </div>
           ) : null}
@@ -195,7 +211,7 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
           Category filter
         </label>
         <select
-          className="min-h-14 rounded-2xl border border-neutral-200 bg-white px-3 text-sm font-semibold"
+          className="min-h-14 rounded-2xl border border-neutral-200 bg-white px-3 type-label-md"
           id="library-category-filter"
           name="category"
           onChange={(event) => setCategory(event.target.value)}
@@ -213,7 +229,7 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
           Verification filter
         </label>
         <select
-          className="min-h-14 rounded-2xl border border-neutral-200 bg-white px-3 text-sm font-semibold"
+          className="min-h-14 rounded-2xl border border-neutral-200 bg-white px-3 type-label-md"
           id="library-verification-filter"
           name="verification"
           onChange={(event) => setVerification(event.target.value)}
@@ -242,7 +258,7 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
 
           return (
             <button
-              className="focus-ring min-h-11 shrink-0 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold text-neutral-700 transition hover:border-violet-500 hover:text-violet-600"
+              className="focus-ring min-h-11 shrink-0 rounded-lg border border-neutral-200 bg-white px-3 py-2 type-label-md text-neutral-700 transition hover:border-violet-500 hover:text-violet-600"
               key={chip.id}
               onClick={() => {
                 setQuery(chip.params.query);
@@ -259,3 +275,5 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
     </div>
   );
 }
+
+

@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { Database, ShieldCheck, Sparkles } from "lucide-react";
+import { ShieldCheck, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CategoryCard } from "@/components/library/category-card";
 import { LibrarySearch } from "@/components/library/library-search";
 import { TrendingTools } from "@/components/library/trending-tools";
-import { getLibraryStatistics, getTrendingTools, plutosLibrary } from "@/lib/plutos-library";
+import { getTrendingTools, plutosLibrary } from "@/lib/plutos-library";
 
 type PlutosLibraryPageProps = {
   searchParams: Promise<{
@@ -16,47 +16,28 @@ type PlutosLibraryPageProps = {
 
 export default async function PlutosLibraryPage({ searchParams }: PlutosLibraryPageProps) {
   const params = await searchParams;
-  const stats = getLibraryStatistics();
 
   return (
     <main className="bg-canvas">
       <section className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-        <nav className="text-sm font-semibold text-neutral-500">
+        <nav className="type-label-md text-neutral-500">
           <Link className="hover:text-violet-600" href="/">
             Home
           </Link>{" "}
-          / Pluto&apos;s Library
+          / Discover
         </nav>
 
-        <div className="mt-6 grid gap-8 lg:grid-cols-[0.95fr_0.65fr] lg:items-end">
-          <div>
-            <Badge tone="violet">
+        <div className="mt-6 max-w-4xl">
+          <Badge tone="violet">
               <Sparkles aria-hidden="true" className="h-3.5 w-3.5" />
               Explore 700+ AI tools
             </Badge>
-            <h1 className="mt-4 max-w-4xl font-heading text-5xl font-bold text-neutral-900 sm:text-6xl">
-              Find the right AI tool for your next task.
+          <h1 className="mt-4 type-h1 text-neutral-900">
+              Discover the right AI tool
             </h1>
-            <p className="mt-5 max-w-2xl text-lg leading-8 text-neutral-700">
-              Search hundreds of AI tools by category, pricing, platform,
-              features and use case. Verification status is labelled clearly so
-              research starts from honest data.
+          <p className="mt-5 max-w-2xl type-body-xl text-neutral-700">
+            Browse trusted AI tools by category, use case, platform, pricing, and capability.
             </p>
-          </div>
-          <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-card">
-            <div className="flex items-center gap-3">
-              <Database aria-hidden="true" className="h-6 w-6 text-violet-600" />
-              <h2 className="font-heading text-2xl font-bold text-neutral-900">
-                Library snapshot
-              </h2>
-            </div>
-            <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
-              <Metric label="AI tools available" value={stats.tools} />
-              <Metric label="Categories available" value={stats.categories} />
-              <Metric label="Free tools" value={stats.freeTools} />
-              <Metric label="Verified tools" value={stats.verifiedTools} />
-            </dl>
-          </div>
         </div>
 
         <LibrarySearch
@@ -76,7 +57,7 @@ export default async function PlutosLibraryPage({ searchParams }: PlutosLibraryP
               <ShieldCheck aria-hidden="true" className="h-3.5 w-3.5" />
               All categories
             </Badge>
-            <h2 className="mt-3 font-heading text-4xl font-bold text-neutral-900">
+            <h2 className="mt-3 type-h2 text-neutral-900">
               Explore AI tools by category
             </h2>
           </div>
@@ -100,13 +81,6 @@ export default async function PlutosLibraryPage({ searchParams }: PlutosLibraryP
   );
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-2xl bg-neutral-50 p-3">
-      <dt className="text-xs font-semibold text-neutral-500">{label}</dt>
-      <dd className="number mt-1 font-heading text-2xl font-bold text-neutral-900">
-        {value}
-      </dd>
-    </div>
-  );
-}
+
+
+

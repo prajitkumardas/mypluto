@@ -18,10 +18,10 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
   return (
     <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
       <Badge tone="lime">Curated collection</Badge>
-      <h1 className="mt-4 font-heading text-5xl font-bold text-neutral-900">
+      <h1 className="mt-4 type-h1 text-neutral-900">
         {collection.name}
       </h1>
-      <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-700">
+      <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
         {collection.description}
       </p>
       <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

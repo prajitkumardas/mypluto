@@ -1,5 +1,5 @@
-import { PlutoWizard } from "@/components/pluto/pluto-wizard";
+import { redirect } from "next/navigation";
 
 export default function AskPlutoPage() {
-  return <PlutoWizard />;
+  redirect("/pluto-guides");
 }

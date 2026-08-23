@@ -28,8 +28,8 @@ export function StatePanel({
       <div className="grid h-14 w-14 place-items-center rounded-2xl bg-violet-100 text-violet-600">
         <Icon aria-hidden="true" className="h-7 w-7" />
       </div>
-      <h2 className="mt-5 font-heading text-2xl font-bold text-neutral-900">{title}</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-700">{copy}</p>
+      <h2 className="mt-5 type-h4 text-neutral-900">{title}</h2>
+      <p className="mt-2 max-w-2xl type-body-sm text-neutral-700">{copy}</p>
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
         {actionHref ? (
           <Button asChild>

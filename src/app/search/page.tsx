@@ -17,10 +17,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   return (
     <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
       <Badge tone="lime">Global search</Badge>
-      <h1 className="mt-4 font-heading text-5xl font-bold text-neutral-900">
+      <h1 className="mt-4 type-h1 text-neutral-900">
         Search results for {q ? `"${q}"` : "your next task"}
       </h1>
-      <p className="mt-4 max-w-2xl text-base leading-7 text-neutral-700">
+      <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
         Results are grouped by recommendation fit, exact matches, categories,
         use cases and curated collections.
       </p>
@@ -43,10 +43,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         <>
           <section className="mt-10">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="font-heading text-3xl font-bold text-neutral-900">
+              <h2 className="type-h3 text-neutral-900">
                 Recommended tools
               </h2>
-              <p className="number text-sm font-semibold text-neutral-500">
+              <p className="number type-label-md text-neutral-500">
                 {results.length} results
               </p>
             </div>
@@ -80,7 +80,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 function SuggestionGroup({ title, items }: { title: string; items: string[][] }) {
   return (
     <section className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-card">
-      <h2 className="font-heading text-xl font-bold text-neutral-900">{title}</h2>
+      <h2 className="type-h5 text-neutral-900">{title}</h2>
       <div className="mt-4 grid gap-2">
         {items.slice(0, 4).map(([label, href]) => (
           <Button asChild key={href} variant="ghost">

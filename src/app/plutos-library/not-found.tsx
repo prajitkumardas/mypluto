@@ -6,7 +6,7 @@ export default function PlutosLibraryNotFound() {
       <StatePanel
         action="Browse all categories"
         actionHref="/plutos-library"
-        copy="That Pluto's Library page does not exist. The category or tool slug may have changed."
+        copy="That Discover page does not exist. The category or tool slug may have changed."
         secondary="Search tools"
         secondaryHref="/plutos-library/search"
         title="Library page not found"
@@ -14,3 +14,4 @@ export default function PlutosLibraryNotFound() {
     </main>
   );
 }
+

@@ -25,10 +25,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       <Badge tone="violet">{category.name}</Badge>
       <div className="mt-4 grid gap-8 lg:grid-cols-[0.85fr_1.15fr]">
         <div>
-          <h1 className="font-heading text-5xl font-bold text-neutral-900">
+          <h1 className="type-h1 text-neutral-900">
             {category.name} AI tools
           </h1>
-          <p className="mt-4 text-base leading-7 text-neutral-700">{category.description}</p>
+          <p className="mt-4 type-body-lg text-neutral-700">{category.description}</p>
           <div className="mt-6 flex flex-wrap gap-2">
             {category.filters.map((filter) => (
               <Badge key={filter} tone="neutral">{filter}</Badge>
@@ -36,11 +36,11 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </div>
         </div>
         <section className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-card">
-          <h2 className="font-heading text-2xl font-bold text-neutral-900">Subcategories</h2>
+          <h2 className="type-h4 text-neutral-900">Subcategories</h2>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             {category.subcategories.map((subcategory) => (
               <Link
-                className="focus-ring flex min-h-12 items-center justify-between rounded-xl bg-neutral-50 px-3 text-sm font-semibold hover:text-violet-600"
+                className="focus-ring flex min-h-12 items-center justify-between rounded-xl bg-neutral-50 px-3 type-label-md hover:text-violet-600"
                 href={`/categories/${category.slug}/${subcategory.toLowerCase().replaceAll(" ", "-")}`}
                 key={subcategory}
               >
@@ -54,7 +54,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
       <section className="mt-12">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="font-heading text-3xl font-bold text-neutral-900">Recommended tools</h2>
+          <h2 className="type-h3 text-neutral-900">Recommended tools</h2>
           <Button asChild variant="secondary">
             <Link href={`/search?q=${encodeURIComponent(category.name)}`}>Search in category</Link>
           </Button>

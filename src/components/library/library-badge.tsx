@@ -9,7 +9,7 @@ export function LibraryBadge({ status }: { status: string }) {
   return (
     <span
       className={cn(
-        "inline-flex min-h-8 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold",
+        "inline-flex min-h-8 items-center gap-1.5 rounded-lg px-3 type-label-sm",
         tone === "success" && "bg-[#E3F8EC] text-[#157A4A]",
         tone === "warning" && "bg-[#FFF3D1] text-[#976500]",
         tone === "danger" && "bg-[#FFE8E8] text-[#C33838]",
