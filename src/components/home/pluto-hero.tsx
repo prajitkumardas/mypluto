@@ -13,7 +13,6 @@ import {
 } from "motion/react";
 import { Mouse } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { HeroNavigation } from "./hero-navigation";
 import { HeroSearch } from "./hero-search";
 import LineWaves from "./line-waves";
 import styles from "./pluto-hero.module.css";
@@ -21,6 +20,8 @@ import styles from "./pluto-hero.module.css";
 type HeroPhase = "brand" | "greeting";
 
 const HERO_INTRO_STORAGE_KEY = "pluto_intro_seen";
+const HOME_SEARCH_HASH = "#home-search";
+const HOME_SEARCH_EVENT = "pluto:focus-home-search";
 const heroMotion = {
   ease: [0.22, 1, 0.36, 1] as const,
   introDuration: 3.15
@@ -73,6 +74,23 @@ export function PlutoHero() {
     }
   }, []);
 
+  const scrollToHeroSearch = useCallback(() => {
+    finishIntro();
+
+    const hero = heroRef.current;
+    if (!hero) return;
+
+    const heroTop = window.scrollY + hero.getBoundingClientRect().top;
+    const scrollDistance = Math.max(hero.offsetHeight - window.innerHeight, 0);
+    const targetY = heroTop + scrollDistance * 0.66;
+
+    setSearchInteractive(true);
+    window.scrollTo({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      top: targetY
+    });
+  }, [finishIntro, prefersReducedMotion]);
+
   useEffect(() => {
     if (prefersReducedMotion) {
       const timer = window.setTimeout(finishIntro, 0);
@@ -94,6 +112,27 @@ export function PlutoHero() {
   }, [finishIntro, prefersReducedMotion]);
 
   useEffect(() => {
+    const requestHomeSearch = () => {
+      window.requestAnimationFrame(scrollToHeroSearch);
+    };
+
+    const handleHashChange = () => {
+      if (window.location.hash === HOME_SEARCH_HASH) {
+        requestHomeSearch();
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener(HOME_SEARCH_EVENT, requestHomeSearch);
+
+    return () => {
+      window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener(HOME_SEARCH_EVENT, requestHomeSearch);
+    };
+  }, [scrollToHeroSearch]);
+
+  useEffect(() => {
     if (introComplete) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -113,21 +152,6 @@ export function PlutoHero() {
     }
   });
 
-  const scrollToHeroSearch = useCallback(() => {
-    finishIntro();
-
-    const hero = heroRef.current;
-    if (!hero) return;
-
-    const heroTop = window.scrollY + hero.getBoundingClientRect().top;
-    const scrollDistance = Math.max(hero.offsetHeight - window.innerHeight, 0);
-    const targetY = heroTop + scrollDistance * 0.62;
-
-    window.scrollTo({
-      behavior: prefersReducedMotion ? "auto" : "smooth",
-      top: targetY
-    });
-  }, [finishIntro, prefersReducedMotion]);
   const handlePointerMove = (event: React.PointerEvent<HTMLElement>) => {
     if (event.pointerType === "touch") return;
     const rect = event.currentTarget.getBoundingClientRect();
@@ -148,7 +172,7 @@ export function PlutoHero() {
         {!prefersReducedMotion ? (
           <LineWaves
             className={styles.lineWavesLayer}
-            speed={0.3}
+            speed={0.14}
             innerLineCount={32}
             outerLineCount={36}
             warpIntensity={1}
@@ -165,15 +189,6 @@ export function PlutoHero() {
         ) : null}
 
         {!introComplete ? <HeroIntro phase={phase} onSkip={finishIntro} /> : null}
-
-        <motion.div
-          className={styles.navWrap}
-          initial={false}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.42, ease: heroMotion.ease }}
-        >
-          <HeroNavigation onSearchClick={scrollToHeroSearch} />
-        </motion.div>
 
         <motion.div
           aria-hidden="true"
@@ -281,4 +296,5 @@ function HeroIntro({ phase, onSkip }: { phase: HeroPhase; onSkip: () => void }) 
     </motion.div>
   );
 }
+
 

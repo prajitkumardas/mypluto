@@ -1,11 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Bookmark, ExternalLink, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { ArrowRight, CheckCircle2, Code2, Gift, Globe2, Plus, Share2, Tag } from "lucide-react";
 import type { LibraryTool } from "@/lib/plutos-library";
 import { useCompareStore } from "@/lib/compare-store";
-import { LibraryBadge } from "./library-badge";
+import { cn } from "@/lib/utils";
+import styles from "./library-tool-card.module.css";
+
+const logoFallback = "/images/home/hero/pluto-cat-mascot.png";
 
 export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
   const selected = useCompareStore((state) => state.selected);
@@ -13,6 +17,10 @@ export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
   const isSelected = selected.includes(tool.slug);
   const atLimit = selected.length >= 4 && !isSelected;
   const detailHref = `/plutos-library/tool/${tool.slug}`;
+  const [logoSrc, setLogoSrc] = useState(getLogoUrl(tool));
+  const verified = tool.verification.status.toLowerCase() === "verified";
+  const platforms = tool.platforms.slice(0, 3);
+  const tags = tool.subcategories.slice(0, 2);
 
   const track = (eventType: string) => {
     void fetch("/api/plutos-library/events", {
@@ -22,76 +30,119 @@ export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
     }).catch(() => undefined);
   };
 
+  const handleCompare = () => {
+    addTool(tool.slug);
+    track("compare");
+  };
+
+  const handleShare = () => {
+    track("share");
+
+    if (typeof window === "undefined") return;
+
+    const url = new URL(detailHref, window.location.origin).toString();
+    if (navigator.share) {
+      void navigator.share({ title: tool.name, text: tool.shortDescription, url }).catch(() => undefined);
+      return;
+    }
+
+    void navigator.clipboard?.writeText(url).catch(() => undefined);
+  };
+
   return (
-    <article className="group flex h-full flex-col rounded-2xl border border-neutral-200 bg-white p-5 shadow-card transition hover:-translate-y-1 hover:border-violet-500 hover:shadow-elevated">
-      <div className="flex items-start justify-between gap-3">
-        <Link className="focus-ring flex items-center gap-3 rounded-xl" href={detailHref} onClick={() => track("tool_view")}>
-          <span className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-violet-100 type-h6 text-violet-600">
-            {tool.name.charAt(0)}
-          </span>
-          <span>
-            <span className="block type-h5 text-neutral-900">
-              {tool.name}
-            </span>
-            <span className="type-body-sm text-neutral-500">
-              {tool.categories[0] ?? "Uncategorized"}
-            </span>
+    <article className={styles.card}>
+      <div className={styles.header}>
+        <Link className={styles.logoLink} href={detailHref} onClick={() => track("tool_view")}>
+          <span className={styles.logoTile}>
+            <Image
+              alt={`${tool.name} logo`}
+              className={styles.logo}
+              height={128}
+              onError={() => setLogoSrc(logoFallback)}
+              src={logoSrc}
+              width={128}
+            />
           </span>
         </Link>
-        <LibraryBadge status={tool.verification.status} />
+
+        <span className={cn(styles.verifiedBadge, !verified && styles.pendingBadge)}>
+          <CheckCircle2 aria-hidden="true" />
+          {verified ? "Verified" : tool.verification.status}
+        </span>
       </div>
 
-      <p className="mt-5 line-clamp-3 type-body-sm text-neutral-700">
-        {tool.shortDescription}
-      </p>
+      <Link className={styles.titleBlock} href={detailHref} onClick={() => track("tool_view")}>
+        <span className={styles.name}>{tool.name}</span>
+        <span className={styles.category}>{tool.categories[0] ?? "Uncategorized"}</span>
+      </Link>
 
-      <div className="mt-4 grid gap-2 type-label-sm text-neutral-600">
-        <span>Pricing: {tool.pricing.model}</span>
-        <span>Free plan: {tool.pricing.freePlan}</span>
-        <span>API: {tool.api.normalized}</span>
-        <span>Platforms: {tool.platforms.slice(0, 3).join(", ") || "Information not available"}</span>
+      <p className={styles.description}>{tool.shortDescription}</p>
+
+      <dl className={styles.facts}>
+        <Fact icon={Tag} label="Pricing" value={tool.pricing.model} />
+        <Fact icon={Gift} label="Free access" value={tool.pricing.freePlan} />
+        <Fact icon={Code2} label="API" value={tool.api.normalized} />
+      </dl>
+
+      <div className={styles.platforms}>
+        <Globe2 aria-hidden="true" />
+        <span>{platforms.length > 0 ? platforms.join(" / ") : "Information not available"}</span>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        {tool.subcategories.slice(0, 2).map((subcategory) => (
-          <span className="rounded-lg bg-neutral-100 px-2.5 py-1 type-label-sm text-neutral-700" key={subcategory}>
-            {subcategory}
-          </span>
-        ))}
-      </div>
-
-      <div className="mt-auto pt-5">
-        <p className="mb-3 type-label-sm text-neutral-500">
-          No ratings or trust scores are shown without a reliable source.
-        </p>
-        <div className="grid gap-2 sm:grid-cols-2">
-          <Button asChild variant="secondary">
-            <Link href={detailHref} onClick={() => track("tool_view")}>
-              View details <ArrowRight aria-hidden="true" className="h-4 w-4" />
-            </Link>
-          </Button>
-          <Button
-            disabled={atLimit}
-            onClick={() => {
-              addTool(tool.slug);
-              track("compare");
-            }}
-            variant={isSelected ? "lime" : "primary"}
-          >
-            <Plus aria-hidden="true" className="h-4 w-4" />
-            {isSelected ? "Added" : atLimit ? "Limit 4" : "Compare"}
-          </Button>
+      {tags.length > 0 ? (
+        <div className={styles.tags}>
+          {tags.map((tag) => (
+            <span className={styles.tag} key={tag}>{tag}</span>
+          ))}
         </div>
-        <Button className="mt-2 w-full" onClick={() => track("bookmark")} variant="secondary">
-          <Bookmark aria-hidden="true" className="h-4 w-4" />
-          Save
-        </Button>
-        <Button asChild className="mt-2 w-full" variant="ghost">
-          <a href={tool.officialUrl || tool.originalOfficialUrl} onClick={() => track("website_click")} rel="noreferrer" target="_blank">
-            Visit official site <ExternalLink aria-hidden="true" className="h-4 w-4" />
-          </a>
-        </Button>
+      ) : null}
+
+      <div className={styles.actions}>
+        <Link className={cn(styles.actionButton, styles.primaryAction)} href={detailHref} onClick={() => track("tool_view")}>
+          View details
+          <ArrowRight aria-hidden="true" />
+        </Link>
+        <button
+          className={cn(styles.actionButton, styles.secondaryAction, isSelected && styles.selectedAction)}
+          disabled={atLimit}
+          onClick={handleCompare}
+          type="button"
+        >
+          <Plus aria-hidden="true" />
+          {isSelected ? "Added" : atLimit ? "Limit 4" : "Compare"}
+        </button>
+        <button className={cn(styles.actionButton, styles.shareAction)} onClick={handleShare} type="button">
+          <Share2 aria-hidden="true" />
+          Share
+        </button>
       </div>
     </article>
   );
+}
+
+function Fact({
+  icon: Icon,
+  label,
+  value
+}: {
+  icon: typeof Tag;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className={styles.factRow}>
+      <dt className={styles.factLabel}>
+        <span className={styles.factIcon}>
+          <Icon aria-hidden="true" />
+        </span>
+        {label}
+      </dt>
+      <dd className={styles.factValue}>{value || "Unknown"}</dd>
+    </div>
+  );
+}
+
+function getLogoUrl(tool: LibraryTool) {
+  const domain = tool.domain || tool.officialUrl || tool.originalOfficialUrl;
+  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`;
 }

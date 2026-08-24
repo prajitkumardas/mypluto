@@ -3,8 +3,7 @@ import { ShieldCheck, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { CategoryCard } from "@/components/library/category-card";
 import { LibrarySearch } from "@/components/library/library-search";
-import { TrendingTools } from "@/components/library/trending-tools";
-import { getTrendingTools, plutosLibrary } from "@/lib/plutos-library";
+import { plutosLibrary } from "@/lib/plutos-library";
 
 type PlutosLibraryPageProps = {
   searchParams: Promise<{
@@ -68,15 +67,6 @@ export default async function PlutosLibraryPage({ searchParams }: PlutosLibraryP
           ))}
         </div>
       </section>
-
-      <TrendingTools
-        toolsByRange={{
-          today: getTrendingTools("today", 8),
-          week: getTrendingTools("week", 8),
-          month: getTrendingTools("month", 8),
-          all: getTrendingTools("all", 8)
-        }}
-      />
     </main>
   );
 }

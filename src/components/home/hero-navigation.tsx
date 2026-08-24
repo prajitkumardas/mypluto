@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { ChevronDown, Menu, Search, X } from "lucide-react";
+import { Menu, Search, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,8 @@ const navItems = [
   ["Discover", "/plutos-library"],
   ["Pluto Guides", "/pluto-guides"],
   ["Trending", "/trending"],
-  ["Compare", "/compare"]
+  ["Compare", "/compare"],
+  ["Play", "/pluto"]
 ];
 
 type HeroNavigationProps = {
@@ -56,9 +57,6 @@ export function HeroNavigation({ onSearchClick }: HeroNavigationProps) {
       <div className={styles.headerActions}>
         <button className={styles.navSearchButton} type="button" onClick={onSearchClick} aria-label="Jump to AI tool search">
           <Search aria-hidden="true" />
-        </button>
-        <button className={styles.languageButton} type="button" aria-label="Language selection">
-          Eng <ChevronDown aria-hidden="true" />
         </button>
         <Link className={styles.submitButton} href="/submit-tool">
           Submit a Tool

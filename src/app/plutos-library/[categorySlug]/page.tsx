@@ -5,8 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SearchResults } from "@/components/library/search-results";
 import {
-  buildLibraryHref,
-  getCategoryToolCount,
   getLibraryCategory,
   getLibrarySearchResults,
   getLibrarySubcategories,
@@ -70,41 +68,14 @@ export default async function LibraryCategoryPage({ params, searchParams }: Cate
           </Link>{" "}
           / {category.name}
         </nav>
-        <div className="mt-6 grid gap-8 lg:grid-cols-[0.85fr_0.65fr] lg:items-start">
-          <div>
-            <Badge tone="violet">{category.name}</Badge>
-            <h1 className="mt-4 type-h1 text-neutral-900">
-              {category.name} tools
-            </h1>
-            <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
-              {category.description}
-            </p>
-            <dl className="mt-6 grid gap-3 sm:grid-cols-2">
-              <Metric label="Available tools" value={getCategoryToolCount(category.slug)} />
-              <Metric label="Subcategories" value={subcategories.length} />
-            </dl>
-          </div>
-          <section className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-card">
-            <h2 className="type-h4 text-neutral-900">
-              Subcategories
-            </h2>
-            <div className="mt-4 grid gap-2 sm:grid-cols-2">
-              {subcategories.slice(0, 12).map((subcategory) => (
-                <Link
-                  className="focus-ring flex min-h-12 items-center justify-between rounded-xl bg-neutral-50 px-3 type-label-md hover:text-violet-600"
-                  href={buildLibraryHref(`/plutos-library/${category.slug}`, {
-                    ...query,
-                    subcategory: subcategory.slug,
-                    page: undefined
-                  })}
-                  key={subcategory.id}
-                >
-                  {subcategory.name}
-                  <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                </Link>
-              ))}
-            </div>
-          </section>
+        <div className="mt-6 max-w-4xl">
+          <Badge tone="violet">{category.name}</Badge>
+          <h1 className="mt-4 type-h1 text-neutral-900">
+            {category.name} tools
+          </h1>
+          <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
+            {category.description}
+          </p>
         </div>
 
         <form
@@ -165,17 +136,6 @@ export default async function LibraryCategoryPage({ params, searchParams }: Cate
   );
 }
 
-function Metric({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-card">
-      <dt className="type-label-md text-neutral-500">{label}</dt>
-      <dd className="number mt-1 type-h3 text-neutral-900">
-        {value}
-      </dd>
-    </div>
-  );
-}
-
 function FilterSelect({
   children,
   label,
@@ -200,4 +160,7 @@ function FilterSelect({
     </label>
   );
 }
+
+
+
 

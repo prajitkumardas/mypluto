@@ -219,6 +219,7 @@
 }
 
 .type-overline {
+  color: var(--section-heading-color);
   font-size: var(--text-overline);
   font-weight: var(--font-weight-semibold);
   line-height: var(--leading-overline);
@@ -229,3 +230,5 @@
 .type-reading {
   max-width: var(--content-reading-width);
 }
+
+

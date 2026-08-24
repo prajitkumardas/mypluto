@@ -1,7 +1,10 @@
 "use client";
 
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useEffect } from "react";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const CARD_SELECTOR = "[data-magic-category-card]";
 const GRID_SELECTOR = "[data-magic-category-grid]";
@@ -56,9 +59,37 @@ export function CategoryBentoEffects({
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
 
-    if (!grid || !section || disableAnimations || reduceMotion || isMobile) return;
+    if (!grid || !section || disableAnimations) return;
 
     const cards = Array.from(grid.querySelectorAll<HTMLElement>(CARD_SELECTOR));
+    const revealTween =
+      reduceMotion
+        ? null
+        : gsap.fromTo(
+            cards,
+            { autoAlpha: 0, y: 34, scale: 0.985 },
+            {
+              autoAlpha: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.72,
+              ease: "power3.out",
+              stagger: 0.08,
+              clearProps: "opacity,visibility,transform",
+              scrollTrigger: {
+                trigger: grid,
+                start: "top 82%",
+                once: true
+              }
+            }
+          );
+
+    if (reduceMotion || isMobile) {
+      return () => {
+        revealTween?.scrollTrigger?.kill();
+        revealTween?.kill();
+      };
+    }
     const timeouts: number[] = [];
     const activeParticles = new Map<HTMLElement, HTMLElement[]>();
     const activeTweens = new Map<HTMLElement, gsap.core.Tween[]>();
@@ -217,6 +248,8 @@ export function CategoryBentoEffects({
 
     return () => {
       timeouts.forEach((timeout) => window.clearTimeout(timeout));
+      revealTween?.scrollTrigger?.kill();
+      revealTween?.kill();
       disposers.forEach((dispose) => dispose());
       cards.forEach(clearParticles);
       document.removeEventListener("mousemove", onDocumentMove);

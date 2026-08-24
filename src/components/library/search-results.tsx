@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Filter, RotateCcw, ShieldAlert } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { ArrowRight, RotateCcw, ShieldAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatePanel } from "@/components/shared/state-panel";
 import { LibraryToolCard } from "@/components/library/library-tool-card";
@@ -28,11 +27,7 @@ export function SearchResults({ result, basePath = "/plutos-library/search" }: S
     <section className="mx-auto max-w-site px-5 pb-20 sm:px-8 xl:px-0">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <Badge tone="neutral">
-            <Filter aria-hidden="true" className="h-3.5 w-3.5" />
-            Results
-          </Badge>
-          <h2 className="mt-3 type-h2 text-neutral-900">
+          <h2 className="type-h2 text-neutral-900">
             {result.total} matching tools
           </h2>
           <p className="sr-only" aria-live="polite">
@@ -60,9 +55,6 @@ export function SearchResults({ result, basePath = "/plutos-library/search" }: S
               </option>
             ))}
           </select>
-          <Button type="submit" variant="secondary">
-            Sort
-          </Button>
         </form>
       </div>
 
@@ -161,4 +153,7 @@ function getActiveFilters(filters: LibrarySearchResult["filters"]) {
     { key: "verification", label: "Verification", value: filters.verification }
   ].filter((filter) => filter.value);
 }
+
+
+
 

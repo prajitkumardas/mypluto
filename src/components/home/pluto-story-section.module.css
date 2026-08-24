@@ -97,11 +97,11 @@
 
 .eyebrow {
   margin: 0 0 clamp(1rem, 2.4vh, 1.55rem);
-  color: rgba(201, 190, 255, 0.78);
+  color: var(--section-heading-color);
   font-size: var(--text-overline);
   font-weight: var(--font-weight-semibold);
   line-height: var(--leading-overline);
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -252,3 +252,5 @@
     min-height: 100svh;
   }
 }
+
+
