@@ -2,6 +2,7 @@
   --font-display: var(--font-bricolage), "Bricolage Grotesque", sans-serif;
   --font-heading: var(--font-display);
   --font-body: var(--font-inter), "Inter", sans-serif;
+  --font-accent: var(--font-instrument-serif), "Instrument Serif", serif;
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -35,6 +36,8 @@
   --text-hero-greeting-title: clamp(3rem, 2.2rem + 4vw, 6rem);
   --text-hero-search-greeting: clamp(1.125rem, 0.95rem + 0.75vw, 1.5rem);
   --text-hero-search-title: clamp(3.25rem, 2rem + 5.4vw, 5.95rem);
+  --text-page-hero-title: clamp(2rem, 3.7vw, 3.05rem);
+  --text-page-hero-copy: clamp(0.82rem, 1.05vw, 0.98rem);
 
   --leading-display-xl: 1.05;
   --leading-display-lg: 1.08;
@@ -59,6 +62,8 @@
   --leading-hero-greeting-title: 1.04;
   --leading-hero-search-greeting: 1.35;
   --leading-hero-search-title: 1.04;
+  --leading-page-hero-title: 1.05;
+  --leading-page-hero-copy: 1.55;
 
   --tracking-display-xl: -0.025em;
   --tracking-display-lg: -0.024em;
@@ -98,56 +103,56 @@
 
 .type-display-xl {
   font-size: var(--text-display-xl);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-display-xl);
   letter-spacing: var(--tracking-display-xl);
 }
 
 .type-display-lg {
   font-size: var(--text-display-lg);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-display-lg);
   letter-spacing: var(--tracking-display-lg);
 }
 
 .type-h1 {
   font-size: var(--text-h1);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-h1);
   letter-spacing: var(--tracking-h1);
 }
 
 .type-h2 {
   font-size: var(--text-h2);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-h2);
   letter-spacing: var(--tracking-h2);
 }
 
 .type-h3 {
   font-size: var(--text-h3);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-h3);
   letter-spacing: var(--tracking-h3);
 }
 
 .type-h4 {
   font-size: var(--text-h4);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-h4);
   letter-spacing: var(--tracking-h4);
 }
 
 .type-h5 {
   font-size: var(--text-h5);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-h5);
   letter-spacing: var(--tracking-h5);
 }
 
 .type-h6 {
   font-size: var(--text-h6);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-h6);
   letter-spacing: var(--tracking-h6);
 }
@@ -229,6 +234,12 @@
 
 .type-reading {
   max-width: var(--content-reading-width);
+}
+.type-accent-serif {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
 }
 
 

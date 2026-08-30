@@ -1,16 +1,29 @@
 import Link from "next/link";
-import { ArrowRight, RotateCcw, ShieldAlert } from "lucide-react";
+import { ArrowRight, RotateCcw, ShieldAlert, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatePanel } from "@/components/shared/state-panel";
+import { AutoSubmitSelect } from "@/components/library/auto-submit-select";
 import { LibraryToolCard } from "@/components/library/library-tool-card";
-import { buildLibraryHref, type LibrarySearchResult } from "@/lib/plutos-library";
+import { buildLibraryHref, plutosLibrary, slugify, type LibrarySearchResult } from "@/lib/plutos-library";
+import { cn } from "@/lib/utils";
 
 type SearchResultsProps = {
   result: LibrarySearchResult;
   basePath?: string;
+  compact?: boolean;
+  embedded?: boolean;
 };
 
-const sortOptions = [
+type ActiveFilter = {
+  key: FilterKey;
+  label: string;
+  removable: boolean;
+  value: string;
+};
+
+type FilterKey = "query" | "category" | "pricing" | "platform" | "api" | "verification";
+
+const sortOptions: Array<[string, string]> = [
   ["relevant", "Most relevant"],
   ["popular", "Most popular"],
   ["highest-rated", "Highest rated"],
@@ -20,21 +33,30 @@ const sortOptions = [
   ["trending", "Trending"]
 ];
 
-export function SearchResults({ result, basePath = "/plutos-library/search" }: SearchResultsProps) {
-  const activeFilters = getActiveFilters(result.filters);
+export function SearchResults({ result, basePath = "/plutos-library/search", compact = false, embedded = false }: SearchResultsProps) {
+  const activeFilters = getActiveFilters(result.filters, basePath);
+  const resultContext = formatFilterValue("category", result.filters.category);
 
   return (
-    <section className="mx-auto max-w-site px-5 pb-20 sm:px-8 xl:px-0">
+    <section
+      className={cn(
+        embedded ? "w-full pb-20" : "mx-auto w-full max-w-site px-5 pb-20 sm:px-8 xl:px-0",
+        embedded ? "pt-8 md:pt-9" : compact ? "pt-10 md:pt-12" : "pt-32 md:pt-36"
+      )}
+    >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="type-h2 text-neutral-900">
-            {result.total} matching tools
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
+          <h2 className="type-h3 text-neutral-900">
+            {resultContext ? `${result.total} AI tools` : `${result.total} tools`}
           </h2>
+          {resultContext ? (
+            <p className="type-body-sm text-neutral-500">Curated for {resultContext}</p>
+          ) : null}
           <p className="sr-only" aria-live="polite">
             {result.total} Discover results are available.
           </p>
         </div>
-        <form action={basePath} className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <form action={basePath} className="relative w-full sm:w-auto">
           {Object.entries(result.filters).map(([key, value]) =>
             key === "sort" || !value ? null : (
               <input key={key} name={key === "query" ? "q" : key} type="hidden" value={value} />
@@ -43,43 +65,46 @@ export function SearchResults({ result, basePath = "/plutos-library/search" }: S
           <label className="sr-only" htmlFor="library-sort">
             Sort tools
           </label>
-          <select
-            className="min-h-11 rounded-xl border border-neutral-200 bg-white px-3 type-label-md shadow-card"
+          <AutoSubmitSelect
             defaultValue={result.filters.sort}
             id="library-sort"
             name="sort"
-          >
-            {sortOptions.map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
+            options={sortOptions}
+          />
         </form>
       </div>
 
       {activeFilters.length > 0 ? (
-        <div className="mt-5 flex flex-wrap items-center gap-2">
+        <div className="mt-5 flex flex-wrap items-center gap-3">
           {activeFilters.map((filter) => (
             <span
-              className="rounded-lg bg-violet-100 px-3 py-2 type-label-md text-violet-700"
+              className="inline-flex min-h-11 items-center gap-3 rounded-full border border-violet-400/22 bg-violet-500/18 px-4 type-label-sm text-violet-100"
               key={`${filter.key}-${filter.value}`}
             >
-              {filter.label}: {filter.value}
+              {filter.label}
+              {filter.removable ? (
+                <Link
+                  aria-label={`Remove ${filter.label} filter`}
+                  className="grid h-7 w-7 place-items-center rounded-full text-violet-100 transition hover:bg-white/10 hover:text-white"
+                  href={getRemoveFilterHref(result.filters, basePath, filter.key)}
+                >
+                  <X aria-hidden="true" className="h-4 w-4" />
+                </Link>
+              ) : null}
             </span>
           ))}
           <Button asChild variant="ghost">
             <Link href={basePath}>
               <RotateCcw aria-hidden="true" className="h-4 w-4" />
-              Clear all filters
+              Clear all
             </Link>
           </Button>
         </div>
       ) : null}
 
-      <div className="mt-5 rounded-2xl bg-[#FFF3D1] p-4 type-label-md text-[#976500]">
-        <ShieldAlert aria-hidden="true" className="mb-2 h-5 w-5" />
-        Some records are not fully verified. Confirm pricing on official websites before buying.
+      <div className="mt-6 flex items-center gap-3 type-body-sm text-neutral-500">
+        <ShieldAlert aria-hidden="true" className="h-5 w-5 shrink-0 text-violet-400" />
+        Pricing may change - verify details on the official website.
       </div>
 
       {result.tools.length > 0 ? (
@@ -113,7 +138,6 @@ function Pagination({ result, basePath }: { result: LibrarySearchResult; basePat
   const common = {
     q: result.filters.query,
     category: result.filters.category,
-    subcategory: result.filters.subcategory,
     pricing: result.filters.pricing,
     platform: result.filters.platform,
     api: result.filters.api,
@@ -142,18 +166,72 @@ function Pagination({ result, basePath }: { result: LibrarySearchResult; basePat
   );
 }
 
-function getActiveFilters(filters: LibrarySearchResult["filters"]) {
-  return [
-    { key: "query", label: "Search", value: filters.query },
-    { key: "category", label: "Category", value: filters.category },
-    { key: "subcategory", label: "Subcategory", value: filters.subcategory },
-    { key: "pricing", label: "Pricing", value: filters.pricing },
-    { key: "platform", label: "Platform", value: filters.platform },
-    { key: "api", label: "API", value: filters.api },
-    { key: "verification", label: "Verification", value: filters.verification }
-  ].filter((filter) => filter.value);
+function getActiveFilters(filters: LibrarySearchResult["filters"], basePath: string): ActiveFilter[] {
+  const categoryLabel = formatFilterValue("category", filters.category);
+  const isCategoryPage = basePath.startsWith("/plutos-library/") && Boolean(filters.category);
+
+  const activeFilters: ActiveFilter[] = [
+    { key: "category", label: categoryLabel, removable: !isCategoryPage, value: filters.category },
+    { key: "query", label: filters.query ? `Search: ${filters.query}` : "", removable: true, value: filters.query },
+    { key: "pricing", label: formatFilterValue("pricing", filters.pricing), removable: true, value: filters.pricing },
+    { key: "platform", label: formatFilterValue("platform", filters.platform), removable: true, value: filters.platform },
+    { key: "api", label: formatFilterValue("api", filters.api), removable: true, value: filters.api },
+    { key: "verification", label: formatFilterValue("verification", filters.verification), removable: true, value: filters.verification }
+  ];
+
+  return activeFilters.filter((filter) => filter.value && filter.label);
 }
 
+function getRemoveFilterHref(filters: LibrarySearchResult["filters"], basePath: string, keyToRemove: FilterKey) {
+  const next = {
+    q: keyToRemove === "query" ? undefined : filters.query,
+    category: keyToRemove === "category" ? undefined : filters.category,
+    pricing: keyToRemove === "pricing" ? undefined : filters.pricing,
+    platform: keyToRemove === "platform" ? undefined : filters.platform,
+    api: keyToRemove === "api" ? undefined : filters.api,
+    verification: keyToRemove === "verification" ? undefined : filters.verification,
+    sort: filters.sort === "relevant" ? undefined : filters.sort
+  };
 
+  return buildLibraryHref(basePath, next);
+}
 
+function formatFilterValue(key: FilterKey, value: string) {
+  if (!value) return "";
 
+  if (key === "category") {
+    return plutosLibrary.categories.find((category) => category.slug === value)?.name ?? titleize(value);
+  }
+
+  if (key === "pricing") {
+    return ({ free: "Free plan", paid: "Paid", unknown: "Unknown" } as Record<string, string>)[value] ?? titleize(value);
+  }
+
+  if (key === "api") {
+    return ({ yes: "API available", no: "No API" } as Record<string, string>)[value] ?? titleize(value);
+  }
+
+  if (key === "verification") {
+    return (
+      ({
+        verified: "Verified",
+        "needs-verification": "Needs verification",
+        "recently-verified": "Recently verified"
+      } as Record<string, string>)[value] ?? titleize(value)
+    );
+  }
+
+  if (key === "platform") {
+    return plutosLibrary.tools.flatMap((tool) => tool.platforms).find((platform) => slugify(platform) === value) ?? titleize(value);
+  }
+
+  return value;
+}
+
+function titleize(value: string) {
+  return value
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}

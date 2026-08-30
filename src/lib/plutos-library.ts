@@ -108,7 +108,7 @@ export type LibrarySearchResult = {
 };
 
 export type LibrarySuggestion = {
-  type: "tool" | "category" | "subcategory";
+  type: "tool" | "category";
   label: string;
   href: string;
   meta?: string;
@@ -312,17 +312,7 @@ export function getLibrarySuggestions(query: string, limit = 8): LibrarySuggesti
       meta: `${category.toolCount} tools`
     }));
 
-  const subcategorySuggestions = plutosLibrary.subcategories
-    .filter((subcategory) => searchableText(subcategory.name, subcategory.categoryName).includes(normalizedQuery))
-    .slice(0, 3)
-    .map((subcategory) => ({
-      type: "subcategory" as const,
-      label: subcategory.name,
-      href: `/plutos-library/${slugify(subcategory.categoryName)}?subcategory=${subcategory.slug}`,
-      meta: subcategory.categoryName
-    }));
-
-  return [...toolSuggestions, ...categorySuggestions, ...subcategorySuggestions].slice(0, limit);
+  return [...toolSuggestions, ...categorySuggestions].slice(0, limit);
 }
 
 export function getTrendingTools(range: string, limit = 8) {

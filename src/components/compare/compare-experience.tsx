@@ -1,261 +1,413 @@
 "use client";
 
+import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Plus, RotateCcw, X } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { ArrowRight, Check, Copy, Loader2, Plus, Search, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { StatePanel } from "@/components/shared/state-panel";
-import { tools } from "@/lib/data";
-import { plutosLibrary } from "@/lib/plutos-library";
-import { useCompareStore } from "@/lib/compare-store";
+import { HeroVeil } from "@/components/shared/hero-veil";
+import { ToolLogo } from "@/components/shared/tool-logo";
+import { MAX_COMPARE_TOOLS, useCompareStore } from "@/lib/compare-store";
+import { compareTools, getCompareTool, getValidCompareSlugs, searchCompareTools, type CompareTool } from "@/lib/compare-tools";
+import styles from "./compare-experience.module.css";
 
-type CompareTool = {
-  slug: string;
-  name: string;
-  category: string;
-  bestFor: string;
-  startingPrice: string;
-  freePlan: boolean | string;
-  api: string;
-  skillLevel: string;
-  verified: string;
-  accent: string;
-};
+type SelectorState =
+  | { mode: "add"; slotIndex: number; oldSlug?: undefined }
+  | { mode: "replace"; slotIndex: number; oldSlug: string };
 
-const compareTools: CompareTool[] = [
-  ...tools.map((tool) => ({
-    slug: tool.slug,
-    name: tool.name,
-    category: tool.category,
-    bestFor: tool.bestFor,
-    startingPrice: tool.startingPrice,
-    freePlan: tool.freePlan,
-    api: tool.api,
-    skillLevel: tool.skillLevel,
-    verified: tool.verified,
-    accent: tool.accent
-  })),
-  ...plutosLibrary.tools.map((tool) => ({
-    slug: tool.slug,
-    name: tool.name,
-    category: tool.categories[0] ?? "Uncategorized",
-    bestFor: tool.useCases[0] ?? "Imported workbook use case",
-    startingPrice: tool.pricing.startingPriceRaw,
-    freePlan: tool.pricing.freePlan,
-    api: tool.api.normalized,
-    skillLevel: "Information not available",
-    verified: tool.verification.status,
-    accent: "#EAE6FF"
-  }))
-];
+const categories = ["All categories", ...Array.from(new Set(compareTools.map((tool) => tool.category).filter(Boolean))).sort((a, b) => a.localeCompare(b))];
 
 const rows = [
   ["Best for", "bestFor"],
+  ["Key features", "features"],
   ["Pricing", "startingPrice"],
   ["Free plan", "freePlan"],
-  ["API", "api"],
-  ["Skill level", "skillLevel"],
-  ["Verification", "verified"]
+  ["Integrations", "integrations"],
+  ["Platforms", "platforms"],
+  ["Ease of use", "chips"],
+  ["Data privacy", "dataPrivacy"],
+  ["Trust or verification", "trust"],
+  ["User rating", "userRating"],
+  ["Primary category", "category"],
+  ["Similar use cases", "similarUseCases"]
 ] as const;
 
 export function CompareExperience() {
-  const selectedSlugs = useCompareStore((state) => state.selected);
-  const removeTool = useCompareStore((state) => state.removeTool);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const selected = useCompareStore((state) => state.selected);
+  const hydrated = useCompareStore((state) => state.hydrated);
+  const feedback = useCompareStore((state) => state.feedback);
+  const setSelectedTools = useCompareStore((state) => state.setSelectedTools);
   const clearCompare = useCompareStore((state) => state.clearCompare);
+  const removeTool = useCompareStore((state) => state.removeTool);
+  const replaceTool = useCompareStore((state) => state.replaceTool);
   const addTool = useCompareStore((state) => state.addTool);
-  const selectedTools = selectedSlugs
-    .map((slug) => compareTools.find((tool) => tool.slug === slug))
-    .filter(Boolean);
-  const recommended = compareTools.filter((tool) => !selectedSlugs.includes(tool.slug)).slice(0, 4);
+  const setFeedback = useCompareStore((state) => state.setFeedback);
+  const recentlyViewed = useCompareStore((state) => state.recentlyViewed);
+  const [selector, setSelector] = useState<SelectorState | null>(null);
+  const seededFromUrlRef = useRef(false);
+  const pendingUrlSeedRef = useRef<string | null>(null);
+  const [hasCompared, setHasCompared] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const validSlugs = useMemo(() => getValidCompareSlugs(selected), [selected]);
+  const selectedTools = useMemo(() => validSlugs.map((slug) => getCompareTool(slug)).filter(Boolean) as CompareTool[], [validSlugs]);
+  const compareReady = selectedTools.length >= 2;
+  const compareUrl = `${pathname}${validSlugs.length > 0 ? `?tools=${validSlugs.join(",")}` : ""}`;
+
+  useEffect(() => {
+    if (!hydrated || seededFromUrlRef.current) return;
+
+    seededFromUrlRef.current = true;
+    const fromUrl = getValidCompareSlugs((searchParams.get("tools") || "").split(","));
+    if (fromUrl.length > 0 && fromUrl.join(",") !== validSlugs.join(",")) {
+      pendingUrlSeedRef.current = fromUrl.join(",");
+      setSelectedTools(fromUrl);
+      return;
+    }
+
+    if (validSlugs.length !== selected.length) {
+      setSelectedTools(validSlugs);
+    }
+  }, [hydrated, searchParams, selected.length, setSelectedTools, validSlugs]);
+
+  useEffect(() => {
+    if (!hydrated || !seededFromUrlRef.current) return;
+
+    const current = searchParams.get("tools") || "";
+    const next = validSlugs.join(",");
+    if (pendingUrlSeedRef.current) {
+      if (next !== pendingUrlSeedRef.current) return;
+      pendingUrlSeedRef.current = null;
+    }
+    if (current === next) return;
+
+    router.replace(next ? `${pathname}?tools=${next}` : pathname, { scroll: false });
+  }, [hydrated, pathname, router, searchParams, validSlugs]);
+
+  const handleClear = () => {
+    clearCompare();
+    setHasCompared(false);
+  };
+
+  const handleRemoveTool = (tool: CompareTool) => {
+    removeTool(tool.slug, tool.name);
+    if (selectedTools.length <= 2) setHasCompared(false);
+  };
+
+  const shareComparison = async () => {
+    if (!compareReady) return;
+    const href = `${window.location.origin}${compareUrl}`;
+    await navigator.clipboard?.writeText(href).catch(() => undefined);
+    setCopied(true);
+    setFeedback("Comparison link copied.");
+    window.setTimeout(() => setCopied(false), 2200);
+  };
 
   return (
-    <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-      <Badge tone="info">Saved on this device</Badge>
-      <div className="mt-4 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="type-h1 text-neutral-900">
-            Compare tools without forcing a fake winner.
-          </h1>
-          <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
-            Compare two to four tools. Pluto highlights contextual strengths so
-            the decision matches the requirement.
-          </p>
+    <main className={styles.page}>
+      <HeroVeil className={styles.background} />
+      <section className={styles.shell}>
+        <div className={styles.hero}>
+          <p className={styles.eyebrow}>COMPARE AI TOOLS</p>
+          <h1 className={styles.title}>Compare tools. Choose with confidence.</h1>
+          <p className={styles.copy}>Review features, pricing and strengths side by side&mdash;up to four tools.</p>
         </div>
-        {selectedTools.length > 0 ? (
-          <Button onClick={clearCompare} variant="secondary">
-            <RotateCcw aria-hidden="true" className="h-4 w-4" />
-            Clear comparison
-          </Button>
-        ) : null}
-      </div>
 
-      {selectedTools.length === 0 ? (
-        <div className="mt-10">
-          <StatePanel
-            action="Search for tools"
-            copy="Add two or more tools to compare. You can start from search, recently viewed tools, popular comparisons or Pluto recommendations."
-            secondary="Ask Pluto"
-            title="No tools selected"
-          />
-          <RecommendedTools tools={recommended} addTool={addTool} />
-        </div>
-      ) : null}
-
-      {selectedTools.length === 1 ? (
-        <section className="mt-10 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-          <div className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-card">
-            <Badge tone="violet">One selected tool</Badge>
-            <h2 className="mt-4 type-h3 text-neutral-900">
-              Add another tool to unlock comparison.
-            </h2>
-            <p className="mt-3 type-body-sm text-neutral-700">
-              Your current choice is preserved locally. Recommended comparable
-              tools are shown on the right.
-            </p>
-          </div>
-          <RecommendedTools tools={recommended} addTool={addTool} />
-        </section>
-      ) : null}
-
-      {selectedTools.length >= 2 ? (
-        <section className="mt-10 overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-elevated">
-          <div className="flex flex-col gap-3 border-b border-neutral-200 bg-neutral-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap gap-2">
-              <Badge tone="violet">Highlight differences</Badge>
-              <Badge tone="neutral">Show all information</Badge>
-              {selectedTools.length === 4 ? (
-                <Badge tone="lime">Maximum comparison limit</Badge>
-              ) : null}
+        <section className={styles.builder} aria-labelledby="comparison-builder-title">
+          <div className={styles.builderHeader}>
+            <div>
+              <h2 id="comparison-builder-title">Your comparison</h2>
+              <p>{selectedTools.length} of {MAX_COMPARE_TOOLS} selected</p>
             </div>
-            <Button asChild size="sm" variant="secondary">
-              <Link href="/tools">
-                Add tool <Plus aria-hidden="true" className="h-4 w-4" />
-              </Link>
+            <p className={styles.guidance}>{selectedTools.length === 0 ? "Choose at least two tools to begin." : compareReady ? "Ready to compare. You can still add or replace tools." : "Add at least one more tool."}</p>
+          </div>
+
+          {!hydrated ? <BuilderSkeleton /> : null}
+
+          {hydrated ? (
+            <div className={styles.slots}>
+              {Array.from({ length: MAX_COMPARE_TOOLS }).map((_, index) => {
+                const tool = selectedTools[index];
+                return tool ? (
+                  <SelectedSlot
+                    key={tool.slug}
+                    onRemove={() => handleRemoveTool(tool)}
+                    onReplace={() => setSelector({ mode: "replace", oldSlug: tool.slug, slotIndex: index })}
+                    tool={tool}
+                  />
+                ) : (
+                  <EmptySlot key={`empty-${index}`} onSelect={() => setSelector({ mode: "add", slotIndex: index })} />
+                );
+              })}
+            </div>
+          ) : null}
+
+          <div className={styles.actions}>
+            <Button disabled={!compareReady} onClick={() => setHasCompared(true)} size="lg" type="button">
+              Compare tools <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </Button>
+            <Button disabled={selectedTools.length === 0} onClick={handleClear} size="lg" type="button" variant="secondary">
+              Clear all
+            </Button>
+            {compareReady ? (
+              <Button onClick={shareComparison} size="lg" type="button" variant="outline">
+                <Copy aria-hidden="true" className="h-4 w-4" />
+                {copied ? "Copied" : "Share comparison"}
+              </Button>
+            ) : null}
           </div>
-          <div className="overflow-x-auto">
-            <div
-              className="grid min-w-[760px]"
-              style={{ gridTemplateColumns: `180px repeat(${selectedTools.length}, minmax(190px, 1fr))` }}
-            >
-              <div className="border-b border-r border-neutral-200 p-4 type-label-md text-neutral-500">
-                Attribute
-              </div>
-              {selectedTools.map((tool) =>
-                tool ? (
-                  <div className="border-b border-r border-neutral-200 p-4 last:border-r-0" key={tool.slug}>
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <span
-                          className="grid h-11 w-11 place-items-center rounded-xl type-h6 text-ink-950"
-                          style={{ backgroundColor: tool.accent }}
-                        >
-                          {tool.name.charAt(0)}
-                        </span>
-                        <h2 className="mt-3 type-h5 text-neutral-900">
-                          {tool.name}
-                        </h2>
-                        <p className="type-body-sm text-neutral-500">{tool.category}</p>
-                      </div>
-                      <button
-                        aria-label={`Remove ${tool.name}`}
-                        className="focus-ring grid h-10 w-10 place-items-center rounded-xl text-neutral-500 hover:bg-neutral-100"
-                        onClick={() => removeTool(tool.slug)}
-                      >
-                        <X aria-hidden="true" className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                ) : null
-              )}
-              {rows.map(([label, key]) => (
-                <ComparisonRow key={label} label={label} field={key} selectedTools={selectedTools} />
-              ))}
-            </div>
-          </div>
-          <div className="grid gap-4 border-t border-neutral-200 p-5 md:grid-cols-4">
-            {["Best for beginners", "Best free option", "Best for API integration", "Best for teams"].map(
-              (label) => (
-                <div className="rounded-2xl bg-lime-100 p-4 type-label-md text-ink-950" key={label}>
-                  <CheckCircle2 aria-hidden="true" className="mb-2 h-5 w-5" />
-                  {label}
-                </div>
-              )
-            )}
-          </div>
+          <div className="sr-only" aria-live="polite">{feedback}</div>
         </section>
-      ) : null}
+
+        {compareReady && hasCompared ? (
+          <>
+            <PlutoInsight tools={selectedTools} />
+            <ComparisonMatrix tools={selectedTools} />
+          </>
+        ) : (
+          <RecommendedTools selectedSlugs={validSlugs} onOpenSelector={() => setSelector({ mode: "add", slotIndex: selectedTools.length })} />
+        )}
+      </section>
+
+      <ToolSelector
+        recentlyViewed={recentlyViewed}
+        selectedSlugs={validSlugs}
+        selector={selector}
+        onClose={() => setSelector(null)}
+        onSelect={(tool) => {
+          if (!selector) return;
+          const result = selector.mode === "replace"
+            ? replaceTool(selector.oldSlug, tool.slug, tool.name)
+            : addTool(tool.slug, tool.name);
+          if (result.status === "added") {
+            setSelector(null);
+            setHasCompared((current) => current && result.selected.length >= 2);
+          }
+        }}
+      />
     </main>
   );
 }
 
-function ComparisonRow({
-  label,
-  field,
-  selectedTools
-}: {
-  label: string;
-  field: (typeof rows)[number][1];
-  selectedTools: Array<CompareTool | undefined>;
-}) {
+function BuilderSkeleton() {
   return (
-    <>
-      <div className="border-b border-r border-neutral-200 bg-neutral-50 p-4 type-label-md text-neutral-700">
-        {label}
-      </div>
-      {selectedTools.map((tool) => (
-        <div className="border-b border-r border-neutral-200 p-4 type-body-sm text-neutral-800 last:border-r-0" key={`${tool?.slug}-${field}`}>
-          {tool ? formatValue(tool[field]) : null}
+    <div className={styles.slots} aria-label="Restoring saved comparison">
+      {Array.from({ length: MAX_COMPARE_TOOLS }).map((_, index) => (
+        <div className={styles.skeletonSlot} key={index}>
+          <Loader2 aria-hidden="true" className="h-5 w-5 animate-spin" />
+          Restoring saved selections
         </div>
       ))}
-    </>
+    </div>
   );
 }
 
-function formatValue(value: string | boolean) {
-  if (typeof value === "boolean") {
-    return value ? "Yes" : "No";
-  }
-  return value;
+function EmptySlot({ onSelect }: { onSelect: () => void }) {
+  return (
+    <button className={styles.emptySlot} onClick={onSelect} type="button">
+      <Plus aria-hidden="true" />
+      <span>Add a tool</span>
+      <small>Search the Pluto library</small>
+    </button>
+  );
 }
 
-function RecommendedTools({
-  tools: recommendedTools,
-  addTool
-}: {
-  tools: CompareTool[];
-  addTool: (slug: string) => void;
-}) {
+function SelectedSlot({ onRemove, onReplace, tool }: { onRemove: () => void; onReplace: () => void; tool: CompareTool }) {
   return (
-    <section className="mt-6 rounded-3xl border border-neutral-200 bg-white p-5 shadow-card">
-      <h2 className="type-h4 text-neutral-900">
-        Recommended comparable tools
-      </h2>
-      <div className="mt-4 grid gap-3 md:grid-cols-4">
-        {recommendedTools.map((tool) => (
-          <button
-            className="focus-ring min-h-32 rounded-2xl border border-neutral-200 p-4 text-left transition hover:border-violet-500"
-            key={tool.slug}
-            onClick={() => addTool(tool.slug)}
-          >
-            <span
-              className="grid h-10 w-10 place-items-center rounded-xl type-h6 text-ink-950"
-              style={{ backgroundColor: tool.accent }}
-            >
-              {tool.name.charAt(0)}
-            </span>
-            <span className="mt-3 block type-h6 text-neutral-900">
-              {tool.name}
-            </span>
-            <span className="mt-1 block type-body-sm text-neutral-500">{tool.bestFor}</span>
-          </button>
+    <article className={styles.selectedSlot}>
+      <button aria-label={`Remove ${tool.name} from comparison`} className={styles.removeSlot} onClick={onRemove} type="button">
+        <X aria-hidden="true" />
+      </button>
+      <ToolLogo className={styles.slotLogo} name={tool.name} src={tool.logoUrl} />
+      <div className={styles.slotCopy}>
+        <h3>{tool.name}</h3>
+        <p>{tool.category}</p>
+        <span>{tool.pricing || "Pricing not verified"}</span>
+      </div>
+      <button className={styles.changeButton} onClick={onReplace} type="button">Change tool</button>
+    </article>
+  );
+}
+
+function PlutoInsight({ tools }: { tools: CompareTool[] }) {
+  const verifiedCount = tools.filter((tool) => /verified/i.test(tool.verification)).length;
+  const message = verifiedCount === tools.length
+    ? "Each tool is strong in a different context. Focus on what matches your workflow."
+    : "Some details are not fully verified. Use this comparison as a shortlist, then confirm critical claims on official sites.";
+
+  return (
+    <section className={styles.insight}>
+      <span className={styles.plutoMark}>P</span>
+      <div>
+        <h2>Pluto&apos;s insight</h2>
+        <p>{message}</p>
+      </div>
+    </section>
+  );
+}
+
+function ComparisonMatrix({ tools }: { tools: CompareTool[] }) {
+  return (
+    <section className={styles.matrixShell} aria-labelledby="comparison-matrix-title">
+      <h2 className="sr-only" id="comparison-matrix-title">Comparison details</h2>
+      <div className={styles.matrixScroll}>
+        <table className={styles.matrix} style={{ minWidth: `${13 + tools.length * 17}rem` }}>
+          <thead>
+            <tr>
+              <th scope="col">Feature</th>
+              {tools.map((tool) => (
+                <th key={tool.slug} scope="col">
+                  <span className={styles.matrixToolHead}>
+                    <ToolLogo className={styles.matrixLogo} name={tool.name} src={tool.logoUrl} />
+                    <span>{tool.name}</span>
+                  </span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(([label, field]) => (
+              <tr key={label}>
+                <th scope="row">{label}</th>
+                {tools.map((tool) => (
+                  <td key={`${tool.slug}-${field}`}>{formatMatrixValue(tool, field)}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function formatMatrixValue(tool: CompareTool, field: (typeof rows)[number][1]) {
+  const value = tool[field];
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) return "Not available";
+    if (field === "chips") {
+      return <span className={styles.chips}>{value.slice(0, 3).map((item) => <span key={item}>{item}</span>)}</span>;
+    }
+    return <span className={styles.listValue}>{value.slice(0, 4).map((item) => <span key={item}><Check aria-hidden="true" />{item}</span>)}</span>;
+  }
+
+  return value || "Not available";
+}
+
+function RecommendedTools({ onOpenSelector, selectedSlugs }: { onOpenSelector: () => void; selectedSlugs: string[] }) {
+  const recommendations = compareTools.filter((tool) => !selectedSlugs.includes(tool.slug)).slice(0, 4);
+
+  return (
+    <section className={styles.recommended}>
+      <div className={styles.recommendedHeader}>
+        <div>
+          <h2>Recommended tools</h2>
+          <p>Start with popular, well-described records from the Pluto library.</p>
+        </div>
+        <Button onClick={onOpenSelector} type="button" variant="secondary">
+          <Plus aria-hidden="true" className="h-4 w-4" /> Add a tool
+        </Button>
+      </div>
+      <div className={styles.recommendedGrid}>
+        {recommendations.map((tool) => (
+          <Link className={styles.recommendedCard} href={`${tool.href}`} key={tool.slug}>
+            <ToolLogo className={styles.recommendedLogo} name={tool.name} src={tool.logoUrl} />
+            <span>{tool.name}</span>
+            <small>{tool.bestFor}</small>
+          </Link>
         ))}
       </div>
-      <Button asChild className="mt-5" variant="secondary">
-        <Link href="/tools">
-          Browse all tools <ArrowRight aria-hidden="true" className="h-4 w-4" />
-        </Link>
-      </Button>
     </section>
+  );
+}
+
+function ToolSelector({
+  onClose,
+  onSelect,
+  recentlyViewed,
+  selectedSlugs,
+  selector
+}: {
+  onClose: () => void;
+  onSelect: (tool: CompareTool) => void;
+  recentlyViewed: string[];
+  selectedSlugs: string[];
+  selector: SelectorState | null;
+}) {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All categories");
+
+  const results = useMemo(() => {
+    const base = searchCompareTools(query, selectedSlugs, 36).filter((tool) => category === "All categories" || tool.category === category);
+    return base.slice(0, 18);
+  }, [category, query, selectedSlugs]);
+  const recentTools = recentlyViewed.map((slug) => getCompareTool(slug)).filter(Boolean).slice(0, 4) as CompareTool[];
+
+  return (
+    <Dialog.Root open={Boolean(selector)} onOpenChange={(open) => !open && onClose()}>
+      <Dialog.Portal>
+        <Dialog.Overlay className={styles.selectorOverlay} />
+        <Dialog.Content className={styles.selectorContent}>
+          <div className={styles.selectorHeader}>
+            <div>
+              <Dialog.Title>{selector?.mode === "replace" ? "Change tool" : "Add a tool"}</Dialog.Title>
+              <Dialog.Description>Search by name, category, use case, or keyword.</Dialog.Description>
+            </div>
+            <Dialog.Close asChild>
+              <button className={styles.selectorClose} aria-label="Close tool selector" type="button"><X aria-hidden="true" /></button>
+            </Dialog.Close>
+          </div>
+
+          <div className={styles.selectorControls}>
+            <label className={styles.searchBox}>
+              <Search aria-hidden="true" />
+              <span className="sr-only">Search tools</span>
+              <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tools, use cases, platforms..." />
+            </label>
+            <label className="sr-only" htmlFor="compare-category">Category</label>
+            <select className="pf-select-trigger" id="compare-category" value={category} onChange={(event) => setCategory(event.target.value)}>
+              {categories.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+          </div>
+
+          {recentTools.length > 0 && !query ? (
+            <section className={styles.selectorSection}>
+              <h3>Recently viewed</h3>
+              <div className={styles.selectorGrid}>
+                {recentTools.map((tool) => <SelectorTool key={tool.slug} selected={selectedSlugs.includes(tool.slug)} tool={tool} onSelect={onSelect} />)}
+              </div>
+            </section>
+          ) : null}
+
+          <section className={styles.selectorSection}>
+            <h3>{query ? "Search results" : "Recommended tools"}</h3>
+            {results.length === 0 ? <p className={styles.selectorStatus}>No tools match that search.</p> : null}
+            <div className={styles.selectorGrid}>
+              {results.map((tool) => <SelectorTool key={tool.slug} selected={tool.alreadySelected} tool={tool} onSelect={onSelect} />)}
+            </div>
+          </section>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+}
+
+function SelectorTool({ onSelect, selected, tool }: { onSelect: (tool: CompareTool) => void; selected?: boolean; tool: CompareTool }) {
+  return (
+    <article className={styles.selectorTool}>
+      <ToolLogo className={styles.selectorLogo} name={tool.name} src={tool.logoUrl} />
+      <div>
+        <h4>{tool.name}</h4>
+        <p>{tool.category}</p>
+        <small>{tool.bestFor}</small>
+      </div>
+      <button disabled={selected} onClick={() => onSelect(tool)} type="button">
+        {selected ? "Added" : "Add"}
+      </button>
+    </article>
   );
 }

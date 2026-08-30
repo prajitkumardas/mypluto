@@ -1,0 +1,272 @@
+.discoverPage {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  overflow-x: clip;
+  background: #060610;
+}
+
+.discoverPage::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 0;
+  height: clamp(28rem, 42vw, 36rem);
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 48% 3%, rgba(124, 99, 255, 0.2), transparent 31rem),
+    radial-gradient(circle at 78% 32%, rgba(103, 70, 219, 0.12), transparent 28rem),
+    radial-gradient(circle at 18% 42%, rgba(124, 99, 255, 0.08), transparent 25rem),
+    linear-gradient(90deg, rgba(124, 99, 255, 0.09) 1px, transparent 1px);
+  background-size: auto, auto, auto, clamp(4.5rem, 8vw, 8.5rem) 100%;
+  mask-image: linear-gradient(180deg, #000 0%, #000 58%, transparent 100%);
+  opacity: 0.36;
+}
+
+.discoverBackground {
+  top: 0;
+  right: 0;
+  bottom: auto;
+  left: 0;
+  z-index: 0;
+  height: clamp(28rem, 42vw, 36rem);
+  opacity: 0.6;
+}
+
+.discoverBackground canvas {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.discoverContent {
+  position: relative;
+  z-index: 1;
+}
+
+.heroShell {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  background: transparent;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  max-width: calc(var(--page-max) + (var(--page-gutter) * 2));
+  padding: clamp(6rem, 7vw, 6.5rem) var(--page-gutter) clamp(1rem, 2vw, 1.5rem);
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.52);
+  text-align: center;
+  font-size: 0.74rem;
+}
+
+.breadcrumb a {
+  color: rgba(255, 255, 255, 0.64);
+  transition: color 160ms ease;
+}
+
+.breadcrumb a:hover {
+  color: #ffffff;
+}
+
+.breadcrumbSeparator {
+  color: rgba(255, 255, 255, 0.32);
+}
+
+.breadcrumbCurrent {
+  color: #c8ff5a;
+  font-weight: var(--font-weight-semibold);
+}
+
+.heroContent {
+  margin: clamp(1.35rem, 1.9vw, 1.65rem) auto 0;
+  max-width: 48rem;
+  text-align: center;
+}
+
+.categoryBadge {
+  justify-content: center;
+  color: #c8ff5a;
+  font-size: 0.64rem;
+}
+
+.heroTitle {
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: var(--text-page-hero-title);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0;
+  line-height: var(--leading-page-hero-title);
+  text-wrap: balance;
+  text-shadow: 0 0 28px rgba(255, 255, 255, 0.12);
+}
+
+.heroTitle span {
+  display: inline-block;
+  color: #a875ff;
+  font-size: 0.96em;
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(124, 99, 255, 0.24);
+}
+
+.heroCopy {
+  margin: clamp(0.9rem, 1.4vw, 1.1rem) auto 0;
+  max-width: 39rem;
+  color: rgba(235, 229, 255, 0.72);
+  font-size: var(--text-page-hero-copy);
+  line-height: var(--leading-page-hero-copy);
+  letter-spacing: 0;
+  text-wrap: pretty;
+}
+
+.heroSearch {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0;
+  width: min(100%, 46rem);
+  min-height: 4.1rem;
+  margin: 2rem auto 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(18, 17, 34, 0.46);
+  box-shadow:
+    0 16px 42px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(18px) saturate(125%);
+}
+
+.searchField {
+  display: flex;
+  min-width: 0;
+  min-height: 4.1rem;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1.5rem;
+}
+
+.searchIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: 0 0 auto;
+  color: #c5adff;
+}
+
+.searchInput {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  font-size: var(--text-body-md);
+  line-height: 1;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: rgba(235, 229, 255, 0.48);
+}
+
+.filterButton {
+  display: inline-flex;
+  min-height: 4.1rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  border: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: rgba(248, 246, 255, 0.9);
+  padding: 0 1.55rem;
+  font-size: var(--text-label-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-label-md);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.filterButton:hover,
+.filterButton:focus-visible {
+  background: rgba(168, 117, 255, 0.14);
+  color: #ffffff;
+}
+
+.filterButton svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  color: #c5adff;
+}
+
+.resultsShell {
+  background: transparent;
+  padding-top: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.resultsLayout {
+  display: grid;
+  width: 100%;
+  max-width: calc(var(--page-max) + (var(--page-gutter) * 2));
+  margin: 0 auto;
+  align-items: start;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  overflow-x: clip;
+  padding-inline: var(--page-gutter);
+}
+
+.catalogueMain {
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .resultsLayout {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 640px) {
+  .heroInner {
+    padding-inline: var(--page-gutter);
+  }
+}
+
+@media (min-width: 1280px) {
+  .heroInner {
+    padding-inline: var(--page-gutter);
+  }
+}
+
+@media (max-width: 700px) {
+  .discoverBackground {
+    height: 30rem;
+    opacity: 0.5;
+  }
+
+  .discoverPage::before {
+    height: 30rem;
+  }
+
+  .heroInner {
+    padding-top: 6rem;
+  }
+
+  .heroSearch {
+    grid-template-columns: 1fr;
+    border-radius: 1.5rem;
+    backdrop-filter: blur(12px) saturate(115%);
+  }
+
+  .filterButton {
+    border-left: 0;
+  }
+}

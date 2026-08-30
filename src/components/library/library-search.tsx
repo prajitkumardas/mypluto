@@ -3,33 +3,20 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Loader2, Search, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { buildLibraryHref, quickSearches, type LibraryCategory, type LibrarySuggestion } from "@/lib/plutos-library";
+import { buildLibraryHref, quickSearches, type LibrarySuggestion } from "@/lib/plutos-library";
 import { cn } from "@/lib/utils";
 
 type LibrarySearchProps = {
-  categories: LibraryCategory[];
   initial: {
     q?: string;
-    category?: string;
-    verification?: string;
   };
 };
 
-const verificationOptions = [
-  ["", "Any verification"],
-  ["verified", "Verified"],
-  ["needs-verification", "Needs verification"],
-  ["recently-verified", "Recently verified"]
-];
-
-export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
+export function LibrarySearch({ initial }: LibrarySearchProps) {
   const router = useRouter();
   const listboxId = useId();
   const wrapperRef = useRef<HTMLFormElement>(null);
   const [query, setQuery] = useState(initial.q ?? "");
-  const [category, setCategory] = useState(initial.category ?? "");
-  const [verification, setVerification] = useState(initial.verification ?? "");
   const [suggestions, setSuggestions] = useState<LibrarySuggestion[]>([]);
   const [activeIndex, setActiveIndex] = useState(-1);
   const [open, setOpen] = useState(false);
@@ -80,13 +67,7 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
   }, [query]);
 
   const submitSearch = () => {
-    router.push(
-      buildLibraryHref("/plutos-library/search", {
-        q: query,
-        category,
-        verification
-      })
-    );
+    router.push(buildLibraryHref("/plutos-library/search", { q: query }));
     setOpen(false);
   };
 
@@ -96,25 +77,25 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
   };
 
   return (
-    <div>
-      <form
-        action="/plutos-library/search"
-        className="mt-10 grid gap-3 rounded-3xl border border-neutral-200 bg-white p-3 shadow-card lg:grid-cols-[1fr_auto_auto_auto]"
-        onSubmit={(event) => {
-          event.preventDefault();
-          submitSearch();
-        }}
-        ref={wrapperRef}
-      >
-        <div className="relative">
-          <label className="flex min-h-14 items-center gap-3 rounded-2xl bg-neutral-50 px-4">
-            <Search aria-hidden="true" className="h-5 w-5 text-violet-600" />
+    <form
+      action="/plutos-library/search"
+      className="relative z-30 mx-auto mt-7 -mb-12 max-w-[44rem] rounded-lg border border-white/28 bg-violet-400/28 p-2.5 shadow-[0_18px_42px_rgba(25,16,78,0.34)] backdrop-blur-xl sm:-mb-14 sm:p-3"
+      onSubmit={(event) => {
+        event.preventDefault();
+        submitSearch();
+      }}
+      ref={wrapperRef}
+    >
+      <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+        <div className="relative min-w-0">
+          <label className="flex min-h-10 items-center gap-2 rounded-md border border-white/10 bg-white/16 px-3 transition focus-within:border-lime-400/70 focus-within:ring-2 focus-within:ring-lime-400/15">
+            <Search aria-hidden="true" className="h-4 w-4 shrink-0 text-white/74" />
             <span className="sr-only">Search Discover</span>
             <input
               aria-autocomplete="list"
               aria-controls={listboxId}
               aria-expanded={open}
-              className="w-full bg-transparent type-body-md outline-none placeholder:text-neutral-500"
+              className="h-full min-h-10 w-full bg-transparent py-0 text-[0.72rem] font-medium leading-none text-white outline-none placeholder:text-white/48"
               name="q"
               onChange={(event) => {
                 const value = event.target.value;
@@ -144,14 +125,14 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
                   setOpen(false);
                 }
               }}
-              placeholder="Search tools or describe what you want to do..."
+              placeholder="What are you trying to create, solve or automate?"
               role="combobox"
               value={query}
             />
-                      {query ? (
+            {query ? (
               <button
                 aria-label="Clear search"
-                className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-neutral-500 transition hover:bg-white hover:text-violet-600"
+                className="grid h-7 w-7 shrink-0 place-items-center rounded-full text-white/58 transition hover:bg-white/10 hover:text-white"
                 onClick={() => {
                   setQuery("");
                   setSuggestions([]);
@@ -161,20 +142,20 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
                 }}
                 type="button"
               >
-                <X aria-hidden="true" className="h-5 w-5" />
+                <X aria-hidden="true" className="h-3.5 w-3.5" />
               </button>
             ) : null}
           </label>
           {open ? (
             <div
               aria-label="Search suggestions"
-              className="absolute z-20 mt-2 w-full overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-elevated"
+              className="absolute z-50 mt-2 w-full overflow-hidden rounded-lg border border-white/18 bg-[#111025] p-1.5 shadow-overlay"
               id={listboxId}
               role="listbox"
             >
               {loading ? (
-                <div className="flex items-center gap-2 px-4 py-3 type-label-md text-neutral-600">
-                  <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />
+                <div className="flex min-h-10 items-center gap-2 rounded-md px-3 text-[0.76rem] font-semibold text-white/72">
+                  <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />
                   Loading suggestions
                 </div>
               ) : suggestions.length > 0 ? (
@@ -182,8 +163,8 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
                   <button
                     aria-selected={activeIndex === index}
                     className={cn(
-                      "flex min-h-12 w-full items-center justify-between gap-3 px-4 text-left type-label-md transition hover:bg-neutral-50",
-                      activeIndex === index && "bg-violet-50"
+                      "flex min-h-10 w-full items-center justify-between gap-3 rounded-md px-3 text-left text-[0.76rem] font-semibold text-white/78 transition hover:bg-white/8 hover:text-white",
+                      activeIndex === index && "bg-violet-500/18 text-white"
                     )}
                     key={`${suggestion.type}-${suggestion.href}`}
                     onMouseDown={(event) => event.preventDefault()}
@@ -191,63 +172,32 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
                     role="option"
                     type="button"
                   >
-                    <span>
-                      <span className="block type-label-md text-neutral-900">{suggestion.label}</span>
-                      <span className="type-overline text-neutral-500">
+                    <span className="min-w-0">
+                      <span className="block truncate text-white">{suggestion.label}</span>
+                      <span className="block truncate text-[0.64rem] uppercase tracking-[0.06em] text-white/52">
                         {suggestion.type} {suggestion.meta ? `- ${suggestion.meta}` : ""}
                       </span>
                     </span>
-                    <ArrowRight aria-hidden="true" className="h-4 w-4 text-violet-600" />
+                    <ArrowRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0 text-lime-400" />
                   </button>
                 ))
               ) : (
-                <div className="px-4 py-3 type-label-md text-neutral-600">No matches found</div>
+                <div className="px-3 py-2 text-[0.76rem] font-semibold text-white/68">No matches found</div>
               )}
             </div>
           ) : null}
         </div>
 
-        <label className="sr-only" htmlFor="library-category-filter">
-          Category filter
-        </label>
-        <select
-          className="min-h-14 rounded-2xl border border-neutral-200 bg-white px-3 type-label-md"
-          id="library-category-filter"
-          name="category"
-          onChange={(event) => setCategory(event.target.value)}
-          value={category}
+        <button
+          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md bg-gradient-to-b from-violet-500 to-violet-600 px-4 text-[0.72rem] font-bold leading-none text-white shadow-[0_10px_24px_rgba(108,77,255,0.24)] transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-lime-400/25"
+          type="submit"
         >
-          <option value="">All categories</option>
-          {categories.map((item) => (
-            <option key={item.id} value={item.slug}>
-              {item.name}
-            </option>
-          ))}
-        </select>
+          Find my tools
+        </button>
+      </div>
 
-        <label className="sr-only" htmlFor="library-verification-filter">
-          Verification filter
-        </label>
-        <select
-          className="min-h-14 rounded-2xl border border-neutral-200 bg-white px-3 type-label-md"
-          id="library-verification-filter"
-          name="verification"
-          onChange={(event) => setVerification(event.target.value)}
-          value={verification}
-        >
-          {verificationOptions.map(([value, label]) => (
-            <option key={label} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
-
-        <Button type="submit">
-          Search <ArrowRight aria-hidden="true" className="h-4 w-4" />
-        </Button>
-      </form>
-
-      <div className="mt-5 flex gap-2 overflow-x-auto pb-2 sm:flex-wrap">
+      <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5">
+        <span className="mr-1 text-[0.62rem] font-semibold leading-none text-white/46">Try:</span>
         {quickSearches.map((chip) => {
           const href = buildLibraryHref("/plutos-library/search", {
             q: chip.params.query,
@@ -258,11 +208,10 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
 
           return (
             <button
-              className="focus-ring min-h-11 shrink-0 rounded-lg border border-neutral-200 bg-white px-3 py-2 type-label-md text-neutral-700 transition hover:border-violet-500 hover:text-violet-600"
+              className="focus-ring min-h-6 shrink-0 rounded-full border border-white/10 bg-white/10 px-2.5 text-[0.58rem] font-semibold leading-none text-white/66 transition hover:border-lime-400/40 hover:text-white"
               key={chip.id}
               onClick={() => {
                 setQuery(chip.params.query);
-                setCategory(chip.params.category ?? "");
                 router.push(href);
               }}
               type="button"
@@ -272,8 +221,6 @@ export function LibrarySearch({ categories, initial }: LibrarySearchProps) {
           );
         })}
       </div>
-    </div>
+    </form>
   );
 }
-
-

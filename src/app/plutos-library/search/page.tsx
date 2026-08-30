@@ -2,13 +2,12 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { LibrarySearch } from "@/components/library/library-search";
 import { SearchResults } from "@/components/library/search-results";
-import { getLibrarySearchResults, plutosLibrary } from "@/lib/plutos-library";
+import { getLibrarySearchResults } from "@/lib/plutos-library";
 
 type LibrarySearchPageProps = {
   searchParams: Promise<{
     q?: string;
     category?: string;
-    subcategory?: string;
     pricing?: string;
     platform?: string;
     api?: string;
@@ -23,7 +22,6 @@ export default async function LibrarySearchPage({ searchParams }: LibrarySearchP
   const result = getLibrarySearchResults({
     query: params.q,
     category: params.category,
-    subcategory: params.subcategory,
     pricing: params.pricing,
     platform: params.platform,
     api: params.api,
@@ -51,15 +49,12 @@ export default async function LibrarySearchPage({ searchParams }: LibrarySearchP
           Search AI tools
         </h1>
         <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
-          Search by tool name, description, category, subcategory, features,
+          Search by tool name, description, category, features,
           best-for use cases, audience, platform and API availability.
         </p>
         <LibrarySearch
-          categories={plutosLibrary.categories}
           initial={{
-            q: params.q,
-            category: params.category,
-            verification: params.verification
+            q: params.q
           }}
         />
       </section>

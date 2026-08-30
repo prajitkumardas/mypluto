@@ -3,7 +3,13 @@
 @tailwind utilities;
 
 :root {
+  --page-gutter: clamp(1rem, 4vw, 5rem);
+  --page-max: 90rem;
   --section-heading-color: rgb(200, 255, 90);
+  --text-reveal-muted: rgba(235, 229, 255, 0.22);
+  --text-reveal-mid: rgba(235, 229, 255, 0.62);
+  --text-reveal-active: rgba(248, 246, 255, 0.92);
+  --text-reveal-emphasis: #ffffff;
 
   color: #ffffff;
   background: #080817;
@@ -14,7 +20,9 @@
 }
 
 html {
+  overflow-x: clip;
   scroll-behavior: smooth;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -22,6 +30,8 @@ body {
   flex-direction: column;
   margin: 0;
   min-height: 100vh;
+  min-width: 320px;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 50% 18%, rgba(88, 56, 204, 0.18), transparent 33rem),
     radial-gradient(circle at 50% 42%, rgba(40, 22, 104, 0.22), transparent 42rem),
@@ -60,6 +70,100 @@ button:disabled {
 
 .focus-ring:focus-visible {
   outline-color: #c8ff5a;
+}
+.pf-select-trigger {
+  display: flex;
+  min-height: 3.25rem;
+  width: 100%;
+  min-width: min(13rem, 100%);
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(21, 21, 31, 0.66);
+  color: #ffffff;
+  padding: 0 1.2rem;
+  font-family: var(--font-body);
+  font-size: var(--text-label-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-label-lg);
+  letter-spacing: var(--tracking-label-lg);
+  text-align: left;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px) saturate(125%);
+  outline: none;
+  transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+
+.pf-select-trigger:hover,
+.pf-select-trigger:focus-visible,
+.pf-select-trigger[data-state="open"],
+.pf-select-trigger[aria-expanded="true"] {
+  border-color: rgba(168, 137, 255, 0.46);
+  background: rgba(111, 82, 255, 0.16);
+  color: #ffffff;
+}
+
+.pf-select-trigger:focus-visible {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 4px rgba(139, 92, 246, 0.18);
+}
+
+.pf-select-trigger:disabled {
+  opacity: 0.54;
+}
+
+.pf-select-content {
+  z-index: 90;
+  min-width: min(17rem, calc(100vw - 2rem));
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 1.15rem;
+  background: rgba(17, 16, 37, 0.96);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(18px) saturate(125%);
+}
+
+.pf-select-item {
+  display: flex;
+  min-height: 2.75rem;
+  width: 100%;
+  cursor: pointer;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  padding: 0 0.95rem;
+  font-family: var(--font-body);
+  font-size: var(--text-label-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-label-md);
+  letter-spacing: var(--tracking-label-md);
+  text-align: left;
+  outline: none;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.pf-select-item:hover,
+.pf-select-item:focus-visible,
+.pf-select-item[data-highlighted],
+.pf-select-item[data-state="checked"],
+.pf-select-item[aria-selected="true"] {
+  background: rgba(124, 99, 255, 0.2);
+  color: #ffffff;
+}
+
+@media (max-width: 700px) {
+  .pf-select-trigger {
+    min-height: 3rem;
+    padding-inline: 1rem;
+    font-size: var(--text-label-md);
+    line-height: var(--leading-label-md);
+    letter-spacing: var(--tracking-label-md);
+  }
 }
 
 .orbit-grid {
@@ -142,11 +246,26 @@ select {
   color: #ffffff;
 }
 
+img,
+video,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
 input::placeholder,
 textarea::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
+button[class*="rounded-"],
+input[class*="rounded-"]:not([type="checkbox"]):not([type="radio"]),
+textarea[class*="rounded-"],
+select[class*="rounded-"],
+label[class*="rounded-"]:has(input:not([type="checkbox"]):not([type="radio"]), textarea, select) {
+  border-radius: 999px;
+}
 .nav-link {
   min-height: 40px;
   border-radius: 10px;
@@ -394,15 +513,3 @@ textarea::placeholder {
     transition-duration: 0.01ms !important;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-

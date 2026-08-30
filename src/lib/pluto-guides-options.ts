@@ -5,6 +5,16 @@ export type GuideOption = {
   terms: string[];
 };
 
+export type SelectionMode = "single" | "multiple";
+
+export interface GuideQuestion {
+  id: string;
+  selectionMode: SelectionMode;
+  minSelections?: number;
+  maxSelections?: number;
+  options: GuideOption[];
+}
+
 export type GuideGoal = GuideOption & {
   tasks: GuideOption[];
 };

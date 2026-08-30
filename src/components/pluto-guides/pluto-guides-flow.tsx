@@ -4,17 +4,24 @@ import Link from "next/link";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
+  BookOpen,
+  Briefcase,
   Check,
+  Code2,
   Heart,
   Loader2,
+  PenLine,
   RotateCcw,
   Search,
+  Settings,
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
   WalletCards
 } from "lucide-react";
+import { CompareButton } from "@/components/compare/compare-button";
 import { Button } from "@/components/ui/button";
+import { HeroVeil } from "@/components/shared/hero-veil";
 import { useCompareStore } from "@/lib/compare-store";
 import {
   emptyGuideAnswers,
@@ -24,7 +31,9 @@ import {
   guidePreferences,
   guideRequirements,
   type GuideAnswers,
-  type GuideRecommendation
+  type GuideOption,
+  type GuideRecommendation,
+  type SelectionMode
 } from "@/lib/pluto-guides-options";
 import { cn } from "@/lib/utils";
 
@@ -113,58 +122,28 @@ export function PlutoGuidesFlow() {
   };
 
   return (
-    <main className="bg-canvas text-white">
-      <section className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
+    <main className="relative isolate overflow-hidden bg-canvas text-white">
+      <HeroVeil className="h-[32rem] opacity-60" />
+      <section className="relative z-10 mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
         {screen === "intro" ? (
           <IntroScreen onStart={() => setScreen("questions")} />
         ) : null}
 
         {screen === "questions" ? (
-          <section className="mx-auto max-w-5xl">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="type-overline text-lime-300">Pluto Guides</p>
-                <h1 className="mt-3 type-h2 text-white">Find the right AI tools in four questions.</h1>
-                <p className="mt-3 max-w-2xl type-body-md text-white/68">
-                  Answer only what matters. Pluto ranks the library with explainable matches.
-                </p>
-              </div>
-              <Button className="w-fit" onClick={startAgain} type="button" variant="outline">
-                <RotateCcw aria-hidden="true" className="h-5 w-5" />
-                Start over
-              </Button>
-            </div>
-
-            <Progress step={step} />
-
-            <div className="mt-8 rounded-3xl border border-white/12 bg-white/8 p-5 shadow-card backdrop-blur sm:p-7">
-              {step === 0 ? <GoalQuestion answers={answers} updateAnswers={updateAnswers} /> : null}
-              {step === 1 ? (
-                <TaskQuestion answers={answers} currentGoal={currentGoal} updateAnswers={updateAnswers} />
-              ) : null}
-              {step === 2 ? <PreferencesQuestion answers={answers} updateAnswers={updateAnswers} /> : null}
-              {step === 3 ? <RequirementsQuestion answers={answers} updateAnswers={updateAnswers} /> : null}
-
-              {error ? <p className="mt-5 type-label-md text-rose-200">{error}</p> : null}
-
-              <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <Button
-                  onClick={() => {
-                    if (step === 0) setScreen("intro");
-                    else setStep((value) => value - 1);
-                  }}
-                  type="button"
-                  variant="outline"
-                >
-                  Back
-                </Button>
-                <Button disabled={!canContinue} onClick={handleNext} type="button">
-                  {step === steps.length - 1 ? "See recommendations" : "Continue"}
-                  <ArrowRight aria-hidden="true" className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-          </section>
+          <GuideQuestionScreen
+            answers={answers}
+            canContinue={canContinue}
+            currentGoal={currentGoal}
+            error={error}
+            onBack={() => {
+              if (step === 0) setScreen("intro");
+              else setStep((value) => value - 1);
+            }}
+            onContinue={handleNext}
+            onSaveExit={() => setScreen("intro")}
+            step={step}
+            updateAnswers={updateAnswers}
+          />
         ) : null}
 
         {screen === "loading" ? <LoadingScreen /> : null}
@@ -186,109 +165,210 @@ export function PlutoGuidesFlow() {
 
 function IntroScreen({ onStart }: { onStart: () => void }) {
   return (
-    <section className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-      <div>
-        <p className="type-overline text-lime-300">Pluto Guides</p>
-        <h1 className="mt-4 type-h1 text-white">AI tool recommendations without the guesswork.</h1>
-        <p className="mt-5 max-w-2xl type-body-xl text-white/70">
-          Tell Pluto your goal, task, preferences, and requirements. Get up to five ranked tools with reasons you can actually compare.
-        </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-          <Button onClick={onStart} type="button">
-            Start guide <Sparkles aria-hidden="true" className="h-5 w-5" />
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/plutos-library">
-              Browse Discover <Search aria-hidden="true" className="h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
-      </div>
-      <div className="rounded-3xl border border-white/12 bg-white/8 p-5 shadow-card backdrop-blur">
-        <div className="grid gap-3">
-          {steps.map((item, index) => (
-            <div className="flex items-center gap-3 rounded-2xl bg-white/8 p-4" key={item}>
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-violet-500/24 type-label-md text-white">
+    <section className="mx-auto flex min-h-[31rem] max-w-6xl flex-col items-center justify-center py-8 text-center lg:py-12">
+      <p className="type-overline text-lime-300">Pluto Guides</p>
+      <h1 className="mt-5 max-w-5xl type-h1 text-white">
+        Find the right AI tools - without the guesswork.
+      </h1>
+      <p className="mt-6 max-w-2xl type-body-lg text-white/72">
+        Answer four focused questions. Pluto will rank the best matches from the Discover library and explain why each tool fits.
+      </p>
+
+      <ol className="mt-7 grid w-full max-w-5xl gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+        {steps.map((item, index) => (
+          <li className="relative" key={item}>
+            {index > 0 ? (
+              <span
+                aria-hidden="true"
+                className="absolute right-[calc(100%+0.35rem)] top-1/2 hidden h-px w-7 -translate-y-1/2 bg-gradient-to-r from-transparent via-violet-400/70 to-violet-400/70 lg:block"
+              />
+            ) : null}
+            <span className="flex min-h-12 items-center gap-3 rounded-full border border-white/14 bg-[rgba(29,29,42,0.72)] px-3 pr-5 text-left shadow-[0_12px_34px_rgba(0,0,0,0.22),inset_0_1px_0_rgba(255,255,255,0.045)] backdrop-blur-[18px]">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 type-label-md text-white">
                 {index + 1}
               </span>
-              <span>
-                <span className="block type-label-md text-white">{item}</span>
-                <span className="type-body-sm text-white/58">One focused answer, then move on.</span>
-              </span>
-            </div>
-          ))}
+              <span className="type-label-sm text-white/86">{item}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+
+      <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <Button className="min-w-40" onClick={onStart} type="button">
+          Start guide <Sparkles aria-hidden="true" className="h-5 w-5" />
+        </Button>
+        <Button asChild className="min-w-40" variant="outline">
+          <Link href="/plutos-library">
+            Browse Discover <Search aria-hidden="true" className="h-5 w-5" />
+          </Link>
+        </Button>
+      </div>
+
+      <p className="mt-5 type-body-sm text-white/48">Takes about 2 minutes - No account required</p>
+    </section>
+  );
+}
+function Progress({ step }: { step: number }) {
+  const percentComplete = (step + 1) * 25;
+
+  return (
+    <div className="mx-auto mt-7 max-w-4xl">
+      <div className="flex items-center justify-between type-label-sm text-white/72">
+        <span>{`Step ${step + 1} of 4`}</span>
+        <span>{`${percentComplete}% complete`}</span>
+      </div>
+      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+        <span
+          className="block h-full rounded-full bg-gradient-to-r from-violet-500 to-violet-400 transition-[width]"
+          style={{ width: `${percentComplete}%` }}
+        />
+      </div>
+      <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {steps.map((item, index) => (
+          <li
+            className={cn(
+              "flex min-h-10 items-center justify-center gap-2 type-label-sm text-white/58",
+              index === step && "text-white",
+              index < step && "text-white/76"
+            )}
+            key={item}
+          >
+            <span
+              className={cn(
+                "grid h-7 w-7 place-items-center rounded-full bg-white/10 text-white/70",
+                index === step && "bg-violet-500 text-white",
+                index < step && "bg-violet-500/55 text-white"
+              )}
+            >
+              {index + 1}
+            </span>
+            {index === step ? <span className="text-lime-300">|</span> : null}
+            <span>{item}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function GuideQuestionScreen({
+  answers,
+  canContinue,
+  currentGoal,
+  error,
+  onBack,
+  onContinue,
+  onSaveExit,
+  step,
+  updateAnswers
+}: {
+  answers: GuideAnswers;
+  canContinue: boolean;
+  currentGoal?: (typeof guideGoals)[number];
+  error: string;
+  onBack: () => void;
+  onContinue: () => void;
+  onSaveExit: () => void;
+  step: number;
+  updateAnswers: (partial: Partial<GuideAnswers>) => void;
+}) {
+  return (
+    <section className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-4xl text-center">
+        <p className="type-overline text-lime-300">Pluto Guides</p>
+        <h1 className="mt-3 type-h1 text-white">Let&apos;s find your best-fit AI tools.</h1>
+        <p className="mt-3 type-body-md text-white/68">
+          Four quick questions. Choose the answer that feels closest - you can adjust it later.
+        </p>
+      </div>
+
+      <Progress step={step} />
+
+      <div className="mt-7 rounded-[1.35rem] border border-[rgba(255,255,255,0.16)] bg-[rgba(29,29,42,0.72)] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.26),inset_0_1px_0_rgba(255,255,255,0.045)] backdrop-blur-[18px] sm:p-7">
+        {step === 0 ? <GoalQuestion answers={answers} updateAnswers={updateAnswers} /> : null}
+        {step === 1 ? <TaskQuestion answers={answers} currentGoal={currentGoal} updateAnswers={updateAnswers} /> : null}
+        {step === 2 ? <PreferencesQuestion answers={answers} updateAnswers={updateAnswers} /> : null}
+        {step === 3 ? <RequirementsQuestion answers={answers} updateAnswers={updateAnswers} /> : null}
+
+        {error ? <p className="mt-5 type-label-md text-rose-200">{error}</p> : null}
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-3 sm:items-end">
+          <Button className="justify-self-start" onClick={onBack} type="button" variant="outline">
+            Back
+          </Button>
+          <button className="justify-self-center type-label-sm text-white/86 transition hover:text-lime-300" onClick={onSaveExit} type="button">
+            Save & exit
+          </button>
+          <div className="grid justify-self-stretch sm:justify-self-end">
+            <Button disabled={!canContinue} onClick={onContinue} type="button">
+              {step === steps.length - 1 ? "See recommendations" : "Continue"}
+              <ArrowRight aria-hidden="true" className="h-5 w-5" />
+            </Button>
+            <span className="mt-2 text-center type-label-sm text-white/38 sm:text-right">Press Enter</span>
+          </div>
         </div>
       </div>
     </section>
   );
 }
 
-function Progress({ step }: { step: number }) {
-  return (
-    <ol className="mt-8 grid gap-2 sm:grid-cols-4">
-      {steps.map((item, index) => (
-        <li
-          className={cn(
-            "rounded-2xl border border-white/12 bg-white/6 px-4 py-3 type-label-md text-white/60",
-            index <= step && "border-violet-300/40 bg-violet-500/18 text-white"
-          )}
-          key={item}
-        >
-          {index + 1}. {item}
-        </li>
-      ))}
-    </ol>
-  );
-}
-
 function GoalQuestion({ answers, updateAnswers }: QuestionProps) {
   return (
-    <QuestionShell eyebrow="Question 1" title="What is your main goal?">
-      <OptionGrid>
-        {guideGoals.map((goal) => (
-          <OptionButton
-            active={answers.goal === goal.id}
-            description={goal.description}
-            key={goal.id}
-            label={goal.label}
-            onClick={() => updateAnswers({ goal: goal.id, primaryTask: "", relatedTasks: [] })}
-          />
-        ))}
-      </OptionGrid>
+    <QuestionShell eyebrow="Question 1" title="What would you mainly like to accomplish?" copy="Choose one primary goal. This helps Pluto narrow the right category first.">
+      <GuideOptions
+        legend="What would you mainly like to accomplish?"
+        minSelections={1}
+        name="guide-goal"
+        onChange={(value) => updateAnswers({ goal: value as string, primaryTask: "", relatedTasks: [] })}
+        options={guideGoals}
+        selectionMode="single"
+        value={answers.goal}
+        iconForOption={(goal) => <GoalIcon goalId={goal.id} />}
+      />
     </QuestionShell>
   );
 }
 
+function GoalIcon({ goalId }: { goalId: string }) {
+  const iconClassName = "h-6 w-6";
+
+  if (goalId === "create-content") return <PenLine aria-hidden="true" className={iconClassName} />;
+  if (goalId === "automate-work") return <Settings aria-hidden="true" className={iconClassName} />;
+  if (goalId === "research-learn") return <BookOpen aria-hidden="true" className={iconClassName} />;
+  if (goalId === "build-products") return <Code2 aria-hidden="true" className={iconClassName} />;
+
+  return <Briefcase aria-hidden="true" className={iconClassName} />;
+}
+
 function TaskQuestion({ answers, currentGoal, updateAnswers }: QuestionProps & { currentGoal?: (typeof guideGoals)[number] }) {
+  const relatedTasks = (currentGoal?.tasks ?? []).filter((task) => task.id !== answers.primaryTask);
+
   return (
-    <QuestionShell eyebrow="Question 2" title="Which task should the tool help with?">
-      <OptionGrid>
-        {(currentGoal?.tasks ?? []).map((task) => (
-          <OptionButton
-            active={answers.primaryTask === task.id}
-            description={task.description}
-            key={task.id}
-            label={task.label}
-            onClick={() => updateAnswers({ primaryTask: task.id })}
-          />
-        ))}
-      </OptionGrid>
-      {answers.primaryTask ? (
-        <div className="mt-6">
-          <p className="type-label-md text-white/76">Optional related tasks</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {(currentGoal?.tasks ?? [])
-              .filter((task) => task.id !== answers.primaryTask)
-              .map((task) => (
-                <ChipToggle
-                  active={answers.relatedTasks.includes(task.id)}
-                  key={task.id}
-                  label={task.label}
-                  onClick={() => toggleList(answers.relatedTasks, task.id, (items) => updateAnswers({ relatedTasks: items }), 2)}
-                />
-              ))}
-          </div>
-        </div>
+    <QuestionShell eyebrow="Question 2" title="Which task should the tool help with?" copy="Choose the closest task. Pluto will use this to sharpen the ranking.">
+      <GuideOptions
+        legend="Which task should the tool help with?"
+        minSelections={1}
+        name="guide-primary-task"
+        onChange={(value) => updateAnswers({ primaryTask: value as string })}
+        options={currentGoal?.tasks ?? []}
+        selectionMode="single"
+        value={answers.primaryTask}
+        iconForOption={() => <Settings aria-hidden="true" className="h-5 w-5" />}
+      />
+
+      {answers.primaryTask && relatedTasks.length > 0 ? (
+        <GuideOptions
+          className="mt-6"
+          heading="Optional related tasks"
+          legend="Optional related tasks"
+          maxSelections={2}
+          name="guide-related-tasks"
+          onChange={(value) => updateAnswers({ relatedTasks: value as string[] })}
+          options={relatedTasks}
+          selectionMode="multiple"
+          value={answers.relatedTasks}
+          iconForOption={() => <Sparkles aria-hidden="true" className="h-5 w-5" />}
+        />
       ) : null}
     </QuestionShell>
   );
@@ -296,84 +376,268 @@ function TaskQuestion({ answers, currentGoal, updateAnswers }: QuestionProps & {
 
 function PreferencesQuestion({ answers, updateAnswers }: QuestionProps) {
   return (
-    <QuestionShell eyebrow="Question 3" title="What should Pluto prioritize?">
-      <p className="mt-2 type-body-sm text-white/60">Choose up to three. No strong preference clears other choices.</p>
-      <div className="mt-5 flex flex-wrap gap-2">
-        {guidePreferences.map((preference) => (
-          <ChipToggle
-            active={answers.preferences.includes(preference.id)}
-            key={preference.id}
-            label={preference.label}
-            onClick={() => {
-              if (preference.id === "no-strong-preference") {
-                updateAnswers({ preferences: [preference.id] });
-                return;
-              }
-              const current = answers.preferences.filter((item) => item !== "no-strong-preference");
-              toggleList(current, preference.id, (items) => updateAnswers({ preferences: items }), 3);
-            }}
-          />
-        ))}
-      </div>
+    <QuestionShell eyebrow="Question 3" title="What should Pluto prioritize?" copy="Choose up to three priorities. No strong preference clears the others.">
+      <GuideOptions
+        alwaysEnabledOptionIds={["no-strong-preference"]}
+        legend="What should Pluto prioritize?"
+        maxSelections={3}
+        name="guide-preferences"
+        onChange={(value) => {
+          const next = value as string[];
+          if (next.includes("no-strong-preference") && !answers.preferences.includes("no-strong-preference")) {
+            updateAnswers({ preferences: ["no-strong-preference"] });
+            return;
+          }
+          updateAnswers({ preferences: next.filter((item) => item !== "no-strong-preference").slice(0, 3) });
+        }}
+        options={guidePreferences}
+        selectionMode="multiple"
+        value={answers.preferences}
+        iconForOption={() => <Sparkles aria-hidden="true" className="h-5 w-5" />}
+      />
     </QuestionShell>
   );
 }
 
 function RequirementsQuestion({ answers, updateAnswers }: QuestionProps) {
   return (
-    <QuestionShell eyebrow="Question 4" title="What requirements matter?">
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div>
-          <p className="flex items-center gap-2 type-label-md text-white">
+    <QuestionShell eyebrow="Question 4" title="What requirements matter?" copy="Set the budget, platform, and any must-have constraints before Pluto ranks the matches.">
+      <GuideOptions
+        className="mt-6"
+        heading={(
+          <span className="inline-flex items-center gap-2">
             <WalletCards aria-hidden="true" className="h-5 w-5 text-lime-300" />
             Budget required
-          </p>
-          <div className="mt-3 grid gap-2">
-            {guideBudgets.map((budget) => (
-              <OptionButton
-                active={answers.budget === budget.id}
-                compact
-                description={budget.description}
-                key={budget.id}
-                label={budget.label}
-                onClick={() => updateAnswers({ budget: budget.id })}
-              />
-            ))}
-          </div>
-        </div>
-        <div>
-          <p className="type-label-md text-white">Platform optional</p>
-          <div className="mt-3 grid gap-2">
-            {guidePlatforms.map((platform) => (
-              <OptionButton
-                active={answers.platform === platform.id}
-                compact
-                description={platform.description}
-                key={platform.label}
-                label={platform.label}
-                onClick={() => updateAnswers({ platform: platform.id })}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="mt-6">
-        <p className="type-label-md text-white">Optional requirements</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {guideRequirements.map((requirement) => (
-            <ChipToggle
-              active={answers.requirements.includes(requirement.id)}
-              key={requirement.id}
-              label={requirement.label}
-              onClick={() => toggleList(answers.requirements, requirement.id, (items) => updateAnswers({ requirements: items }))}
-            />
-          ))}
-        </div>
-      </div>
+          </span>
+        )}
+        legend="Budget required"
+        minSelections={1}
+        name="guide-budget"
+        onChange={(value) => updateAnswers({ budget: value as string })}
+        options={guideBudgets}
+        selectionMode="single"
+        value={answers.budget}
+        iconForOption={() => <WalletCards aria-hidden="true" className="h-5 w-5" />}
+      />
+
+      <GuideOptions
+        className="mt-6"
+        heading="Platform optional"
+        instruction="Choose one option, or keep no platform preference."
+        legend="Platform optional"
+        name="guide-platform"
+        onChange={(value) => updateAnswers({ platform: value as string })}
+        options={guidePlatforms}
+        selectionMode="single"
+        value={answers.platform}
+        iconForOption={() => <Search aria-hidden="true" className="h-5 w-5" />}
+      />
+
+      <GuideOptions
+        className="mt-6"
+        heading="Optional requirements"
+        legend="Optional requirements"
+        name="guide-requirements"
+        onChange={(value) => updateAnswers({ requirements: value as string[] })}
+        options={guideRequirements}
+        selectionMode="multiple"
+        value={answers.requirements}
+        iconForOption={() => <ShieldCheck aria-hidden="true" className="h-5 w-5" />}
+      />
     </QuestionShell>
   );
 }
 
+type GuideOptionsProps = {
+  alwaysEnabledOptionIds?: string[];
+  className?: string;
+  heading?: ReactNode;
+  iconForOption: (option: GuideOption) => ReactNode;
+  instruction?: string;
+  legend: string;
+  maxSelections?: number;
+  minSelections?: number;
+  name: string;
+  onChange: (value: string | string[]) => void;
+  options: GuideOption[];
+  selectionMode: SelectionMode;
+  value: string | string[];
+};
+
+function GuideOptions({
+  alwaysEnabledOptionIds = [],
+  className,
+  heading,
+  iconForOption,
+  instruction,
+  legend,
+  maxSelections,
+  minSelections,
+  name,
+  onChange,
+  options,
+  selectionMode,
+  value
+}: GuideOptionsProps) {
+  const selectedValues = Array.isArray(value) ? value : [value];
+  const selectedCount = Array.isArray(value) ? value.length : value ? 1 : 0;
+  const hintId = `${name}-hint`;
+  const counterId = `${name}-counter`;
+  const describedBy = selectionMode === "multiple" && maxSelections ? `${hintId} ${counterId}` : hintId;
+
+  const handleSelect = (optionId: string) => {
+    if (selectionMode === "single") {
+      onChange(optionId);
+      return;
+    }
+
+    if (selectedValues.includes(optionId)) {
+      onChange(selectedValues.filter((item) => item !== optionId));
+      return;
+    }
+
+    if (maxSelections && selectedCount >= maxSelections && !alwaysEnabledOptionIds.includes(optionId)) return;
+    onChange([...selectedValues.filter(Boolean), optionId]);
+  };
+
+  return (
+    <fieldset className={cn("mt-6", className)}>
+      <legend className="sr-only">{legend}</legend>
+      {heading ? <p className="type-label-md text-white">{heading}</p> : null}
+      <div className={cn("flex flex-wrap items-center justify-between gap-2", heading && "mt-3")}>
+        <p className="type-label-sm text-lime-200" id={hintId}>
+          {instruction ?? getSelectionInstruction(selectionMode, minSelections, maxSelections)}
+        </p>
+        {selectionMode === "multiple" && maxSelections ? (
+          <p className="type-label-sm text-white/48" id={counterId}>
+            {selectedCount} of {maxSelections} selected
+          </p>
+        ) : null}
+      </div>
+      <div
+        aria-describedby={describedBy}
+        className="mt-4 grid items-stretch gap-4 md:grid-cols-2"
+        role={selectionMode === "single" ? "radiogroup" : undefined}
+      >
+        {options.map((option) => {
+          const selected = selectedValues.includes(option.id);
+          const disabled = Boolean(
+            selectionMode === "multiple" &&
+              maxSelections &&
+              selectedCount >= maxSelections &&
+              !selected &&
+              !alwaysEnabledOptionIds.includes(option.id)
+          );
+
+          return (
+            <GuideOptionCard
+              description={option.description}
+              disabled={disabled}
+              icon={iconForOption(option)}
+              id={option.id}
+              key={option.id || "none"}
+              name={name}
+              onSelect={handleSelect}
+              selected={selected}
+              selectionMode={selectionMode}
+              title={option.label}
+            />
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
+
+type GuideOptionCardProps = {
+  description: string;
+  disabled?: boolean;
+  icon: ReactNode;
+  id: string;
+  name: string;
+  onSelect: (id: string) => void;
+  selected: boolean;
+  selectionMode: SelectionMode;
+  title: string;
+};
+
+function GuideOptionCard({
+  description,
+  disabled,
+  icon,
+  id,
+  name,
+  onSelect,
+  selected,
+  selectionMode,
+  title
+}: GuideOptionCardProps) {
+  const optionDomId = `${name}-${id || "none"}`;
+  const descriptionId = `${optionDomId}-description`;
+  const isRadio = selectionMode === "single";
+
+  return (
+    <label
+      className={cn(
+        "group relative flex h-full min-h-24 cursor-pointer items-center gap-5 rounded-[1.125rem] border border-white/14 bg-[rgba(12,12,26,0.55)] px-5 py-4 text-left text-white/82 transition duration-200 focus-within:outline focus-within:outline-2 focus-within:outline-offset-4 focus-within:outline-lime-200 hover:-translate-y-0.5 hover:border-violet-300/48 hover:bg-violet-500/12 sm:min-h-28 sm:px-6 sm:py-5",
+        selected && "border-lime-300 bg-[linear-gradient(90deg,rgba(183,255,75,0.08),rgba(183,255,75,0.018)),rgba(12,12,26,0.62)] text-white shadow-[0_14px_34px_rgba(183,255,75,0.08)]",
+        disabled && "cursor-not-allowed opacity-50 hover:translate-y-0 hover:border-white/14 hover:bg-[rgba(12,12,26,0.55)]",
+        "motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+      )}
+      data-selected={selected}
+      data-disabled={disabled ? "true" : undefined}
+      htmlFor={optionDomId}
+    >
+      <span
+        aria-hidden="true"
+        className={cn(
+          "grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/6 text-violet-300 transition duration-200 group-hover:border-white/18 group-hover:text-violet-100 sm:h-11 sm:w-11",
+          selected && "border-lime-300/35 bg-lime-300/10 text-lime-200",
+          disabled && "group-hover:border-white/10 group-hover:text-violet-300"
+        )}
+      >
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-[18px] font-semibold leading-[1.3] text-white">{title}</span>
+        <span className="mt-1 line-clamp-2 block text-[15px] leading-[1.45] text-white/62" id={descriptionId}>
+          {description}
+        </span>
+      </span>
+      <span className="relative grid h-11 w-11 shrink-0 place-items-center">
+        <input
+          aria-describedby={descriptionId}
+          checked={selected}
+          className={cn(
+            "peer h-8 w-8 cursor-pointer appearance-none border border-white/34 bg-transparent transition duration-200 checked:border-lime-300 checked:bg-lime-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lime-200 disabled:cursor-not-allowed",
+            isRadio ? "rounded-full" : "rounded-md"
+          )}
+          disabled={disabled}
+          id={optionDomId}
+          name={name}
+          onChange={() => onSelect(id)}
+          type={isRadio ? "radio" : "checkbox"}
+          value={id}
+        />
+        <Check
+          aria-hidden="true"
+          className="pointer-events-none absolute h-4 w-4 text-ink-950 opacity-0 transition peer-checked:opacity-100"
+        />
+      </span>
+    </label>
+  );
+}
+
+function getSelectionInstruction(selectionMode: SelectionMode, minSelections?: number, maxSelections?: number) {
+  if (selectionMode === "single") return "Choose one option.";
+  if (minSelections && maxSelections && minSelections !== maxSelections) return `Select ${minSelections}-${maxSelections} options.`;
+  if (minSelections && maxSelections && minSelections === maxSelections) return `Choose ${minSelections} options.`;
+  if (maxSelections) return `Select up to ${maxSelections} options.`;
+  if (minSelections && minSelections > 1) return `Choose at least ${minSelections} options.`;
+  if (minSelections === 1) return "Select at least one option.";
+
+  return "Select all that apply.";
+}
 function LoadingScreen() {
   return (
     <section className="mx-auto grid min-h-[46vh] max-w-3xl place-items-center text-center">
@@ -399,9 +663,7 @@ function ResultsScreen({
   onStartAgain: () => void;
   recommendations: GuideRecommendation[];
 }) {
-  const addTool = useCompareStore((state) => state.addTool);
-
-  return (
+return (
     <section className="mx-auto max-w-6xl">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -442,8 +704,7 @@ function ResultsScreen({
             <ResultCard
               emphasized={index < 3}
               key={recommendation.slug}
-              onCompare={() => addTool(recommendation.slug)}
-              recommendation={recommendation}
+recommendation={recommendation}
             />
           ))}
         </div>
@@ -453,12 +714,9 @@ function ResultsScreen({
 }
 
 function ResultCard({
-  emphasized,
-  onCompare,
-  recommendation
+  emphasized,  recommendation
 }: {
   emphasized: boolean;
-  onCompare: () => void;
   recommendation: GuideRecommendation;
 }) {
   const toggleSaved = useCompareStore((state) => state.toggleSaved);
@@ -508,9 +766,7 @@ function ResultCard({
               Visit tool <ArrowRight aria-hidden="true" className="h-5 w-5" />
             </a>
           </Button>
-          <Button onClick={onCompare} type="button" variant="outline">
-            Add to compare
-          </Button>
+          <CompareButton toolName={recommendation.name} toolSlug={recommendation.slug} type="button" variant="outline" />
           <Button onClick={() => toggleSaved(recommendation.slug)} type="button" variant="outline">
             <Heart aria-hidden="true" className={cn("h-5 w-5", saved && "fill-current")} />
             {saved ? "Saved" : "Save"}
@@ -531,77 +787,14 @@ type QuestionProps = {
   updateAnswers: (partial: Partial<GuideAnswers>) => void;
 };
 
-function QuestionShell({ children, eyebrow, title }: { children: ReactNode; eyebrow: string; title: string }) {
+function QuestionShell({ children, copy, eyebrow, title }: { children: ReactNode; copy: string; eyebrow: string; title: string }) {
   return (
     <div>
       <p className="type-overline text-lime-300">{eyebrow}</p>
       <h2 className="mt-2 type-h3 text-white">{title}</h2>
+      <p className="mt-2 type-body-sm text-white/62">{copy}</p>
       {children}
     </div>
   );
 }
-
-function OptionGrid({ children }: { children: ReactNode }) {
-  return <div className="mt-5 grid gap-3 md:grid-cols-2">{children}</div>;
-}
-
-function OptionButton({
-  active,
-  compact,
-  description,
-  label,
-  onClick
-}: {
-  active: boolean;
-  compact?: boolean;
-  description: string;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      aria-pressed={active}
-      className={cn(
-        "focus-ring rounded-2xl border p-4 text-left transition",
-        compact ? "min-h-20" : "min-h-32",
-        active
-          ? "border-violet-300/70 bg-violet-500/20 text-white"
-          : "border-white/12 bg-white/6 text-white/78 hover:border-white/28 hover:bg-white/10"
-      )}
-      onClick={onClick}
-      type="button"
-    >
-      <span className="block type-label-lg text-white">{label}</span>
-      <span className="mt-2 block type-body-sm text-white/58">{description}</span>
-    </button>
-  );
-}
-
-function ChipToggle({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
-  return (
-    <button
-      aria-pressed={active}
-      className={cn(
-        "focus-ring min-h-11 rounded-full border px-4 type-label-md transition",
-        active
-          ? "border-lime-300/70 bg-lime-300/14 text-lime-100"
-          : "border-white/12 bg-white/6 text-white/70 hover:border-white/28 hover:bg-white/10"
-      )}
-      onClick={onClick}
-      type="button"
-    >
-      {label}
-    </button>
-  );
-}
-
-function toggleList(current: string[], id: string, onChange: (items: string[]) => void, max = 99) {
-  if (current.includes(id)) {
-    onChange(current.filter((item) => item !== id));
-    return;
-  }
-  if (current.length >= max) return;
-  onChange([...current, id]);
-}
-
 

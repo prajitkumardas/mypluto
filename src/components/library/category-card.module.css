@@ -99,7 +99,7 @@
   color: #ffffff;
   font-family: var(--font-display);
   font-size: clamp(1.45rem, 2.2vw, 2.1rem);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: 1.04;
   letter-spacing: 0;
 }

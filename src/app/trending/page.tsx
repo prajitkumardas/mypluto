@@ -1,57 +1,51 @@
-import Link from "next/link";
-import { ArrowRight, TrendingUp } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { trendingTools } from "@/lib/data";
+import type { Metadata } from "next";
+import { HeroVeil } from "@/components/shared/hero-veil";
+import { TrendingLeaderboard } from "@/components/trending/trending-leaderboard";
+import { getTrendingResponse } from "@/lib/trending";
+import styles from "@/components/trending/trending.module.css";
 
-export default function TrendingPage() {
+export const metadata: Metadata = {
+  title: "Trending AI Tools - Pluto Finds",
+  description: "Explore AI tools gaining momentum across research, development, design, productivity and creative workflows.",
+  alternates: {
+    canonical: "/trending"
+  }
+};
+
+type TrendingPageProps = {
+  searchParams: Promise<{
+    period?: string;
+    category?: string;
+  }>;
+};
+
+export default async function TrendingPage({ searchParams }: TrendingPageProps) {
+  const params = await searchParams;
+  const initialResponse = await getTrendingResponse({
+    period: params.period,
+    category: params.category,
+    limit: 20
+  });
+
   return (
-    <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-      <Badge tone="lime">Trending</Badge>
-      <h1 className="mt-4 type-h1 text-neutral-900">
-        Meaningful attention, not fabricated popularity.
-      </h1>
-      <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
-        Trending uses platform signals such as search growth, tool-page views,
-        comparison activity, outbound clicks and recent update interest.
-      </p>
-      <div className="mt-8 flex flex-wrap gap-2">
-        {["Today", "This week", "This month", "Video", "New releases", "Recently updated"].map((item, index) => (
-          <button
-            className={`focus-ring min-h-11 rounded-xl border px-4 type-label-md ${
-              index === 1 ? "border-violet-600 bg-violet-100 text-violet-600" : "border-neutral-200 bg-white"
-            }`}
-            key={item}
-          >
-            {item}
-          </button>
-        ))}
-      </div>
-      <div className="mt-10 overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-card">
-        {trendingTools.map((tool) => (
-          <article
-            className="grid gap-4 border-b border-neutral-200 p-5 last:border-b-0 lg:grid-cols-[72px_1fr_1fr_140px_140px] lg:items-center"
-            key={tool.slug}
-          >
-            <div className="number type-h3 text-neutral-300">
-              {String(tool.rank).padStart(2, "0")}
-            </div>
-            <div>
-              <h2 className="type-h4 text-neutral-900">{tool.name}</h2>
-              <p className="type-body-sm text-neutral-500">{tool.category} / {tool.pricing}</p>
-            </div>
-            <p className="type-body-sm text-neutral-700">{tool.trendingReason}</p>
-            <Badge tone="success">
-              <TrendingUp aria-hidden="true" className="h-3.5 w-3.5" />
-              {tool.movement}
-            </Badge>
-            <Button asChild variant="secondary">
-              <Link href={`/tools/${tool.slug}`}>
-                Open tool <ArrowRight aria-hidden="true" className="h-4 w-4" />
-              </Link>
-            </Button>
-          </article>
-        ))}
+    <main className={styles.page}>
+      <HeroVeil className={styles.background} />
+      <div className={styles.shell}>
+        <section className={styles.hero} aria-labelledby="trending-title">
+          <p className={styles.eyebrow}>Trending now</p>
+          <h1 className={styles.title} id="trending-title">See what the AI world is using right now.</h1>
+          <p className={styles.copy}>
+            Real momentum, measured through discovery, comparisons and community interest.
+          </p>
+          <p className={styles.trustNote}>
+            <span className={styles.trustDot} aria-hidden="true" />
+            <span>Updated daily</span>
+            <span aria-hidden="true">&mdash;</span>
+            <span>Based on real platform signals</span>
+          </p>
+        </section>
+
+        <TrendingLeaderboard initialResponse={initialResponse} />
       </div>
     </main>
   );

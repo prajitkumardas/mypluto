@@ -1,76 +1,135 @@
 import Link from "next/link";
-import { ShieldCheck, Sparkles } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { CategoryCard } from "@/components/library/category-card";
-import { LibrarySearch } from "@/components/library/library-search";
-import { plutosLibrary } from "@/lib/plutos-library";
+import { HeroVeil } from "@/components/shared/hero-veil";
+import { CategoryDiscoverFilters } from "@/components/library/category-discover-filters";
+import { CategoryNavigation } from "@/components/library/category-navigation";
+import { SearchResults } from "@/components/library/search-results";
+import {
+  getLibraryCategory,
+  getLibrarySearchResults,
+  getPlatformOptions,
+  plutosLibrary
+} from "@/lib/plutos-library";
+import styles from "./page.module.css";
 
 type PlutosLibraryPageProps = {
   searchParams: Promise<{
     q?: string;
     category?: string;
+    pricing?: string;
+    platform?: string;
+    api?: string;
     verification?: string;
+    sort?: string;
+    page?: string;
   }>;
 };
 
 export default async function PlutosLibraryPage({ searchParams }: PlutosLibraryPageProps) {
   const params = await searchParams;
+  const category = getLibraryCategory(params.category ?? "");
+  const result = getLibrarySearchResults({
+    query: params.q,
+    category: category?.slug,
+    pricing: params.pricing,
+    platform: params.platform,
+    api: params.api,
+    verification: params.verification,
+    sort: params.sort,
+    page: params.page,
+    limit: 24
+  });
 
   return (
-    <main className="bg-canvas">
-      <section className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-        <nav className="type-label-md text-neutral-500">
-          <Link className="hover:text-violet-600" href="/">
-            Home
-          </Link>{" "}
-          / Discover
-        </nav>
+    <main className={styles.discoverPage}>
+      <HeroVeil className={styles.discoverBackground} />
+      <div className={styles.discoverContent}>
+        <section className={styles.heroShell}>
+          <div className={styles.heroInner}>
+            <nav className={`${styles.breadcrumb} type-label-md`} aria-label="Breadcrumb">
+              <Link href="/">Home</Link>
+              <span className={styles.breadcrumbSeparator}>/</span>
+              <span className={styles.breadcrumbCurrent} aria-current="page">Discover</span>
+              {category ? (
+                <>
+                  <span className={styles.breadcrumbSeparator}>/</span>
+                  <span>{category.name}</span>
+                </>
+              ) : null}
+            </nav>
 
-        <div className="mt-6 max-w-4xl">
-          <Badge tone="violet">
-              <Sparkles aria-hidden="true" className="h-3.5 w-3.5" />
-              Explore 700+ AI tools
-            </Badge>
-          <h1 className="mt-4 type-h1 text-neutral-900">
-              Discover the right AI tool
-            </h1>
-          <p className="mt-5 max-w-2xl type-body-xl text-neutral-700">
-            Browse trusted AI tools by category, use case, platform, pricing, and capability.
-            </p>
-        </div>
-
-        <LibrarySearch
-          categories={plutosLibrary.categories}
-          initial={{
-            q: params.q,
-            category: params.category,
-            verification: params.verification
-          }}
-        />
-      </section>
-
-      <section className="mx-auto max-w-site px-5 pb-16 sm:px-8 xl:px-0">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <Badge tone="lime">
-              <ShieldCheck aria-hidden="true" className="h-3.5 w-3.5" />
-              All categories
-            </Badge>
-            <h2 className="mt-3 type-h2 text-neutral-900">
-              Explore AI tools by category
-            </h2>
+            <div className={styles.heroContent}>
+              <h1 className={styles.heroTitle}>
+                Find the right <span className="type-accent-serif">{category ? `${formatHeroAccent(category.name)} tool` : "AI tool"}</span>
+              </h1>
+              <p className={styles.heroCopy}>
+                {category
+                  ? `Explore trusted tools for ${formatCategoryPurpose(category.name)}.`
+                  : "Search trusted AI tools across every category, then narrow the list with filters."}
+              </p>
+            </div>
           </div>
-        </div>
-        <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {plutosLibrary.categories.map((category) => (
-            <CategoryCard category={category} key={category.id} />
-          ))}
-        </div>
-      </section>
+        </section>
+
+        <section className={styles.resultsShell}>
+          <div className={styles.resultsLayout}>
+            <CategoryNavigation
+              categories={plutosLibrary.categories}
+              currentCategorySlug={category?.slug ?? ""}
+              linkMode="query"
+              variant="section"
+            />
+            <div className={styles.catalogueMain}>
+              <CategoryDiscoverFilters
+                key={[
+                  params.q,
+                  category?.slug,
+                  params.pricing,
+                  params.verification,
+                  params.platform,
+                  params.api,
+                  params.sort
+                ].join("-")}
+                basePath="/plutos-library"
+                categories={plutosLibrary.categories}
+                initial={{
+                  q: params.q,
+                  category: category?.slug,
+                  pricing: params.pricing,
+                  verification: params.verification,
+                  platform: params.platform,
+                  api: params.api,
+                  sort: params.sort
+                }}
+                placement="catalogue"
+                platforms={getPlatformOptions().slice(0, 18)}
+              />
+              <SearchResults compact embedded result={result} basePath="/plutos-library" />
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }
 
+function formatHeroAccent(categoryName: string) {
+  const withoutSuffix = categoryName.replace(/\s*&\s*Content$/i, "").replace(/\s+Tools$/i, "");
 
+  if (withoutSuffix.toLowerCase().startsWith("ai ")) {
+    return `AI ${withoutSuffix.slice(3).toLowerCase()}`;
+  }
+
+  return withoutSuffix.toLowerCase();
+}
+
+function formatCategoryPurpose(categoryName: string) {
+  const normalized = categoryName.replace(/^AI\s+/i, "").toLowerCase();
+
+  if (normalized.includes("writing")) {
+    return "copywriting, blogs, SEO, storytelling, and more";
+  }
+
+  return `${normalized} workflows, use cases, platforms, pricing, and capability`;
+}
 
 

@@ -14,7 +14,7 @@ export default function CategoriesPage() {
       <label className="mt-8 flex min-h-14 max-w-2xl items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 shadow-card">
         <Search aria-hidden="true" className="h-5 w-5 text-violet-600" />
         <span className="sr-only">Search categories</span>
-        <input className="w-full bg-transparent outline-none" placeholder="Search categories and subcategories" />
+        <input className="w-full bg-transparent outline-none" placeholder="Search categories" />
       </label>
       <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {categories.map((category) => {
@@ -39,7 +39,7 @@ export default function CategoriesPage() {
                 {category.count} tools / featured: {featured?.name ?? "Coming soon"}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                {category.subcategories.slice(0, 3).map((item) => (
+                {category.filters.slice(0, 3).map((item) => (
                   <Badge key={item} tone="neutral">{item}</Badge>
                 ))}
               </div>

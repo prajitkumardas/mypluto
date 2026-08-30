@@ -1,26 +1,18 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { ArrowRight, CheckCircle2, Code2, Gift, Globe2, Plus, Share2, Tag } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { CompareButton } from "@/components/compare/compare-button";
+import { ToolLogo } from "@/components/shared/tool-logo";
 import type { LibraryTool } from "@/lib/plutos-library";
-import { useCompareStore } from "@/lib/compare-store";
+import { getFaviconLogoUrl } from "@/lib/tool-logo";
 import { cn } from "@/lib/utils";
 import styles from "./library-tool-card.module.css";
 
-const logoFallback = "/images/home/hero/pluto-cat-mascot.png";
-
 export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
-  const selected = useCompareStore((state) => state.selected);
-  const addTool = useCompareStore((state) => state.addTool);
-  const isSelected = selected.includes(tool.slug);
-  const atLimit = selected.length >= 4 && !isSelected;
   const detailHref = `/plutos-library/tool/${tool.slug}`;
-  const [logoSrc, setLogoSrc] = useState(getLogoUrl(tool));
+  const logoSrc = getFaviconLogoUrl(tool.domain || tool.officialUrl || tool.originalOfficialUrl);
   const verified = tool.verification.status.toLowerCase() === "verified";
-  const platforms = tool.platforms.slice(0, 3);
-  const tags = tool.subcategories.slice(0, 2);
 
   const track = (eventType: string) => {
     void fetch("/api/plutos-library/events", {
@@ -30,39 +22,11 @@ export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
     }).catch(() => undefined);
   };
 
-  const handleCompare = () => {
-    addTool(tool.slug);
-    track("compare");
-  };
-
-  const handleShare = () => {
-    track("share");
-
-    if (typeof window === "undefined") return;
-
-    const url = new URL(detailHref, window.location.origin).toString();
-    if (navigator.share) {
-      void navigator.share({ title: tool.name, text: tool.shortDescription, url }).catch(() => undefined);
-      return;
-    }
-
-    void navigator.clipboard?.writeText(url).catch(() => undefined);
-  };
-
   return (
     <article className={styles.card}>
       <div className={styles.header}>
         <Link className={styles.logoLink} href={detailHref} onClick={() => track("tool_view")}>
-          <span className={styles.logoTile}>
-            <Image
-              alt={`${tool.name} logo`}
-              className={styles.logo}
-              height={128}
-              onError={() => setLogoSrc(logoFallback)}
-              src={logoSrc}
-              width={128}
-            />
-          </span>
+          <ToolLogo className={styles.logoTile} imageClassName={styles.logo} name={tool.name} src={logoSrc} />
         </Link>
 
         <span className={cn(styles.verifiedBadge, !verified && styles.pendingBadge)}>
@@ -78,71 +42,33 @@ export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
 
       <p className={styles.description}>{tool.shortDescription}</p>
 
-      <dl className={styles.facts}>
-        <Fact icon={Tag} label="Pricing" value={tool.pricing.model} />
-        <Fact icon={Gift} label="Free access" value={tool.pricing.freePlan} />
-        <Fact icon={Code2} label="API" value={tool.api.normalized} />
-      </dl>
-
-      <div className={styles.platforms}>
-        <Globe2 aria-hidden="true" />
-        <span>{platforms.length > 0 ? platforms.join(" / ") : "Information not available"}</span>
+      <div className={styles.metaLine}>
+        <span className={styles.priceModel}>{tool.pricing.model || "Unknown"}</span>
+        <span aria-hidden="true" className={styles.metaDot}>Ã¢â‚¬Â¢</span>
+        <span>{formatStartingPrice(tool.pricing.startingPriceRaw)}</span>
       </div>
-
-      {tags.length > 0 ? (
-        <div className={styles.tags}>
-          {tags.map((tag) => (
-            <span className={styles.tag} key={tag}>{tag}</span>
-          ))}
-        </div>
-      ) : null}
 
       <div className={styles.actions}>
         <Link className={cn(styles.actionButton, styles.primaryAction)} href={detailHref} onClick={() => track("tool_view")}>
           View details
           <ArrowRight aria-hidden="true" />
         </Link>
-        <button
-          className={cn(styles.actionButton, styles.secondaryAction, isSelected && styles.selectedAction)}
-          disabled={atLimit}
-          onClick={handleCompare}
-          type="button"
-        >
-          <Plus aria-hidden="true" />
-          {isSelected ? "Added" : atLimit ? "Limit 4" : "Compare"}
-        </button>
-        <button className={cn(styles.actionButton, styles.shareAction)} onClick={handleShare} type="button">
-          <Share2 aria-hidden="true" />
-          Share
-        </button>
+        <CompareButton className={cn(styles.actionButton, styles.secondaryAction)} afterSelection={() => track("compare")} toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
       </div>
     </article>
   );
 }
 
-function Fact({
-  icon: Icon,
-  label,
-  value
-}: {
-  icon: typeof Tag;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className={styles.factRow}>
-      <dt className={styles.factLabel}>
-        <span className={styles.factIcon}>
-          <Icon aria-hidden="true" />
-        </span>
-        {label}
-      </dt>
-      <dd className={styles.factValue}>{value || "Unknown"}</dd>
-    </div>
-  );
-}
+function formatStartingPrice(value: string) {
+  if (!value) return "See pricing";
+  if (value.length <= 26) return value;
 
-function getLogoUrl(tool: LibraryTool) {
-  const domain = tool.domain || tool.officialUrl || tool.originalOfficialUrl;
-  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=128`;
+  const currencyMatch = value.match(/(?:from\s+)?(?:~)?(?:\$|Ã¢â€šÂ¬|Ã‚Â£)\s?\d[\d,.]*(?:\.\d+)?(?:\s?\/\s?(?:mo|month|yr|year))?/i);
+  if (currencyMatch) return `From ${currencyMatch[0].replace(/^from\s+/i, "")}`;
+
+  if (/free/i.test(value)) return "Free plan";
+  if (/custom/i.test(value)) return "Custom pricing";
+  if (/not independently verified|official pricing/i.test(value)) return "See pricing";
+
+  return `${value.slice(0, 23).trim()}...`;
 }

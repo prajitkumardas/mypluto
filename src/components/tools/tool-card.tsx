@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ExternalLink, Plus, Star } from "lucide-react";
+import { ArrowRight, ExternalLink, Star } from "lucide-react";
+import { CompareButton } from "@/components/compare/compare-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { ToolRecord } from "@/lib/data";
@@ -13,13 +14,9 @@ type ToolCardProps = {
 };
 
 export function ToolCard({ tool, variant = "standard" }: ToolCardProps) {
-  const selected = useCompareStore((state) => state.selected);
   const saved = useCompareStore((state) => state.saved);
-  const addTool = useCompareStore((state) => state.addTool);
   const toggleSaved = useCompareStore((state) => state.toggleSaved);
-  const isSelected = selected.includes(tool.slug);
   const isSaved = saved.includes(tool.slug);
-  const atLimit = selected.length >= 4 && !isSelected;
 
   return (
     <article className="group flex h-full flex-col rounded-2xl border border-neutral-200 bg-white p-5 shadow-card transition hover:-translate-y-1 hover:border-violet-500 hover:shadow-elevated">
@@ -63,15 +60,7 @@ export function ToolCard({ tool, variant = "standard" }: ToolCardProps) {
               View details <ArrowRight aria-hidden="true" className="h-4 w-4" />
             </Link>
           </Button>
-          <Button
-            disabled={atLimit}
-            onClick={() => addTool(tool.slug)}
-            title={atLimit ? "Remove a tool before adding another" : "Add to compare"}
-            variant={isSelected ? "lime" : "primary"}
-          >
-            <Plus aria-hidden="true" className="h-4 w-4" />
-            {isSelected ? "Added" : atLimit ? "Limit 4" : "Compare"}
-          </Button>
+          <CompareButton toolName={tool.name} toolSlug={tool.slug} variant="primary" />
         </div>
         <div className="mt-2 grid gap-2 sm:grid-cols-2">
           <Button onClick={() => toggleSaved(tool.slug)} variant="ghost">
