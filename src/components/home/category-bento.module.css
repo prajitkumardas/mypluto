@@ -56,7 +56,7 @@
 
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.65rem;
+  gap: clamp(0.75rem, 1.4vw, 1rem);
   margin-top: clamp(2rem, 4vw, 2.75rem);
   position: relative;
   user-select: none;
@@ -68,16 +68,16 @@
   position: relative;
   display: flex;
   min-height: 12.5rem;
+  height: 100%;
   overflow: hidden;
   flex-direction: column;
-  justify-content: space-between;
   border: 1px solid rgba(196, 184, 255, 0.18);
   border-radius: 1.25rem;
   background:
     radial-gradient(var(--glow-radius) circle at var(--glow-x) var(--glow-y), rgba(124, 99, 255, calc(var(--glow-intensity) * 0.16)), transparent 58%),
     linear-gradient(145deg, rgba(21, 18, 46, 0.98), rgba(10, 9, 28, 0.98));
   color: #ffffff;
-  padding: clamp(1.15rem, 2.4vw, 1.55rem);
+  padding: clamp(1.5rem, 2.6vw, 2rem);
   text-decoration: none;
   transform: translateZ(0);
   transition:
@@ -118,6 +118,12 @@
   transform: translateY(-2px);
 }
 
+.card:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.86);
+  outline-offset: 4px;
+}
+
+.cardHeader,
 .cardTop,
 .cardBody,
 .cardFooter {
@@ -125,15 +131,21 @@
   z-index: 3;
 }
 
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4vw, 2.5rem);
+}
+
 .cardTop {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 1rem;
 }
 
 .count {
-  color: rgba(215, 207, 255, 0.74);
+  color: rgba(215, 207, 255, 0.68);
   font-size: var(--text-label-md);
   font-weight: var(--font-weight-semibold);
   line-height: var(--leading-label-md);
@@ -143,12 +155,12 @@
   width: 1.25rem;
   height: 1.25rem;
   color: rgba(255, 255, 255, 0.56);
-  transition: color 180ms ease, transform 180ms ease;
+  transition: color 240ms ease, transform 240ms ease;
 }
 
 .card:hover .arrow {
   color: #ffffff;
-  transform: translate(3px, -3px);
+  transform: translateX(4px);
 }
 
 .iconWrap {
@@ -162,6 +174,15 @@
     radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.22), transparent 34%),
     color-mix(in srgb, var(--category-accent) 26%, rgba(255, 255, 255, 0.08));
   box-shadow: 0 0 28px color-mix(in srgb, var(--category-accent) 30%, transparent);
+  transition: background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+}
+
+.card:hover .iconWrap {
+  border-color: color-mix(in srgb, var(--category-accent) 58%, rgba(255, 255, 255, 0.24));
+  background:
+    radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.28), transparent 34%),
+    color-mix(in srgb, var(--category-accent) 34%, rgba(255, 255, 255, 0.1));
+  box-shadow: 0 0 34px color-mix(in srgb, var(--category-accent) 38%, transparent);
 }
 
 .icon {
@@ -172,16 +193,21 @@
 
 .cardBody {
   display: grid;
-  gap: 0.95rem;
-  margin-top: 2.25rem;
+  gap: clamp(1.25rem, 2vw, 1.5rem);
+  max-width: min(100%, 23rem);
+}
+
+.cardBody > div {
+  display: grid;
+  gap: 0.5rem;
 }
 
 .cardTitle {
   margin: 0;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: clamp(1.45rem, 2.2vw, 2.1rem);
-  font-weight: var(--font-weight-bold);
+  font-size: clamp(1.75rem, 2.35vw, 2.25rem);
+  font-weight: var(--font-weight-semibold);
   line-height: 1.04;
   letter-spacing: 0;
 }
@@ -192,7 +218,7 @@
   overflow: hidden;
   color: rgba(255, 255, 255, 0.72);
   font-size: var(--text-body-sm);
-  line-height: var(--leading-body-sm);
+  line-height: 1.55;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -201,8 +227,9 @@
 .cardFooter {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 1.5rem;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 2rem;
 }
 
 .pill {
@@ -213,38 +240,110 @@
   padding: 0.38rem 0.62rem;
   font-size: var(--text-caption);
   line-height: var(--leading-caption);
+  transition: background-color 240ms ease, border-color 240ms ease, color 240ms ease;
 }
 
-.large {
-  min-height: 25.75rem;
+.card:hover .pill {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.standard,
+.compact {
+  min-height: 12.5rem;
 }
 
 .medium {
   min-height: 16.25rem;
 }
 
-.compact {
+.large,
+.featureLeft,
+.featureRight {
+  min-height: 25.75rem;
+}
+
+.featureLeft .cardHeader,
+.featureRight .cardHeader {
+  gap: clamp(2.5rem, 4.2vw, 3rem);
+}
+
+.featureLeft .cardBody,
+.featureRight .cardBody {
+  max-width: min(100%, 24rem);
+}
+
+.featureLeft .cardTitle,
+.featureRight .cardTitle {
+  font-size: clamp(2rem, 3vw, 2.5rem);
+}
+
+.grid > * {
+  min-width: 0;
   min-height: 12.5rem;
+}
+
+.grid > .card,
+.grid > * > .card {
+  height: 100%;
+  min-height: 100%;
 }
 
 @media (min-width: 640px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .grid > :nth-child(1),
+  .grid > :nth-child(5) {
+    grid-row: span 2;
+    min-height: 24rem;
+  }
 }
 
 @media (min-width: 1024px) {
   .grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(12.5rem, 1fr));
+    align-items: stretch;
   }
 
-  .large {
-    grid-column: span 2;
-    grid-row: span 2;
+  .grid > :nth-child(1) {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    min-height: 26rem;
   }
 
-  .medium {
-    grid-column: span 1;
+  .grid > :nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .grid > :nth-child(3) {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .grid > :nth-child(4) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .grid > :nth-child(5) {
+    grid-column: 3;
+    grid-row: 2 / 4;
+    min-height: 26rem;
+  }
+
+  .grid > :nth-child(6) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .grid > :nth-child(7) {
+    grid-column: 2;
+    grid-row: 3;
   }
 }
 
@@ -262,13 +361,48 @@
     width: min(calc(100% - 2rem), 80rem);
   }
 
-  .card {
-    min-height: 11.75rem;
-  }
-
+  .card,
+  .standard,
   .large,
   .medium,
-  .compact {
-    min-height: 11.75rem;
+  .compact,
+  .featureLeft,
+  .featureRight,
+  .grid > * {
+    min-height: auto;
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  .cardHeader,
+  .featureLeft .cardHeader,
+  .featureRight .cardHeader {
+    gap: 1.5rem;
+  }
+
+  .cardTitle,
+  .featureLeft .cardTitle,
+  .featureRight .cardTitle {
+    font-size: clamp(1.6rem, 8vw, 2rem);
+  }
+
+  .cardFooter {
+    padding-top: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .arrow,
+  .iconWrap,
+  .pill {
+    transition: none;
+  }
+
+  .card:hover,
+  .card:hover .arrow {
+    transform: none;
   }
 }

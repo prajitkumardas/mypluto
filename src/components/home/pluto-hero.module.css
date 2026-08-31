@@ -335,7 +335,7 @@
 .mobileTitle {
   font-family: var(--font-display);
   font-size: var(--text-h4);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-h4);
   letter-spacing: var(--tracking-h4);
 }
@@ -393,7 +393,7 @@
   color: #ffffff;
   font-family: var(--font-display);
   font-size: var(--text-hero-brand);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-hero-brand);
   letter-spacing: var(--tracking-hero-brand);
   text-align: center;
@@ -453,7 +453,7 @@
   margin: 0;
   color: #ffffff;
   font-size: var(--text-hero-greeting-eyebrow);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-hero-greeting-eyebrow);
   letter-spacing: var(--tracking-hero-greeting-eyebrow);
 }
@@ -691,7 +691,7 @@
   color: #11111a;
   font-family: var(--font-display);
   font-size: var(--text-h5);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
   line-height: var(--leading-h5);
   letter-spacing: var(--tracking-h5);
 }
