@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
+import { CardGrid } from "@/components/layout/card-grid";
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell } from "@/components/layout/page-shell";
 import { ToolCard } from "@/components/tools/tool-card";
 import { professions, tools } from "@/lib/data";
 
@@ -16,24 +18,24 @@ export default async function ProfessionPage({ params }: ProfessionPageProps) {
   }
 
   return (
-    <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-      <Badge tone="violet">Profession workflow</Badge>
-      <h1 className="mt-4 type-h1 text-neutral-900">
-        AI workflows for {profession.title.toLowerCase()}.
-      </h1>
-      <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">{profession.copy}</p>
+    <PageShell>
+      <PageHeader
+        eyebrow="Profession workflow"
+        title={`AI workflows for ${profession.title.toLowerCase()}.`}
+        description={profession.copy}
+      />
       <div className="mt-8 grid gap-3 md:grid-cols-4">
         {profession.workflows.map((workflow) => (
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 type-label-md text-neutral-900 shadow-card" key={workflow}>
+          <div className="rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-4 type-label-md text-[var(--text-primary)] shadow-[var(--shadow-xs)]" key={workflow}>
             {workflow}
           </div>
         ))}
       </div>
-      <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <CardGrid>
         {tools.slice(0, 3).map((tool) => (
           <ToolCard key={tool.slug} tool={tool} />
         ))}
-      </div>
-    </main>
+      </CardGrid>
+    </PageShell>
   );
 }

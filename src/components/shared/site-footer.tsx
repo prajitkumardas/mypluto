@@ -32,7 +32,7 @@ const footerGroups: FooterGroup[] = [
     links: [
       { label: "Pluto Guides", href: "/pluto-guides" },
       { label: "Compare Tools", href: "/compare" },
-      { label: "Play with Pluto", href: "/pluto" }
+      { label: "Play with Pluto", href: "/play" }
     ]
   },
   {
@@ -114,3 +114,4 @@ export function SiteFooter() {
     </footer>
   );
 }
+

@@ -3,9 +3,12 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell } from "@/components/layout/page-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { tools } from "@/lib/data";
+import { cn } from "@/lib/utils";
 
 const steps = [
   "Tool identity",
@@ -28,16 +31,14 @@ export function SubmitToolFlow() {
 
   if (submitted) {
     return (
-      <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-        <div className="rounded-3xl border border-neutral-200 bg-white p-8 shadow-elevated">
-          <Badge icon tone="success">Submission received</Badge>
-          <h1 className="mt-5 type-h1 text-neutral-900">
-            Your tool has been submitted for review.
-          </h1>
-          <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
-            Reference PLU-2026-1842. The moderation queue checks duplicates,
-            pricing, official links and feature claims before publication.
-          </p>
+      <PageShell width="content">
+        <section className="rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-8 shadow-[var(--shadow-md)]">
+          <PageHeader
+            eyebrow="Submission received"
+            eyebrowTone="success"
+            title="Your tool has been submitted for review."
+            description="Reference PLU-2026-1842. The moderation queue checks duplicates, pricing, official links and feature claims before publication."
+          />
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Button asChild>
               <Link href="/">Return home</Link>
@@ -46,32 +47,28 @@ export function SubmitToolFlow() {
               <Link href="/tools">Discover similar tools</Link>
             </Button>
           </div>
-        </div>
-      </main>
+        </section>
+      </PageShell>
     );
   }
 
   return (
-    <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-      <Badge tone="violet">Submit a Tool</Badge>
-      <h1 className="mt-4 type-h1 text-neutral-900">
-        Submit an AI tool for verification.
-      </h1>
-      <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
-        No account is required. Your draft is treated as local session progress,
-        and submission does not guarantee publication or featured placement.
-      </p>
+    <PageShell>
+      <PageHeader
+        eyebrow="Submit a Tool"
+        title="Submit an AI tool for verification."
+        description="No account is required. Your draft is treated as local session progress, and submission does not guarantee publication or featured placement."
+      />
 
       <div className="mt-8 grid gap-3 md:grid-cols-5">
         {steps.map((label, index) => (
           <div
-            className={`rounded-2xl border p-4 type-label-md ${
-              index === step
-                ? "border-violet-600 bg-violet-100 text-violet-600"
-                : index < step
-                  ? "border-[#157A4A] bg-[#E3F8EC] text-[#157A4A]"
-                  : "border-neutral-200 bg-white text-neutral-500"
-            }`}
+            className={cn(
+              "rounded-[var(--radius-lg)] border p-4 type-label-md transition duration-200",
+              index === step && "border-[var(--border-brand)] bg-[var(--surface-selected)] text-[var(--color-pluto-purple-300)]",
+              index < step && "border-[rgba(117,242,142,0.34)] bg-[rgba(117,242,142,0.1)] text-[var(--status-success)]",
+              index > step && "border-[var(--border-default)] bg-[var(--surface-raised)] text-[var(--text-tertiary)]"
+            )}
             key={label}
           >
             <span className="number">{index + 1}.</span> {label}
@@ -79,37 +76,33 @@ export function SubmitToolFlow() {
         ))}
       </div>
 
-      <section className="mt-8 rounded-3xl border border-neutral-200 bg-white p-6 shadow-card">
+      <section className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-6 shadow-[var(--shadow-xs)]">
         {step === 0 ? (
           <div className="grid gap-5">
             <Field label="Tool name" onChange={setName} placeholder="Example: Pluto Studio" value={name} />
             <Field label="Official website URL" onChange={setUrl} placeholder="https://example.com" value={url} />
-            {unsafeUrl ? (
-              <InlineError copy="Use a valid HTTPS official website URL. Your entered information is preserved." />
-            ) : null}
+            {unsafeUrl ? <InlineError copy="Use a valid HTTPS official website URL. Your entered information is preserved." /> : null}
           </div>
         ) : null}
 
         {step === 1 ? (
           <div>
             {duplicate ? (
-              <div className="rounded-2xl bg-[#FFF3D1] p-5 text-[#976500]">
+              <div className="rounded-[var(--radius-xl)] border border-[rgba(255,211,110,0.32)] bg-[rgba(255,211,110,0.1)] p-5 text-[var(--status-warning)]">
                 <AlertTriangle aria-hidden="true" className="h-6 w-6" />
                 <h2 className="mt-3 type-h4">Possible duplicate found</h2>
-                <p className="mt-2 type-body-sm">
-                  {duplicate.name} already exists. You can view the listing,
-                  report incorrect information or continue only if this is a
-                  different product.
+                <p className="mt-2 type-body-sm text-[var(--text-secondary)]">
+                  {duplicate.name} already exists. You can view the listing, report incorrect information or continue only if this is a different product.
                 </p>
                 <Button asChild className="mt-4" variant="secondary">
                   <Link href={`/tools/${duplicate.slug}`}>View existing listing</Link>
                 </Button>
               </div>
             ) : (
-              <div className="rounded-2xl bg-[#E3F8EC] p-5 text-[#157A4A]">
+              <div className="rounded-[var(--radius-xl)] border border-[rgba(117,242,142,0.34)] bg-[rgba(117,242,142,0.1)] p-5 text-[var(--status-success)]">
                 <CheckCircle2 aria-hidden="true" className="h-6 w-6" />
                 <h2 className="mt-3 type-h4">No duplicate detected</h2>
-                <p className="mt-2 type-body-sm">Continue with product details.</p>
+                <p className="mt-2 type-body-sm text-[var(--text-secondary)]">Continue with product details.</p>
               </div>
             )}
           </div>
@@ -134,21 +127,18 @@ export function SubmitToolFlow() {
         {step === 4 ? (
           <div>
             <Badge tone="lime">Review</Badge>
-            <h2 className="mt-4 type-h3 text-neutral-900">
-              Confirm submission policy
-            </h2>
-            <p className="mt-3 type-body-sm text-neutral-700">
-              Pluto will verify official website availability, pricing and key
-              features before publication. AI-detected changes require admin approval.
+            <h2 className="mt-4 type-h3 text-[var(--text-primary)]">Confirm submission policy</h2>
+            <p className="mt-3 type-body-sm text-[var(--text-secondary)]">
+              Pluto will verify official website availability, pricing and key features before publication. AI-detected changes require admin approval.
             </p>
-            <label className="mt-5 flex min-h-12 items-center gap-3 rounded-xl border border-neutral-200 px-3 type-label-md">
-              <input className="h-4 w-4 accent-violet-600" type="checkbox" />
+            <label className="mt-5 flex min-h-12 items-center gap-3 rounded-[var(--radius-md)] border border-[var(--border-default)] px-3 type-label-md text-[var(--text-primary)]">
+              <input className="h-4 w-4 accent-[var(--action-primary)]" type="checkbox" />
               I confirm this information is accurate to the best of my knowledge.
             </label>
           </div>
         ) : null}
 
-        <div className="mt-8 flex flex-col justify-between gap-3 border-t border-neutral-200 pt-5 sm:flex-row">
+        <div className="mt-8 flex flex-col justify-between gap-3 border-t border-[var(--border-default)] pt-5 sm:flex-row">
           <Button disabled={step === 0} onClick={() => setStep((value) => value - 1)} variant="secondary">
             Back
           </Button>
@@ -164,7 +154,7 @@ export function SubmitToolFlow() {
           )}
         </div>
       </section>
-    </main>
+    </PageShell>
   );
 }
 
@@ -180,10 +170,10 @@ function Field({
   onChange?: (value: string) => void;
 }) {
   return (
-    <label className="grid gap-2 type-label-md text-neutral-900">
+    <label className="grid gap-2 type-label-md text-[var(--text-primary)]">
       {label}
       <input
-        className="min-h-12 rounded-xl border border-neutral-200 px-3 text-neutral-900 outline-none focus:border-violet-600 focus:ring-4 focus:ring-violet-100"
+        className="min-h-12 rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--background-interactive)] px-3 text-[var(--text-primary)] outline-none transition focus:border-[var(--border-brand)] focus:ring-4 focus:ring-[rgba(145,61,255,0.18)] placeholder:text-[var(--text-tertiary)]"
         onChange={(event) => onChange?.(event.target.value)}
         placeholder={placeholder}
         value={value}
@@ -194,7 +184,7 @@ function Field({
 
 function InlineError({ copy }: { copy: string }) {
   return (
-    <div className="flex gap-3 rounded-2xl bg-[#FFE8E8] p-4 type-label-md text-[#C33838]">
+    <div className="flex gap-3 rounded-[var(--radius-lg)] border border-[rgba(255,138,138,0.34)] bg-[rgba(255,138,138,0.1)] p-4 type-label-md text-[var(--status-danger)]">
       <AlertTriangle aria-hidden="true" className="h-5 w-5 shrink-0" />
       {copy}
     </div>

@@ -11,12 +11,7 @@ import "@/styles/typography.css";
 export const metadata: Metadata = {
   title: "Pluto | Find the right AI tool for anything",
   description:
-    "A premium AI-tool discovery platform for finding, comparing and understanding trustworthy AI products.",
-  icons: {
-    icon: "/images/plutofinds-logo.png",
-    shortcut: "/images/plutofinds-logo.png",
-    apple: "/images/plutofinds-logo.png"
-  }
+    "A premium AI-tool discovery platform for finding, comparing and understanding trustworthy AI products."
 };
 
 export default function RootLayout({

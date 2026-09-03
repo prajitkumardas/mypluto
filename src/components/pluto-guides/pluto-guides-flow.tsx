@@ -5,10 +5,10 @@ import { type ReactNode, useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
   BookOpen,
+  CheckCircle2,
   Briefcase,
   Check,
   Code2,
-  Heart,
   Loader2,
   PenLine,
   RotateCcw,
@@ -20,9 +20,10 @@ import {
   WalletCards
 } from "lucide-react";
 import { CompareButton } from "@/components/compare/compare-button";
+import { ToolLogo } from "@/components/shared/tool-logo";
 import { Button } from "@/components/ui/button";
 import { HeroVeil } from "@/components/shared/hero-veil";
-import { useCompareStore } from "@/lib/compare-store";
+import { getFaviconLogoUrl } from "@/lib/tool-logo";
 import {
   emptyGuideAnswers,
   guideBudgets,
@@ -36,6 +37,7 @@ import {
   type SelectionMode
 } from "@/lib/pluto-guides-options";
 import { cn } from "@/lib/utils";
+import cardStyles from "@/components/library/library-tool-card.module.css";
 
 const STORAGE_KEY = "pluto-guides-draft";
 const steps = ["Your goal", "Task", "Preferences", "Requirements"];
@@ -124,7 +126,7 @@ export function PlutoGuidesFlow() {
   return (
     <main className="relative isolate overflow-hidden bg-canvas text-white">
       <HeroVeil className="h-[32rem] opacity-60" />
-      <section className="relative z-10 mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
+      <section className="relative z-10 mx-auto w-full max-w-[calc(var(--page-max)+(var(--page-gutter)*2))] px-[var(--page-gutter)] pb-20 pt-[clamp(6rem,7vw,6.5rem)] lg:pb-24">
         {screen === "intro" ? (
           <IntroScreen onStart={() => setScreen("questions")} />
         ) : null}
@@ -652,6 +654,14 @@ function LoadingScreen() {
   );
 }
 
+function getSelectedAnswerLabels(answers: GuideAnswers) {
+  const goal = guideGoals.find((item) => item.id === answers.goal);
+  const task = goal?.tasks.find((item) => item.id === answers.primaryTask);
+  const budget = guideBudgets.find((item) => item.id === answers.budget);
+  const platform = guidePlatforms.find((item) => item.id === answers.platform);
+
+  return [goal?.label, task?.label, budget?.label, platform?.label].filter(Boolean) as string[];
+}
 function ResultsScreen({
   answers,
   onAdjust,
@@ -663,48 +673,53 @@ function ResultsScreen({
   onStartAgain: () => void;
   recommendations: GuideRecommendation[];
 }) {
-return (
-    <section className="mx-auto max-w-6xl">
-      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="type-overline text-lime-300">Pluto Guides</p>
-          <h1 className="mt-3 type-h2 text-white">Your recommended tools</h1>
-          <p className="mt-3 max-w-2xl type-body-md text-white/68">
-            Ranked from the existing Discover library using your four answers.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button onClick={onAdjust} type="button" variant="outline">
-            <SlidersHorizontal aria-hidden="true" className="h-5 w-5" />
-            Adjust answers
-          </Button>
-          <Button onClick={onStartAgain} type="button" variant="outline">
-            <RotateCcw aria-hidden="true" className="h-5 w-5" />
-            Start over
-          </Button>
-        </div>
+  const selectedAnswers = getSelectedAnswerLabels(answers);
+
+  return (
+    <section className="mx-auto w-full">
+      <div className="mx-auto max-w-3xl text-center">
+        <p className="type-overline text-lime-300">Pluto Guides</p>
+        <h1 className="mt-3 font-display text-[var(--text-page-hero-title)] font-medium leading-[var(--leading-page-hero-title)] tracking-[0] text-white [text-wrap:balance]">
+          Your recommended tools
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-[var(--text-page-hero-copy)] leading-[var(--leading-page-hero-copy)] tracking-[0] text-white/72 [text-wrap:pretty]">
+          Ranked from the existing Discover library using your four answers.
+        </p>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-2">
-        {[answers.goal, answers.primaryTask, answers.budget, answers.platform].filter(Boolean).map((item) => (
-          <span className="rounded-full border border-white/12 bg-white/8 px-3 py-2 type-label-sm text-white/70" key={item}>
-            {item}
-          </span>
-        ))}
+      <div className="mx-auto mt-7 flex max-w-3xl flex-col items-center justify-center gap-2 sm:flex-row">
+        <Button className="w-full sm:w-auto" onClick={onAdjust} type="button" variant="outline">
+          <SlidersHorizontal aria-hidden="true" className="h-5 w-5" />
+          Adjust answers
+        </Button>
+        <Button className="w-full sm:w-auto" onClick={onStartAgain} type="button" variant="outline">
+          <RotateCcw aria-hidden="true" className="h-5 w-5" />
+          Start over
+        </Button>
       </div>
+
+      {selectedAnswers.length > 0 ? (
+        <div className="mx-auto mt-7 flex max-w-4xl flex-wrap justify-center gap-2.5">
+          {selectedAnswers.map((item) => (
+            <span className="inline-flex min-h-9 items-center rounded-full border border-white/12 bg-white/8 px-3.5 type-label-sm text-white/70" key={item}>
+              {item}
+            </span>
+          ))}
+        </div>
+      ) : null}
 
       {recommendations.length === 0 ? (
-        <div className="mt-8 rounded-3xl border border-white/12 bg-white/8 p-8 text-center">
+        <div className="mx-auto mt-9 max-w-3xl rounded-[1.25rem] border border-white/12 bg-white/8 p-8 text-center shadow-card backdrop-blur">
           <h2 className="type-h4 text-white">No confident match yet</h2>
           <p className="mt-3 type-body-md text-white/66">Try loosening budget, platform, or API requirements.</p>
         </div>
       ) : (
-        <div className="mt-8 grid gap-4">
+        <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
           {recommendations.map((recommendation, index) => (
             <ResultCard
-              emphasized={index < 3}
               key={recommendation.slug}
-recommendation={recommendation}
+              rank={index + 1}
+              recommendation={recommendation}
             />
           ))}
         </div>
@@ -714,75 +729,57 @@ recommendation={recommendation}
 }
 
 function ResultCard({
-  emphasized,  recommendation
+  rank,
+  recommendation
 }: {
-  emphasized: boolean;
+  rank: number;
   recommendation: GuideRecommendation;
 }) {
-  const toggleSaved = useCompareStore((state) => state.toggleSaved);
-  const saved = useCompareStore((state) => state.saved.includes(recommendation.slug));
+  const verified = recommendation.verification.toLowerCase() === "verified";
+  const logoSrc = getFaviconLogoUrl(recommendation.officialUrl);
 
   return (
-    <article
-      className={cn(
-        "rounded-3xl border bg-white/8 p-5 shadow-card backdrop-blur sm:p-6",
-        emphasized ? "border-violet-300/38" : "border-white/12"
-      )}
-    >
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-violet-500/24 px-3 py-1 type-label-sm text-violet-100">{recommendation.fit}</span>
-            <span className="rounded-full bg-white/8 px-3 py-1 type-label-sm text-white/64">Score {recommendation.score}</span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-lime-300/12 px-3 py-1 type-label-sm text-lime-200">
-              <ShieldCheck aria-hidden="true" className="h-4 w-4" />
-              {recommendation.verification}
-            </span>
-          </div>
-          <h2 className="mt-4 type-h4 text-white">{recommendation.name}</h2>
-          <p className="mt-2 max-w-3xl type-body-md text-white/68">{recommendation.shortDescription}</p>
-          <div className="mt-4 grid gap-2 type-body-sm text-white/72">
-            {recommendation.reasons.map((reason) => (
-              <p className="flex gap-2" key={reason}>
-                <Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-lime-300" />
-                {reason}
-              </p>
-            ))}
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {recommendation.matchedRequirements.map((item) => (
-              <span className="rounded-full border border-white/12 px-3 py-1 type-label-sm text-white/68" key={item}>
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="grid shrink-0 gap-2 sm:grid-cols-2 lg:w-64 lg:grid-cols-1">
-          <Button asChild>
-            <Link href={recommendation.href}>View details</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <a href={recommendation.officialUrl} rel="noreferrer" target="_blank">
-              Visit tool <ArrowRight aria-hidden="true" className="h-5 w-5" />
-            </a>
-          </Button>
-          <CompareButton toolName={recommendation.name} toolSlug={recommendation.slug} type="button" variant="outline" />
-          <Button onClick={() => toggleSaved(recommendation.slug)} type="button" variant="outline">
-            <Heart aria-hidden="true" className={cn("h-5 w-5", saved && "fill-current")} />
-            {saved ? "Saved" : "Save"}
-          </Button>
-        </div>
+    <article className={cardStyles.card}>
+      <div className={cardStyles.header}>
+        <Link className={cardStyles.logoLink} href={recommendation.href}>
+          <ToolLogo className={cardStyles.logoTile} imageClassName={cardStyles.logo} name={recommendation.name} src={logoSrc} />
+        </Link>
+
+        <span className={cn(cardStyles.verifiedBadge, !verified && cardStyles.pendingBadge)}>
+          <CheckCircle2 aria-hidden="true" />
+          {verified ? "Verified" : recommendation.verification}
+        </span>
       </div>
-      <div className="mt-5 grid gap-3 border-t border-white/12 pt-4 type-body-sm text-white/58 md:grid-cols-3">
-        <p>Pricing: {recommendation.pricing}</p>
-        <p>Platforms: {recommendation.platforms.join(", ") || "Not listed"}</p>
-        <p>API: {recommendation.api}</p>
+
+      <Link className={cardStyles.titleBlock} href={recommendation.href}>
+        <span className={cardStyles.name}>{recommendation.name}</span>
+        <span className={cardStyles.category}>{recommendation.categories[0] ?? "AI tool"}</span>
+      </Link>
+
+      <p className={cardStyles.description}>{recommendation.shortDescription}</p>
+
+      <div className={cardStyles.metaLine}>
+        <span className={cardStyles.priceModel}>#{rank} {recommendation.fit}</span>
+        <span aria-hidden="true" className={cardStyles.metaDot}>/</span>
+        <span>Score {recommendation.score}</span>
+      </div>
+
+      <div className={cardStyles.metaLine}>
+        <span className={cardStyles.priceModel}>{recommendation.pricing || "See pricing"}</span>
+        <span aria-hidden="true" className={cardStyles.metaDot}>/</span>
+        <span>{recommendation.platforms.slice(0, 2).join(", ") || "Platform varies"}</span>
+      </div>
+
+      <div className={cardStyles.actions}>
+        <Link className={cn(cardStyles.actionButton, cardStyles.primaryAction)} href={recommendation.href}>
+          View details
+          <ArrowRight aria-hidden="true" />
+        </Link>
+        <CompareButton className={cn(cardStyles.actionButton, cardStyles.secondaryAction)} compact toolName={recommendation.name} toolSlug={recommendation.slug} variant="secondary" />
       </div>
     </article>
   );
-}
-
-type QuestionProps = {
+}type QuestionProps = {
   answers: GuideAnswers;
   updateAnswers: (partial: Partial<GuideAnswers>) => void;
 };

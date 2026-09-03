@@ -26,8 +26,6 @@ export function PlutoStorySection() {
     [0, 0.17],
     ["0 -28px 80px rgba(0, 0, 0, 0.42)", "0 0 0 rgba(0, 0, 0, 0)"]
   );
-  const labelOpacity = useTransform(scrollYProgress, [0.28, 0.36], [0, 1]);
-  const labelY = useTransform(scrollYProgress, [0.28, 0.36], [14, 0]);
   const videoScale = useTransform(scrollYProgress, [0.17, 1], [1.04, 1.12]);
 
   return (
@@ -49,7 +47,7 @@ export function PlutoStorySection() {
           <div className={styles.overlay} aria-hidden="true" />
           <div className={styles.copyLayer}>
             <div className={styles.copyInner}>
-              <motion.p className={styles.eyebrow} style={reducedMotion ? { opacity: 1, y: 0 } : { opacity: labelOpacity, y: labelY }}>A NOTE FROM PLUTO</motion.p>
+              <p className={styles.eyebrow}>A NOTE FROM PLUTO</p>
               <div>
                 <SplitText
                   className={styles.revealText}

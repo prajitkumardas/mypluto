@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AlertTriangle, ArrowRight, Database, FileSpreadsheet } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell } from "@/components/layout/page-shell";
 import { Button } from "@/components/ui/button";
 import summary from "@/data/generated/plutos-library-summary.json";
 import { plutosLibrary } from "@/lib/plutos-library";
@@ -11,15 +12,12 @@ export default function ImportAdminPreviewPage() {
     .slice(0, 12);
 
   return (
-    <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-      <Badge tone="violet">Admin import preview</Badge>
-      <h1 className="mt-4 type-h1 text-neutral-900">
-        XLSX import summary and verification queue.
-      </h1>
-      <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
-        This mirrors the protected workflow: upload XLSX, validate workbook,
-        preview changes, review errors, confirm import and view summary.
-      </p>
+    <PageShell>
+      <PageHeader
+        eyebrow="Admin import preview"
+        title="XLSX import summary and verification queue."
+        description="This mirrors the protected workflow: upload XLSX, validate workbook, preview changes, review errors, confirm import and view summary."
+      />
 
       <section className="mt-8 grid gap-4 md:grid-cols-4">
         <Metric label="Worksheets" value={summary.worksheetCount} />
@@ -28,12 +26,10 @@ export default function ImportAdminPreviewPage() {
         <Metric label="Import errors" value={summary.importErrorCount} />
       </section>
 
-      <section className="mt-8 rounded-3xl border border-neutral-200 bg-white p-6 shadow-card">
+      <section className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-6 shadow-[var(--shadow-xs)]">
         <div className="flex items-center gap-3">
-          <FileSpreadsheet aria-hidden="true" className="h-7 w-7 text-violet-600" />
-          <h2 className="type-h3 text-neutral-900">
-            Preview changes
-          </h2>
+          <FileSpreadsheet aria-hidden="true" className="h-7 w-7 text-[var(--color-pluto-purple-300)]" />
+          <h2 className="type-h3 text-[var(--text-primary)]">Preview changes</h2>
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-3">
           <Change label="New or updated tools" value={summary.canonicalToolCount} />
@@ -45,36 +41,32 @@ export default function ImportAdminPreviewPage() {
         </div>
       </section>
 
-      <section className="mt-8 rounded-3xl border border-neutral-200 bg-white p-6 shadow-card">
+      <section className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-6 shadow-[var(--shadow-xs)]">
         <div className="flex items-center gap-3">
-          <AlertTriangle aria-hidden="true" className="h-7 w-7 text-[#976500]" />
-          <h2 className="type-h3 text-neutral-900">
-            Verification review queue
-          </h2>
+          <AlertTriangle aria-hidden="true" className="h-7 w-7 text-[var(--status-warning)]" />
+          <h2 className="type-h3 text-[var(--text-primary)]">Verification review queue</h2>
         </div>
-        <div className="mt-5 overflow-hidden rounded-2xl border border-neutral-200">
+        <div className="mt-5 overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border-default)]">
           {verificationQueue.map((tool) => (
-            <div className="grid gap-3 border-b border-neutral-200 p-4 last:border-b-0 md:grid-cols-[1fr_180px_180px]" key={tool.slug}>
+            <div className="grid gap-3 border-b border-[var(--border-default)] p-4 last:border-b-0 md:grid-cols-[1fr_180px_180px]" key={tool.slug}>
               <div>
-                <Link className="type-h5 text-neutral-900 hover:text-violet-600" href={`/plutos-library/tool/${tool.slug}`}>
+                <Link className="type-h5 text-[var(--text-primary)] hover:text-[var(--color-pluto-purple-300)]" href={`/plutos-library/tool/${tool.slug}`}>
                   {tool.name}
                 </Link>
-                <p className="mt-1 type-body-sm text-neutral-600">{tool.categories.join(", ")}</p>
+                <p className="mt-1 type-body-sm text-[var(--text-secondary)]">{tool.categories.join(", ")}</p>
               </div>
-              <p className="type-label-md text-[#976500]">{tool.verification.status}</p>
-              <p className="type-body-sm text-neutral-500">{tool.verification.lastVerifiedRaw}</p>
+              <p className="type-label-md text-[var(--status-warning)]">{tool.verification.status}</p>
+              <p className="type-body-sm text-[var(--text-tertiary)]">{tool.verification.lastVerifiedRaw}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="mt-8 rounded-3xl bg-ink-950 p-6 text-white">
-        <Database aria-hidden="true" className="h-8 w-8 text-lime-400" />
+      <section className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--background-section)] p-6 text-[var(--text-primary)] shadow-[var(--shadow-xs)]">
+        <Database aria-hidden="true" className="h-8 w-8 text-[var(--text-brand)]" />
         <h2 className="mt-4 type-h3">Database handoff</h2>
-        <p className="mt-3 max-w-2xl type-body-sm text-white/70">
-          The normalized PostgreSQL schema is in `supabase/migrations`. Workbook
-          values are preserved as raw values and normalized fields so re-imports
-          can avoid duplicates and keep admin-approved data precedence.
+        <p className="mt-3 max-w-[var(--text-width-md)] type-body-sm text-[var(--text-secondary)]">
+          The normalized PostgreSQL schema is in `supabase/migrations`. Workbook values are preserved as raw values and normalized fields so re-imports can avoid duplicates and keep admin-approved data precedence.
         </p>
         <Button asChild className="mt-5" variant="lime">
           <Link href="/plutos-library">
@@ -82,26 +74,24 @@ export default function ImportAdminPreviewPage() {
           </Link>
         </Button>
       </section>
-    </main>
+    </PageShell>
   );
 }
 
 function Metric({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-card">
-      <dt className="type-label-md text-neutral-500">{label}</dt>
-      <dd className="number mt-2 type-h2 text-neutral-900">
-        {value}
-      </dd>
+    <div className="rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-5 shadow-[var(--shadow-xs)]">
+      <dt className="type-label-md text-[var(--text-tertiary)]">{label}</dt>
+      <dd className="number mt-2 type-h2 text-[var(--text-primary)]">{value}</dd>
     </div>
   );
 }
 
 function Change({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-2xl bg-neutral-50 p-4">
-      <p className="number type-h3 text-neutral-900">{value}</p>
-      <p className="mt-1 type-label-md text-neutral-600">{label}</p>
+    <div className="rounded-[var(--radius-lg)] bg-[var(--background-interactive)] p-4">
+      <p className="number type-h3 text-[var(--text-primary)]">{value}</p>
+      <p className="mt-1 type-label-md text-[var(--text-secondary)]">{label}</p>
     </div>
   );
 }

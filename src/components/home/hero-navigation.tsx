@@ -14,7 +14,7 @@ const navItems = [
   ["Pluto Guides", "/pluto-guides"],
   ["Trending", "/trending"],
   ["Compare", "/compare"],
-  ["Play", "/pluto"]
+  ["Play", "/play"]
 ];
 
 type HeroNavigationProps = {
@@ -110,6 +110,7 @@ function MobileMenu({ onSearchClick }: HeroNavigationProps) {
     </Dialog.Root>
   );
 }
+
 
 
 

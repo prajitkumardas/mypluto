@@ -77,7 +77,7 @@ const config: Config = {
           "0 20px 60px rgba(20, 20, 20, 0.16), 0 4px 12px rgba(20, 20, 20, 0.08)"
       },
       maxWidth: {
-        site: "1280px",
+        site: "var(--page-max)",
         reading: "var(--content-reading-width)"
       }
     }
@@ -86,3 +86,4 @@ const config: Config = {
 };
 
 export default config;
+

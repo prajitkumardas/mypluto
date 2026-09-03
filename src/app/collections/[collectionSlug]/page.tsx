@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
+import { CardGrid } from "@/components/layout/card-grid";
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell } from "@/components/layout/page-shell";
 import { ToolCard } from "@/components/tools/tool-card";
 import { collections, tools } from "@/lib/data";
 
@@ -16,19 +18,18 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
   }
 
   return (
-    <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-      <Badge tone="lime">Curated collection</Badge>
-      <h1 className="mt-4 type-h1 text-neutral-900">
-        {collection.name}
-      </h1>
-      <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
-        {collection.description}
-      </p>
-      <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+    <PageShell>
+      <PageHeader
+        eyebrow="Curated collection"
+        eyebrowTone="lime"
+        title={collection.name}
+        description={collection.description}
+      />
+      <CardGrid>
         {tools.slice(0, 4).map((tool) => (
           <ToolCard key={tool.slug} tool={tool} />
         ))}
-      </div>
-    </main>
+      </CardGrid>
+    </PageShell>
   );
 }

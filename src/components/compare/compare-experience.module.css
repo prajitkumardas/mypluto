@@ -6,7 +6,7 @@
   background:
     radial-gradient(circle at 50% 3%, rgba(124, 99, 255, 0.24), transparent 31rem),
     radial-gradient(circle at 20% 28%, rgba(63, 45, 160, 0.18), transparent 26rem),
-    #05050d;
+    var(--background-page);
   color: #ffffff;
 }
 
@@ -26,7 +26,7 @@
   width: 100%;
   max-width: calc(var(--page-max) + (var(--page-gutter) * 2));
   margin: 0 auto;
-  padding: clamp(6rem, 7vw, 6.5rem) var(--page-gutter) clamp(4rem, 8vw, 6rem);
+  padding: var(--section-space-start) var(--page-gutter) var(--section-space-end);
 }
 
 .hero {
@@ -68,9 +68,9 @@
 .insight,
 .matrixShell,
 .recommended {
-  border: 1px solid rgba(184, 164, 255, 0.24);
-  background: rgba(22, 22, 39, 0.78);
-  box-shadow: 0 24px 74px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-default);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-md);
   backdrop-filter: blur(18px) saturate(125%);
 }
 

@@ -2,12 +2,15 @@
 
 import type { ElementType, ReactNode } from "react";
 import { Children, isValidElement, useMemo, useRef } from "react";
-import type { MotionValue, Variants } from "motion/react";
+import type { HTMLMotionProps, MotionValue, Variants } from "motion/react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { motionTokens } from "@/lib/motion/tokens";
 import { useReducedMotionPreference } from "./use-reduced-motion-preference";
 
 type RevealTag = "div" | "span" | "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "section" | "article";
+
+type PlainRevealElement = ElementType<{ children?: ReactNode; className?: string } & Record<string, unknown>>;
+type MotionRevealElement = ElementType<HTMLMotionProps<"div"> & { children?: ReactNode }>;
 
 type CommonRevealProps = {
   children?: ReactNode;
@@ -77,8 +80,8 @@ type WordRevealProps = {
 export function WordReveal({ as = "h2", className, delay = 0, once = true, text }: WordRevealProps) {
   const reducedMotion = useReducedMotionPreference();
   const units = useMemo(() => text.split(/(\s+)/), [text]);
-  const PlainElement = plainElements[as];
-  const MotionElement = motionElements[as];
+  const PlainElement = plainElements[as] as PlainRevealElement;
+  const MotionElement = motionElements[as] as MotionRevealElement;
 
   if (reducedMotion) {
     return <PlainElement className={className}>{text}</PlainElement>;
@@ -115,8 +118,8 @@ type ContentBlockRevealProps = CommonRevealProps & {
 
 export function ContentBlockReveal({ as = "div", children, className, delay = 0, once = true }: ContentBlockRevealProps) {
   const reducedMotion = useReducedMotionPreference();
-  const PlainElement = plainElements[as];
-  const MotionElement = motionElements[as];
+  const PlainElement = plainElements[as] as PlainRevealElement;
+  const MotionElement = motionElements[as] as MotionRevealElement;
 
   if (reducedMotion) {
     return <PlainElement className={className}>{children}</PlainElement>;
@@ -158,8 +161,8 @@ export function RevealGroup({
   ...props
 }: RevealGroupProps) {
   const reducedMotion = useReducedMotionPreference();
-  const PlainElement = plainElements[as];
-  const MotionElement = motionElements[as];
+  const PlainElement = plainElements[as] as PlainRevealElement;
+  const MotionElement = motionElements[as] as MotionRevealElement;
   const childArray = Children.toArray(children).filter(isValidElement);
 
   if (reducedMotion) {
@@ -211,8 +214,8 @@ export function ScrollTextReveal({
   const reducedMotion = useReducedMotionPreference();
   const ref = useRef<HTMLSpanElement>(null);
   const units = useMemo(() => (mode === "character" ? Array.from(text) : text.split(/(\s+)/)), [mode, text]);
-  const PlainElement = plainElements[as];
-  const MotionElement = motionElements[as];
+  const PlainElement = plainElements[as] as PlainRevealElement;
+  const MotionElement = motionElements[as] as MotionRevealElement;
   const { scrollYProgress } = useScroll({ target: ref, offset: [start, end] as unknown as ["start 82%", "end 38%"] });
   const tokens = useMemo(() => {
     const indexedUnits = units.map((unit, index) => ({ index, isRevealable: Boolean(unit.trim()), unit }));

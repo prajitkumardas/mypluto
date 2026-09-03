@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell } from "@/components/layout/page-shell";
 import { LibrarySearch } from "@/components/library/library-search";
 import { SearchResults } from "@/components/library/search-results";
 import { getLibrarySearchResults } from "@/lib/plutos-library";
@@ -33,33 +34,30 @@ export default async function LibrarySearchPage({ searchParams }: LibrarySearchP
 
   return (
     <main className="bg-canvas">
-      <section className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-        <nav className="type-label-md text-neutral-500">
-          <Link className="hover:text-violet-600" href="/">
+      <PageShell as="section">
+        <nav className="type-label-md text-[var(--text-tertiary)]">
+          <Link className="hover:text-[var(--color-pluto-purple-300)]" href="/">
             Home
           </Link>{" "}
           /{" "}
-          <Link className="hover:text-violet-600" href="/plutos-library">
+          <Link className="hover:text-[var(--color-pluto-purple-300)]" href="/plutos-library">
             Discover
           </Link>{" "}
           / Search
         </nav>
-        <Badge className="mt-6" tone="violet">Discover search</Badge>
-        <h1 className="mt-4 type-h1 text-neutral-900">
-          Search AI tools
-        </h1>
-        <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
-          Search by tool name, description, category, features,
-          best-for use cases, audience, platform and API availability.
-        </p>
+        <PageHeader
+          className="mt-6"
+          eyebrow="Discover search"
+          title="Search AI tools"
+          description="Search by tool name, description, category, features, best-for use cases, audience, platform and API availability."
+        />
         <LibrarySearch
           initial={{
             q: params.q
           }}
         />
-      </section>
+      </PageShell>
       <SearchResults result={result} />
     </main>
   );
 }
-

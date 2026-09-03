@@ -1,8 +1,9 @@
+import { PageShell } from "@/components/layout/page-shell";
 import { StatePanel } from "@/components/shared/state-panel";
 
 export default function PlutosLibraryNotFound() {
   return (
-    <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
+    <PageShell>
       <StatePanel
         action="Browse all categories"
         actionHref="/plutos-library"
@@ -11,7 +12,6 @@ export default function PlutosLibraryNotFound() {
         secondaryHref="/plutos-library/search"
         title="Library page not found"
       />
-    </main>
+    </PageShell>
   );
 }
-

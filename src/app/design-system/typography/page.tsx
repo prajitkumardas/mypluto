@@ -1,3 +1,6 @@
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell, SectionShell } from "@/components/layout/page-shell";
+
 const typeTokens = [
   {
     name: "Display XL",
@@ -207,59 +210,59 @@ const typeTokens = [
 
 export default function TypographyDocumentationPage() {
   return (
-    <main className="bg-canvas">
-      <section className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-        <p className="type-overline text-violet-600">Design System</p>
-        <h1 className="mt-4 max-w-4xl type-h1 text-neutral-900">Responsive Typography</h1>
-        <p className="mt-4 max-w-reading type-body-xl text-neutral-700">
-          Pluto uses Bricolage Grotesque for display and editorial hierarchy, and Inter for body copy and functional UI.
-          Tokens live in CSS variables and semantic utilities so typography is chosen by role, not by ad hoc size.
-        </p>
-      </section>
+    <>
+      <PageShell>
+        <PageHeader
+          eyebrow="Design System"
+          title="Responsive Typography"
+          description="Pluto uses Bricolage Grotesque for display and editorial hierarchy, and Inter for body copy and functional UI. Tokens live in CSS variables and semantic utilities so typography is chosen by role, not by ad hoc size."
+        />
+      </PageShell>
 
-      <section className="mx-auto max-w-site px-5 pb-20 sm:px-8 xl:px-0">
+      <SectionShell spacing="none">
         <div className="grid gap-5">
           {typeTokens.map((token) => (
-            <article className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-card" key={token.name}>
+            <article className="rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-5 shadow-[var(--shadow-xs)]" key={token.name}>
               <div className="grid gap-5 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
                 <div>
-                  <p className="type-overline text-neutral-500">{token.className}</p>
-                  <h2 className="mt-2 type-h4 text-neutral-900">{token.name}</h2>
-                  <dl className="mt-4 grid gap-2 type-body-sm text-neutral-700 sm:grid-cols-2">
+                  <p className="type-overline text-[var(--text-tertiary)]">{token.className}</p>
+                  <h2 className="mt-2 type-h4 text-[var(--text-primary)]">{token.name}</h2>
+                  <dl className="mt-4 grid gap-2 type-body-sm text-[var(--text-secondary)] sm:grid-cols-2">
                     <div>
-                      <dt className="type-label-sm text-neutral-500">Font</dt>
+                      <dt className="type-label-sm text-[var(--text-tertiary)]">Font</dt>
                       <dd>{token.family}</dd>
                     </div>
                     <div>
-                      <dt className="type-label-sm text-neutral-500">Weight</dt>
+                      <dt className="type-label-sm text-[var(--text-tertiary)]">Weight</dt>
                       <dd>{token.weight}</dd>
                     </div>
                     <div>
-                      <dt className="type-label-sm text-neutral-500">Size</dt>
+                      <dt className="type-label-sm text-[var(--text-tertiary)]">Size</dt>
                       <dd>{token.size}</dd>
                     </div>
                     <div>
-                      <dt className="type-label-sm text-neutral-500">Line height</dt>
+                      <dt className="type-label-sm text-[var(--text-tertiary)]">Line height</dt>
                       <dd>{token.leading}</dd>
                     </div>
                     <div>
-                      <dt className="type-label-sm text-neutral-500">Tracking</dt>
+                      <dt className="type-label-sm text-[var(--text-tertiary)]">Tracking</dt>
                       <dd>{token.tracking}</dd>
                     </div>
                   </dl>
                 </div>
                 <div>
-                  <p className={`${token.className} text-neutral-900`}>{token.sample}</p>
-                  <div className="mt-5 grid gap-3 type-body-sm text-neutral-700 md:grid-cols-2">
-                    <p><span className="type-label-md text-neutral-900">Use:</span> {token.usage}</p>
-                    <p><span className="type-label-md text-neutral-900">Do not use:</span> {token.avoid}</p>
+                  <p className={`${token.className} text-[var(--text-primary)]`}>{token.sample}</p>
+                  <div className="mt-5 grid gap-3 type-body-sm text-[var(--text-secondary)] md:grid-cols-2">
+                    <p><span className="type-label-md text-[var(--text-primary)]">Use:</span> {token.usage}</p>
+                    <p><span className="type-label-md text-[var(--text-primary)]">Do not use:</span> {token.avoid}</p>
                   </div>
                 </div>
               </div>
             </article>
           ))}
         </div>
-      </section>
-    </main>
+      </SectionShell>
+    </>
   );
 }
+

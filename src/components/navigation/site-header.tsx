@@ -17,7 +17,7 @@ const navItems = [
   ["Pluto Guides", "/pluto-guides"],
   ["Trending", "/trending"],
   ["Compare", "/compare"],
-  ["Play", "/pluto"]
+  ["Play", "/play"]
 ] as const;
 
 export function SiteHeader() {
@@ -125,3 +125,4 @@ export function SiteHeader() {
     </header>
   );
 }
+

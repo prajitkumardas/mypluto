@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Filter, Search, SlidersHorizontal } from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell } from "@/components/layout/page-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { StatePanel } from "@/components/shared/state-panel";
@@ -12,62 +14,51 @@ export default function ToolsPage() {
 
   return (
     <main className="bg-canvas">
-      <section className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
+      <PageShell as="section">
         <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
-          <aside className="h-fit rounded-3xl border border-neutral-200 bg-white p-5 shadow-card lg:sticky lg:top-28">
+          <aside className="h-fit rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-5 shadow-[var(--shadow-xs)] lg:sticky lg:top-28">
             <div className="flex items-center gap-2">
-              <SlidersHorizontal aria-hidden="true" className="h-5 w-5 text-violet-600" />
-              <h2 className="type-h4 text-neutral-900">Filters</h2>
+              <SlidersHorizontal aria-hidden="true" className="h-5 w-5 text-[var(--color-pluto-purple-300)]" />
+              <h2 className="type-h4 text-[var(--text-primary)]">Filters</h2>
             </div>
-            <p className="mt-2 type-body-sm text-neutral-600">
+            <p className="mt-2 type-body-sm text-[var(--text-secondary)]">
               URL-backed filter state will make every result set shareable.
             </p>
             <div className="mt-5 grid gap-5">
               <FilterGroup title="Category" values={categories.map((category) => category.name)} />
-              <FilterGroup
-                title="Pricing"
-                values={["Free plan", "Freemium", "Paid", "Open source"]}
-              />
-              <FilterGroup
-                title="Decision needs"
-                values={["API available", "Beginner", "Teams", "Commercial usage"]}
-              />
+              <FilterGroup title="Pricing" values={["Free plan", "Freemium", "Paid", "Open source"]} />
+              <FilterGroup title="Decision needs" values={["API available", "Beginner", "Teams", "Commercial usage"]} />
             </div>
-            <div className="mt-5 rounded-2xl bg-lime-100 p-4 type-body-sm text-ink-950">
+            <div className="mt-5 rounded-[var(--radius-lg)] border border-[rgba(200,255,90,0.28)] bg-[rgba(200,255,90,0.1)] p-4 type-body-sm text-[var(--text-brand)]">
               Saved on this device: selected compare tools, saved tools and recently viewed history.
             </div>
           </aside>
 
           <div>
-            <Badge tone="violet">All AI Tools</Badge>
-            <div className="mt-4 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
-              <div>
-                <h1 className="type-h1 text-neutral-900">
-                  Find tools by requirement, not by list fatigue.
-                </h1>
-                <p className="mt-4 max-w-2xl type-body-lg text-neutral-700">
-                  Browse the structured directory, then move into evaluation,
-                  comparison or Pluto-assisted recommendations.
-                </p>
-              </div>
-              <Button asChild variant="secondary">
-                <Link href="/pluto-guides">Pluto Guides</Link>
-              </Button>
-            </div>
+            <PageHeader
+              actions={(
+                <Button asChild variant="secondary">
+                  <Link href="/pluto-guides">Pluto Guides</Link>
+                </Button>
+              )}
+              eyebrow="All AI Tools"
+              title="Find tools by requirement, not by list fatigue."
+              description="Browse the structured directory, then move into evaluation, comparison or Pluto-assisted recommendations."
+            />
 
-            <div className="mt-8 rounded-3xl border border-neutral-200 bg-white p-3 shadow-card">
-              <label className="flex min-h-14 items-center gap-3 rounded-2xl bg-neutral-50 px-4">
-                <Search aria-hidden="true" className="h-5 w-5 text-violet-600" />
+            <div className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-3 shadow-[var(--shadow-xs)]">
+              <label className="flex min-h-14 items-center gap-3 rounded-[var(--radius-xl)] bg-[var(--background-interactive)] px-4">
+                <Search aria-hidden="true" className="h-5 w-5 text-[var(--color-pluto-purple-300)]" />
                 <span className="sr-only">Search within tools</span>
                 <input
-                  className="w-full bg-transparent type-body-md outline-none placeholder:text-neutral-500"
+                  className="w-full bg-transparent type-body-md outline-none placeholder:text-[var(--text-tertiary)]"
                   placeholder="Search by tool, feature, use case or profession"
                 />
               </label>
             </div>
 
             <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="number type-label-md text-neutral-600">
+              <p className="number type-label-md text-[var(--text-tertiary)]">
                 {tools.length} recommended tools shown from mock data
               </p>
               <div className="flex flex-wrap gap-2">
@@ -96,7 +87,7 @@ export default function ToolsPage() {
             </div>
           </div>
         </div>
-      </section>
+      </PageShell>
       <RecentlyViewed />
     </main>
   );
@@ -105,14 +96,14 @@ export default function ToolsPage() {
 function FilterGroup({ title, values }: { title: string; values: string[] }) {
   return (
     <fieldset>
-      <legend className="type-label-md text-neutral-900">{title}</legend>
+      <legend className="type-label-md text-[var(--text-primary)]">{title}</legend>
       <div className="mt-3 grid gap-2">
         {values.map((value, index) => (
           <label
-            className="flex min-h-11 items-center gap-3 rounded-xl border border-neutral-200 px-3 type-label-md text-neutral-700"
+            className="flex min-h-11 items-center gap-3 rounded-[var(--radius-md)] border border-[var(--border-default)] px-3 type-label-md text-[var(--text-secondary)] transition hover:border-[var(--border-brand)] hover:text-[var(--text-primary)]"
             key={value}
           >
-            <input className="h-4 w-4 accent-violet-600" defaultChecked={index === 0} type="checkbox" />
+            <input className="h-4 w-4 accent-[var(--action-primary)]" defaultChecked={index === 0} type="checkbox" />
             {value}
           </label>
         ))}
@@ -120,4 +111,3 @@ function FilterGroup({ title, values }: { title: string; values: string[] }) {
     </fieldset>
   );
 }
-

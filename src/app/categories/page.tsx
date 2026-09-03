@@ -1,41 +1,44 @@
 import Link from "next/link";
 import { ArrowRight, Search } from "lucide-react";
+import { CardGrid } from "@/components/layout/card-grid";
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell } from "@/components/layout/page-shell";
 import { Badge } from "@/components/ui/badge";
 import { categories, tools } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
 export default function CategoriesPage() {
   return (
-    <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-      <Badge tone="violet">Categories</Badge>
-      <h1 className="mt-4 type-h1 text-neutral-900">
-        Browse the AI ecosystem by work type.
-      </h1>
-      <label className="mt-8 flex min-h-14 max-w-2xl items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 shadow-card">
-        <Search aria-hidden="true" className="h-5 w-5 text-violet-600" />
+    <PageShell>
+      <PageHeader
+        eyebrow="Categories"
+        title="Browse the AI ecosystem by work type."
+      />
+      <label className="mt-8 flex min-h-14 max-w-[var(--text-width-md)] items-center gap-3 rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] px-4 shadow-[var(--shadow-xs)]">
+        <Search aria-hidden="true" className="h-5 w-5 text-[var(--color-pluto-purple-300)]" />
         <span className="sr-only">Search categories</span>
-        <input className="w-full bg-transparent outline-none" placeholder="Search categories" />
+        <input className="w-full bg-transparent outline-none placeholder:text-[var(--text-tertiary)]" placeholder="Search categories" />
       </label>
-      <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+      <CardGrid>
         {categories.map((category) => {
           const featured = tools.find((tool) => tool.category === category.name);
           return (
             <Link
-              className="focus-ring group rounded-3xl border border-neutral-200 bg-white p-6 shadow-card transition hover:-translate-y-1 hover:border-violet-500 hover:shadow-elevated"
+              className="focus-ring group rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-6 shadow-[var(--shadow-xs)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-brand)] hover:bg-[var(--surface-hover)]"
               href={`/categories/${category.slug}`}
               key={category.slug}
             >
               <div className="flex items-start justify-between gap-4">
-                <span className={cn("grid h-14 w-14 place-items-center rounded-2xl", category.tone)}>
-                  <category.icon aria-hidden="true" className="h-7 w-7 text-ink-950" />
+                <span className={cn("grid h-14 w-14 place-items-center rounded-[var(--radius-lg)]", category.tone)}>
+                  <category.icon aria-hidden="true" className="h-7 w-7 text-[var(--text-inverse)]" />
                 </span>
-                <ArrowRight className="h-5 w-5 text-neutral-500 transition group-hover:translate-x-1 group-hover:text-violet-600" />
+                <ArrowRight className="h-5 w-5 text-[var(--text-tertiary)] transition group-hover:translate-x-1 group-hover:text-[var(--color-pluto-purple-300)]" />
               </div>
-              <h2 className="mt-8 type-h3 text-neutral-900">
+              <h2 className="mt-8 type-h3 text-[var(--text-primary)]">
                 {category.name}
               </h2>
-              <p className="mt-3 type-body-sm text-neutral-700">{category.description}</p>
-              <p className="number mt-4 type-label-md text-neutral-500">
+              <p className="mt-3 type-body-sm text-[var(--text-secondary)]">{category.description}</p>
+              <p className="number mt-4 type-label-md text-[var(--text-tertiary)]">
                 {category.count} tools / featured: {featured?.name ?? "Coming soon"}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -46,7 +49,7 @@ export default function CategoriesPage() {
             </Link>
           );
         })}
-      </div>
-    </main>
+      </CardGrid>
+    </PageShell>
   );
 }

@@ -4,7 +4,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText as GSAPSplitText } from "gsap/SplitText";
-import type { CSSProperties, ElementType, RefObject } from "react";
+import type { CSSProperties, RefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 
 gsap.registerPlugin(ScrollTrigger, GSAPSplitText, useGSAP);
@@ -46,7 +46,7 @@ export function SplitText({
   revealEnd = 0.82,
   onLetterAnimationComplete
 }: SplitTextProps) {
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLElement | null>(null);
   const onCompleteRef = useRef(onLetterAnimationComplete);
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
@@ -151,18 +151,39 @@ export function SplitText({
     }
   );
 
-  const Tag = tag as ElementType;
+  const setSplitTextRef = (node: HTMLElement | null) => {
+    ref.current = node;
+  };
+  const splitTextStyle: CSSProperties = {
+    textAlign,
+    wordWrap: "break-word",
+    willChange: "transform, opacity"
+  };
+  const splitTextProps = {
+    "aria-label": text,
+    "data-split-state": reducedMotion ? "ready" : "pending",
+    className,
+    id,
+    ref: setSplitTextRef,
+    style: splitTextStyle
+  };
 
-  return (
-    <Tag
-      aria-label={text}
-      data-split-state={reducedMotion ? "ready" : "pending"}
-      className={className}
-      id={id}
-      ref={ref}
-      style={{ textAlign, wordWrap: "break-word", willChange: "transform, opacity" }}
-    >
-      {text}
-    </Tag>
-  );
+  switch (tag) {
+    case "h1":
+      return <h1 {...splitTextProps}>{text}</h1>;
+    case "h2":
+      return <h2 {...splitTextProps}>{text}</h2>;
+    case "h3":
+      return <h3 {...splitTextProps}>{text}</h3>;
+    case "h4":
+      return <h4 {...splitTextProps}>{text}</h4>;
+    case "h5":
+      return <h5 {...splitTextProps}>{text}</h5>;
+    case "h6":
+      return <h6 {...splitTextProps}>{text}</h6>;
+    case "span":
+      return <span {...splitTextProps}>{text}</span>;
+    default:
+      return <p {...splitTextProps}>{text}</p>;
+  }
 }

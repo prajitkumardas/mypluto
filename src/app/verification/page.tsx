@@ -1,25 +1,27 @@
 import { ShieldCheck } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { CardGrid } from "@/components/layout/card-grid";
+import { PageHeader } from "@/components/layout/page-header";
+import { PageShell } from "@/components/layout/page-shell";
 
 export default function VerificationPage() {
   return (
-    <main className="mx-auto max-w-site px-5 py-14 sm:px-8 lg:py-20 xl:px-0">
-      <Badge icon tone="success">Verification methodology</Badge>
-      <h1 className="mt-4 type-h1 text-neutral-900">
-        Trust is workflow, not a decorative badge.
-      </h1>
-      <div className="mt-8 grid gap-5 md:grid-cols-3">
+    <PageShell>
+      <PageHeader
+        eyebrow="Verification methodology"
+        eyebrowTone="success"
+        title="Trust is workflow, not a decorative badge."
+      />
+      <CardGrid>
         {["Website available", "Pricing checked", "Features reviewed"].map((item) => (
-          <div className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-card" key={item}>
-            <ShieldCheck aria-hidden="true" className="h-7 w-7 text-violet-600" />
-            <h2 className="mt-5 type-h4 text-neutral-900">{item}</h2>
-            <p className="mt-3 type-body-sm text-neutral-700">
-              AI can detect possible changes, but admin review is required before
-              critical data is published.
+          <div className="rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-6 shadow-[var(--shadow-xs)]" key={item}>
+            <ShieldCheck aria-hidden="true" className="h-7 w-7 text-[var(--color-pluto-purple-300)]" />
+            <h2 className="mt-5 type-h4 text-[var(--text-primary)]">{item}</h2>
+            <p className="mt-3 type-body-sm text-[var(--text-secondary)]">
+              AI can detect possible changes, but admin review is required before critical data is published.
             </p>
           </div>
         ))}
-      </div>
-    </main>
+      </CardGrid>
+    </PageShell>
   );
 }

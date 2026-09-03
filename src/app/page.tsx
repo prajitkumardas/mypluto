@@ -1,19 +1,14 @@
-import type { CSSProperties } from "react";
 import {
   ArrowRight,
-  CheckCircle2,
-  CircleDollarSign,
   ExternalLink,
-  Filter,
   Library,
   Plus,
-  ShieldCheck,
   TrendingUp
 } from "lucide-react";
 import Link from "next/link";
-import { CategoryBentoEffects } from "@/components/home/category-bento-effects";
-import categoryBentoStyles from "@/components/home/category-bento.module.css";
+import { DiscoverGuideSection } from "@/components/home/discover-guide-section";
 import { PlutoHero } from "@/components/home/pluto-hero";
+import { PopularCategoriesShowcase } from "@/components/home/popular-categories-showcase";
 import { PlutoStorySection } from "@/components/home/pluto-story-section";
 import {
   ContentBlockReveal,
@@ -23,270 +18,106 @@ import {
 } from "@/components/motion/scroll-reveals";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { RecentlyViewed } from "@/components/tools/recently-viewed";
 import {
-  categories,
   collections,
-  comparisonTools,
-  librarySteps,
   trendingTools
 } from "@/lib/data";
+import Silk from "@/components/ui/silk";
 import { cn } from "@/lib/utils";
 
-const categoryDiscoverFilters: Record<string, string> = {
-  audio: "ai-audio-and-music",
-  business: "ai-business-and-productivity",
-  creative: "ai-image-generation-and-design",
-  development: "ai-coding-and-development",
-  productivity: "ai-business-and-productivity",
-  research: "ai-search-and-research",
-  writing: "ai-writing-and-content"
-};
-
-const categoryBentoLayout = [
-  categoryBentoStyles.featureLeft,
-  categoryBentoStyles.standard,
-  categoryBentoStyles.standard,
-  categoryBentoStyles.standard,
-  categoryBentoStyles.featureRight,
-  categoryBentoStyles.standard,
-  categoryBentoStyles.standard
-];
 export default function Home() {
   return (
     <main>
       <PlutoHero />
       <PlutoStorySection />
-      <Categories />
-      <LibraryPreview />
+      <PopularCategoriesShowcase />
+      <DiscoverGuideSection />
       <Trending />
       <Collections />
-      <ComparePreview />
-      <RecentlyViewed />
       <SubmitCta />
     </main>
   );
 }
 
-function Categories() {
-  return (
-    <section className={categoryBentoStyles.section} data-magic-category-section id="categories">
-      <CategoryBentoEffects glowColor="124, 99, 255" particleCount={12} spotlightRadius={400} />
-      <div className={categoryBentoStyles.inner}>
-        <div className={categoryBentoStyles.header}>
-          <div>
-            <SectionEyebrowReveal>
-              <Badge tone="violet">Popular categories</Badge>
-            </SectionEyebrowReveal>
-            <WordReveal
-              as="h2"
-              className={`mt-4 type-h2 ${categoryBentoStyles.title}`}
-              text="Browse by the job you need done."
-            />
-          </div>
-          <Button asChild className={categoryBentoStyles.actionLink} variant="secondary">
-            <Link href="/plutos-library">
-              View all categories <ArrowRight aria-hidden="true" className="h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-
-        <RevealGroup className={categoryBentoStyles.grid} data-magic-category-grid itemClassName="h-full" stagger={0.08}>
-          {categories.map((category, index) => (
-            <Link
-              className={cn(
-                categoryBentoStyles.card,
-                categoryBentoLayout[index] ?? categoryBentoStyles.standard
-              )}
-              data-magic-category-card
-              href={getCategoryDiscoverHref(category.slug)}
-              key={category.name}
-              aria-label={`View ${category.name} tools`}
-              style={{ "--category-accent": category.accent } as CSSProperties}
-            >
-              <div className={categoryBentoStyles.cardHeader}>
-                <div className={categoryBentoStyles.cardTop}>
-                  <span className={categoryBentoStyles.count}>{category.count} verified tools</span>
-                  <ArrowRight aria-hidden="true" className={categoryBentoStyles.arrow} />
-                </div>
-
-                <div className={categoryBentoStyles.cardBody}>
-                  <span className={categoryBentoStyles.iconWrap}>
-                    <category.icon aria-hidden="true" className={categoryBentoStyles.icon} />
-                  </span>
-                  <div>
-                    <h3 className={categoryBentoStyles.cardTitle}>{category.name}</h3>
-                    <p className={categoryBentoStyles.description}>{category.description}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className={categoryBentoStyles.cardFooter} aria-label={`${category.name} tags`}>
-                {category.examples.map((example) => (
-                  <span className={categoryBentoStyles.pill} key={example}>{example}</span>
-                ))}
-              </div>
-            </Link>
-          ))}
-        </RevealGroup>
-      </div>
-    </section>
-  );
-}
-
-function getCategoryDiscoverHref(categorySlug: string) {
-  const discoverCategory = categoryDiscoverFilters[categorySlug];
-
-  return discoverCategory ? `/plutos-library?category=${discoverCategory}` : "/plutos-library";
-}
-function LibraryPreview() {
-  return (
-    <section className="bg-ink-950 py-20 text-white lg:py-28" id="library">
-      <div className="mx-auto max-w-site px-5 sm:px-8 xl:px-0">
-        <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <div>
-            <SectionEyebrowReveal>
-              <Badge className="bg-white/8 text-lime-400" tone="neutral">
-                Discover
-              </Badge>
-            </SectionEyebrowReveal>
-            <WordReveal
-              as="h2"
-              className="mt-4 type-h2"
-              text="Not sure where to start? Pluto Guides."
-            />
-            <ContentBlockReveal as="p" className="mt-5 max-w-xl type-body-lg text-white/70" delay={0.08}>
-              A guided recommendation flow turns ambiguous goals into matched
-              tools, clear tradeoffs and decision-ready explanations.
-            </ContentBlockReveal>
-            <Button asChild className="mt-7" variant="lime">
-              <Link href="/pluto-guides">
-                Start a recommendation <ArrowRight aria-hidden="true" className="h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
-
-          <div className="grid gap-4">
-            <RevealGroup className="grid gap-4" stagger={0.08}>
-              {librarySteps.map((step, index) => (
-                <div
-                  className="rounded-2xl border border-white/12 bg-white/8 p-5"
-                  key={step.title}
-                >
-                  <div className="flex gap-4">
-                    <span className="number grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-lime-400 type-label-lg text-ink-950">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <h3 className="flex items-center gap-2 type-h5">
-                        <step.icon aria-hidden="true" className="h-5 w-5 text-lime-400" />
-                        {step.title}
-                      </h3>
-                      <p className="mt-2 type-body-sm text-white/68">{step.copy}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </RevealGroup>
-
-            <ContentBlockReveal className="rounded-2xl border border-lime-400/30 bg-lime-400 p-5 text-ink-950" delay={0.12}>
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <p className="type-h4">Top match: Gamma</p>
-                  <p className="mt-2 type-body-sm">
-                    Matches fast presentation creation, beginner workflow and a
-                    freemium budget. Limitation: less control over custom systems.
-                  </p>
-                </div>
-                <Badge className="bg-white text-ink-950" icon tone="neutral">
-                  Verified Aug 2026
-                </Badge>
-              </div>
-            </ContentBlockReveal>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Trending() {
   return (
-    <section className="mx-auto max-w-site px-5 py-20 sm:px-8 lg:py-28 xl:px-0" id="trending">
-      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
-        <div>
-          <SectionEyebrowReveal>
-            <Badge tone="lime">Trending tools</Badge>
-          </SectionEyebrowReveal>
-          <WordReveal
-            as="h2"
-            className="mt-4 type-h2 text-neutral-900"
-            text="What builders are checking now."
-          />
-        </div>
-        <div className="flex gap-2 overflow-x-auto">
-          {["Today", "This week", "This month"].map((item, index) => (
-            <button
-              className={cn(
-                "focus-ring min-h-11 shrink-0 rounded-xl border px-4 type-label-md",
-                index === 1
-                  ? "border-violet-600 bg-violet-100 text-violet-600"
-                  : "border-neutral-200 bg-white text-neutral-700"
-              )}
-              key={item}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <ContentBlockReveal className="mt-10 overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-card">
-        {trendingTools.map((tool) => (
-          <article
-            className="grid gap-4 border-b border-neutral-200 p-5 last:border-b-0 lg:grid-cols-[72px_1.1fr_1fr_120px_120px_140px] lg:items-center"
-            key={tool.name}
-          >
-            <div className="number type-h3 text-neutral-300">
-              {String(tool.rank).padStart(2, "0")}
-            </div>
-            <div className="flex items-center gap-3">
-              <span
-                className="grid h-12 w-12 place-items-center rounded-2xl type-h6 text-ink-950"
-                style={{ backgroundColor: tool.accent }}
+    <section className="site-section" id="trending">
+      <div className="site-container">
+        <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+          <div>
+            <SectionEyebrowReveal>
+              <Badge tone="lime">Trending tools</Badge>
+            </SectionEyebrowReveal>
+            <WordReveal
+              as="h2"
+              className="mt-4 type-h2 text-neutral-900"
+              text="What builders are checking now."
+            />
+          </div>
+          <div className="flex gap-2 overflow-x-auto">
+            {["Today", "This week", "This month"].map((item, index) => (
+              <button
+                className={cn(
+                  "focus-ring min-h-11 shrink-0 rounded-xl border px-4 type-label-md",
+                  index === 1
+                    ? "border-violet-600 bg-violet-100 text-violet-600"
+                    : "border-neutral-200 bg-white text-neutral-700"
+                )}
+                key={item}
               >
-                {tool.name.charAt(0)}
-              </span>
-              <div>
-                <h3 className="type-h5 text-neutral-900">
-                  {tool.name}
-                </h3>
-                <p className="type-body-sm text-neutral-500">{tool.category}</p>
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <ContentBlockReveal className="mt-10 overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-card">
+          {trendingTools.map((tool) => (
+            <article
+              className="grid gap-4 border-b border-neutral-200 p-5 last:border-b-0 lg:grid-cols-[72px_1.1fr_1fr_120px_120px_140px] lg:items-center"
+              key={tool.name}
+            >
+              <div className="number type-h3 text-neutral-300">
+                {String(tool.rank).padStart(2, "0")}
               </div>
-            </div>
-            <p className="type-body-sm text-neutral-700">{tool.tagline}</p>
-            <Badge tone="neutral">{tool.pricing}</Badge>
-            <Badge className="justify-center" tone="success">
-              <TrendingUp aria-hidden="true" className="h-3.5 w-3.5" />
-              {tool.movement}
-            </Badge>
-            <Button asChild variant="secondary">
-              <Link href={`/tools/${tool.slug}`}>
-                <Plus aria-hidden="true" className="h-4 w-4" />
-                Evaluate
-              </Link>
-            </Button>
-          </article>
-        ))}
-      </ContentBlockReveal>
+              <div className="flex items-center gap-3">
+                <span
+                  className="grid h-12 w-12 place-items-center rounded-2xl type-h6 text-ink-950"
+                  style={{ backgroundColor: tool.accent }}
+                >
+                  {tool.name.charAt(0)}
+                </span>
+                <div>
+                  <h3 className="type-h5 text-neutral-900">
+                    {tool.name}
+                  </h3>
+                  <p className="type-body-sm text-neutral-500">{tool.category}</p>
+                </div>
+              </div>
+              <p className="type-body-sm text-neutral-700">{tool.tagline}</p>
+              <Badge tone="neutral">{tool.pricing}</Badge>
+              <Badge className="justify-center" tone="success">
+                <TrendingUp aria-hidden="true" className="h-3.5 w-3.5" />
+                {tool.movement}
+              </Badge>
+              <Button asChild variant="secondary">
+                <Link href={`/tools/${tool.slug}`}>
+                  <Plus aria-hidden="true" className="h-4 w-4" />
+                  Evaluate
+                </Link>
+              </Button>
+            </article>
+          ))}
+        </ContentBlockReveal>
+      </div>
     </section>
   );
 }
 
 function Collections() {
   return (
-    <section className="bg-neutral-50 py-20 lg:py-28">
-      <div className="mx-auto max-w-site px-5 sm:px-8 xl:px-0">
+    <section className="site-section bg-neutral-50">
+      <div className="site-container">
         <div className="max-w-3xl">
           <SectionEyebrowReveal>
             <Badge tone="violet">Curated collections</Badge>
@@ -334,111 +165,46 @@ function Collections() {
   );
 }
 
-function ComparePreview() {
-  return (
-    <section className="mx-auto max-w-site px-5 py-20 sm:px-8 lg:py-28 xl:px-0" id="compare">
-      <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-        <div>
-          <SectionEyebrowReveal>
-            <Badge tone="info">Compare preview</Badge>
-          </SectionEyebrowReveal>
-          <WordReveal
-            as="h2"
-            className="mt-4 type-h2 text-neutral-900"
-            text="Calm decisions, not noisy scoreboards."
-          />
-          <ContentBlockReveal as="p" className="mt-5 type-body-lg text-neutral-700" delay={0.08}>
-            Pluto highlights differences and context instead of declaring a
-            universal winner. Start with two to four tools, then filter by what
-            matters.
-          </ContentBlockReveal>
-          <ContentBlockReveal className="mt-6 flex flex-wrap gap-2" delay={0.12}>
-            <Badge tone="success">
-              <CheckCircle2 aria-hidden="true" className="h-3.5 w-3.5" />
-              Best for beginners
-            </Badge>
-            <Badge tone="lime">
-              <CircleDollarSign aria-hidden="true" className="h-3.5 w-3.5" />
-              Free plan first
-            </Badge>
-            <Badge tone="violet">
-              <ShieldCheck aria-hidden="true" className="h-3.5 w-3.5" />
-              Verified data
-            </Badge>
-          </ContentBlockReveal>
-        </div>
-
-        <ContentBlockReveal className="overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-elevated">
-          <div className="flex items-center justify-between border-b border-neutral-200 bg-neutral-50 p-4">
-            <div className="flex items-center gap-2">
-              <Filter aria-hidden="true" className="h-4 w-4 text-violet-600" />
-              <span className="type-label-md text-neutral-900">Differences only</span>
-            </div>
-          <Button asChild size="sm" variant="secondary">
-            <Link href="/compare">
-              Full comparison
-            </Link>
-          </Button>
-          </div>
-          <div className="grid min-w-[680px] grid-cols-3">
-            {comparisonTools.map((tool) => (
-              <div className="border-r border-neutral-200 p-5 last:border-r-0" key={tool.name}>
-                <span className="grid h-11 w-11 place-items-center rounded-xl bg-violet-100 type-h6 text-violet-600">
-                  {tool.logo}
-                </span>
-                <h3 className="mt-4 type-h5 text-neutral-900">
-                  {tool.name}
-                </h3>
-                <dl className="mt-5 grid gap-4 type-body-sm">
-                  <CompareFact label="Starting price" value={tool.price} />
-                  <CompareFact label="Best for" value={tool.bestFor} />
-                  <CompareFact label="API" value={tool.api} />
-                  <CompareFact label="Team use" value={tool.team} />
-                  <CompareFact label="Limitation" value={tool.limitation} />
-                </dl>
-              </div>
-            ))}
-          </div>
-        </ContentBlockReveal>
-      </div>
-    </section>
-  );
-}
-
-function CompareFact({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <dt className="type-label-sm text-neutral-500">{label}</dt>
-      <dd className="mt-1 type-body-sm text-neutral-900">{value}</dd>
-    </div>
-  );
-}
-
 function SubmitCta() {
   return (
-    <section className="mx-auto max-w-site px-5 pb-20 sm:px-8 lg:pb-28 xl:px-0">
-      <div className="grid gap-8 rounded-[2rem] bg-lime-400 p-6 text-ink-950 md:grid-cols-[1fr_auto] md:items-center md:p-10">
-        <div>
-          <SectionEyebrowReveal>
-            <Badge className="bg-white text-ink-950" tone="neutral">
-              Submit a Tool
-            </Badge>
-          </SectionEyebrowReveal>
-          <WordReveal
-            as="h2"
-            className="mt-4 type-h2"
-            text="Built something useful? Add it to the universe."
+    <section className="site-section">
+      <div className="site-container">
+        <div className="relative isolate grid gap-8 overflow-hidden rounded-[2rem] border border-neutral-200 bg-ink-950 p-6 text-white shadow-elevated md:grid-cols-[1fr_auto] md:items-center md:p-10">
+          <div aria-hidden="true" className="absolute inset-0 z-0 opacity-80">
+            <Silk
+              color="#5227FF"
+              noiseIntensity={1.5}
+              rotation={0}
+              scale={1}
+              speed={5}
+            />
+          </div>
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 z-10 bg-[linear-gradient(110deg,rgba(21,21,21,0.78),rgba(21,21,21,0.56)_48%,rgba(200,255,90,0.16))]"
           />
-          <ContentBlockReveal as="p" className="mt-4 max-w-2xl type-body-lg" delay={0.08}>
-            A guided submission flow will capture product details, pricing,
-            platform support and verification notes without one long form.
-          </ContentBlockReveal>
+          <div className="relative z-20">
+            <SectionEyebrowReveal>
+              <Badge className="text-lime-400" tone="neutral">
+                Submit a Tool
+              </Badge>
+            </SectionEyebrowReveal>
+            <WordReveal
+              as="h2"
+              className="mt-4 type-h2"
+              text="Built something useful? Add it to the universe."
+            />
+            <ContentBlockReveal as="p" className="mt-4 max-w-2xl type-body-md text-white/78" delay={0.08}>
+              A guided submission flow will capture product details, pricing,
+              platform support and verification notes without one long form.
+            </ContentBlockReveal>
+          </div>
+          <Button asChild className="relative z-20 bg-[#ffffff] text-[#6C4DFF] hover:bg-violet-100" size="lg">
+            <Link href="/submit-tool">
+              Start submission <ExternalLink aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          </Button>
         </div>
-        <Button asChild className="bg-ink-950 text-white hover:bg-ink-900" size="lg">
-          <Link href="/submit-tool">
-            Start submission <ExternalLink aria-hidden="true" className="h-4 w-4" />
-          </Link>
-        </Button>
       </div>
     </section>
   );
