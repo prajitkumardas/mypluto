@@ -1,21 +1,25 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
+import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
+  Circle,
   Gamepad2,
   Gift,
-  Grid3X3,
+  Lightbulb,
   Lock,
+  PawPrint,
   RotateCcw,
   Sparkles,
   Trophy,
   X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import LightPillar from "@/components/ui/light-pillar";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { HeroVeil } from "@/components/shared/hero-veil";
 import { getFaviconLogoUrl } from "@/lib/tool-logo";
@@ -58,6 +62,20 @@ type Score = {
   draws: number;
 };
 
+type BodyScrollSnapshot = {
+  scrollY: number;
+  bodyPosition: string;
+  bodyTop: string;
+  bodyLeft: string;
+  bodyRight: string;
+  bodyWidth: string;
+  bodyOverflow: string;
+  bodyPaddingRight: string;
+  htmlOverflow: string;
+  htmlOverscrollBehavior: string;
+  bodyOverscrollBehavior: string;
+};
+
 const VIDEO_SRC = "/videos/play/plutoplay.mp4";
 const POSTER_SRC = "/images/home/hero/pluto-valley-background.webp";
 const PLAYER_NAME_KEY = "pluto-play-player-name";
@@ -85,9 +103,13 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
   const [selectedReward, setSelectedReward] = useState<PlayRewardTool | null>(null);
   const [giftOpening, setGiftOpening] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const scrollLockRef = useRef<BodyScrollSnapshot | null>(null);
 
   const modalOpen = flowState === "game-selection" || flowState === "name-entry";
   const resultOpen = flowState === "user-won" || flowState === "pluto-won" || flowState === "draw" || flowState === "reward-reveal";
+  const popupOpen = modalOpen || resultOpen;
+  const gameVisible = isGameVisible(flowState);
+  const scrollLocked = popupOpen || flowState === "versus" || gameVisible;
   const thinking = flowState === "playing" && turn === "pluto";
   const outcome = getOutcomeFromState(flowState);
   const status = getStatusText(flowState, turn, thinking);
@@ -125,13 +147,81 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
     return () => document.removeEventListener("visibilitychange", syncPlayback);
   }, [flowState, modalOpen]);
 
+
+  useEffect(() => {
+    if (!scrollLocked) return;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const scrollY = window.scrollY;
+    const scrollbarWidth = window.innerWidth - html.clientWidth;
+    const computedBody = window.getComputedStyle(body);
+    const currentPaddingRight = Number.parseFloat(computedBody.paddingRight) || 0;
+
+    scrollLockRef.current = {
+      scrollY,
+      bodyPosition: body.style.position,
+      bodyTop: body.style.top,
+      bodyLeft: body.style.left,
+      bodyRight: body.style.right,
+      bodyWidth: body.style.width,
+      bodyOverflow: body.style.overflow,
+      bodyPaddingRight: body.style.paddingRight,
+      htmlOverflow: html.style.overflow,
+      htmlOverscrollBehavior: html.style.overscrollBehavior,
+      bodyOverscrollBehavior: body.style.overscrollBehavior
+    };
+
+    const preventBackgroundScroll = (event: WheelEvent | TouchEvent) => {
+      const target = event.target;
+      if (target instanceof Element && target.closest('[data-pluto-modal-scroll="true"]')) return;
+      event.preventDefault();
+    };
+
+    html.style.overflow = "hidden";
+    html.style.overscrollBehavior = "none";
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+    body.style.overscrollBehavior = "none";
+    if (scrollbarWidth > 0) {
+      body.style.paddingRight = `${currentPaddingRight + scrollbarWidth}px`;
+    }
+
+    document.addEventListener("wheel", preventBackgroundScroll, { passive: false });
+    document.addEventListener("touchmove", preventBackgroundScroll, { passive: false });
+
+    return () => {
+      document.removeEventListener("wheel", preventBackgroundScroll);
+      document.removeEventListener("touchmove", preventBackgroundScroll);
+
+      const snapshot = scrollLockRef.current;
+      if (!snapshot) return;
+
+      html.style.overflow = snapshot.htmlOverflow;
+      html.style.overscrollBehavior = snapshot.htmlOverscrollBehavior;
+      body.style.position = snapshot.bodyPosition;
+      body.style.top = snapshot.bodyTop;
+      body.style.left = snapshot.bodyLeft;
+      body.style.right = snapshot.bodyRight;
+      body.style.width = snapshot.bodyWidth;
+      body.style.overflow = snapshot.bodyOverflow;
+      body.style.overscrollBehavior = snapshot.bodyOverscrollBehavior;
+      body.style.paddingRight = snapshot.bodyPaddingRight;
+      scrollLockRef.current = null;
+      window.scrollTo(0, snapshot.scrollY);
+    };
+  }, [scrollLocked]);
   useEffect(() => {
     if (flowState !== "versus") return;
 
     const timer = window.setTimeout(() => {
       setFlowState("playing");
       setTurn("user");
-    }, 1250);
+    }, 4800);
 
     return () => window.clearTimeout(timer);
   }, [flowState]);
@@ -261,7 +351,7 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
   }
 
   return (
-    <main className={cn(styles.stage, flowState === "landing" && styles.landingStage)}>
+    <main className={cn(styles.stage, flowState === "landing" && styles.landingStage, gameVisible && styles.gameStage)}>
       {flowState === "landing" || modalOpen ? (
         <div className={styles.videoLayer} aria-hidden="true">
           <video
@@ -293,42 +383,64 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
       ) : null}
 
       {flowState === "versus" ? (
-        <section className={styles.versusScreen} aria-live="polite">
-          <span>{playerName}</span>
-          <strong>VS</strong>
-          <span>Pluto</span>
+        <section className={styles.versusScreen} aria-label={`Pluto versus ${playerName}`} aria-live="polite">
+          <div className={styles.versusLight} aria-hidden="true">
+            <LightPillar
+              topColor="#AD6CFF"
+              bottomColor="#7825E8"
+              intensity={0.58}
+              rotationSpeed={2}
+              glowAmount={0.00125}
+              pillarWidth={3}
+              pillarHeight={0.4}
+              noiseIntensity={0.5}
+              pillarRotation={25}
+              interactive={false}
+              mixBlendMode="screen"
+              quality="high"
+            />
+          </div>
+          <div className={styles.versusContent}>
+            <span className={cn(styles.versusName, styles.versusPluto)} data-text="Pluto">Pluto</span>
+            <strong className={styles.versusMark} data-text="VS">VS</strong>
+            <span className={cn(styles.versusName, styles.versusPlayer)} data-text={playerName}>{playerName}</span>
+          </div>
         </section>
       ) : null}
 
-      {isGameVisible(flowState) ? (
+      {gameVisible ? (
         <section className={styles.gameShell} aria-labelledby="game-title">
           <div className={styles.gameHeader}>
-            <div>
-              <p className={styles.eyebrow}>Tic-Tac-Toe</p>
-              <h1 id="game-title">{playerName} vs Pluto</h1>
-            </div>
             <Button className={styles.exitButton} onClick={exitGame} variant="ghost">
               <ArrowLeft aria-hidden="true" /> Exit game
             </Button>
+            <div className={styles.gameTitleBlock}>
+              <p className={styles.eyebrow}>Tic-Tac-Toe</p>
+              <h1 className={styles.gameTitle} id="game-title">
+                <span className={styles.gameTitlePlayer}>{playerName}</span>
+                <span className={styles.gameTitleVs}>vs</span>
+                <span className={styles.gameTitlePluto}>Pluto</span>
+              </h1>
+            </div>
           </div>
 
           <div className={styles.scoreRow} aria-label="Current session score">
             <div className={styles.playerBadge}>
               <span>{playerName} - X</span>
-              <strong>{score.user}</strong>
+              <strong key={`user-${score.user}`}>{score.user}</strong>
             </div>
             <div className={styles.playerBadge}>
               <span>Draws</span>
-              <strong>{score.draws}</strong>
+              <strong key={`draws-${score.draws}`}>{score.draws}</strong>
             </div>
             <div className={styles.playerBadge}>
               <span>Pluto - O</span>
-              <strong>{score.pluto}</strong>
+              <strong key={`pluto-${score.pluto}`}>{score.pluto}</strong>
             </div>
           </div>
 
           <div className={cn(styles.turnPill, outcome && styles.turnPillSettled)} aria-live="polite">
-            {outcome === "user" ? <Trophy aria-hidden="true" /> : <X aria-hidden="true" />}
+            {turn === "pluto" || outcome === "pluto" ? <Circle aria-hidden="true" /> : outcome === "user" ? <Trophy aria-hidden="true" /> : <X aria-hidden="true" />}
             {status}
           </div>
 
@@ -367,61 +479,79 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
       <Dialog.Root open={modalOpen} onOpenChange={(open) => !open && closeGameModal()}>
         <Dialog.Portal>
           <Dialog.Overlay className={styles.modalOverlay} />
-          <Dialog.Content className={styles.modalContent}>
+          <Dialog.Content className={cn(styles.modalContent, styles.selectionModalContent, flowState === "name-entry" && styles.nameEntryModalContent)} data-pluto-modal-scroll="true">
+            <div className={styles.modalMascotFrame} aria-hidden="true">
+              <Image
+                alt=""
+                className={styles.modalMascot}
+                height={1321}
+                priority
+                sizes="(max-width: 700px) 105px, 136px"
+                src="/images/play/plutopopup.png"
+                width={1191}
+              />
+            </div>
             <div className={styles.modalHeader}>
               <div>
                 <Dialog.Title className={styles.modalTitle}>
-                  {flowState === "name-entry" ? "What should Pluto call you?" : "What would you like to play?"}
+                  {flowState === "name-entry" ? (
+                    "What should Pluto call you?"
+                  ) : (
+                    <>What would you like to <span className={styles.titleAccent}>play?</span></>
+                  )}
                 </Dialog.Title>
                 <Dialog.Description className={styles.modalDescription}>
                   {flowState === "name-entry" ? "The name is optional. Pluto will keep it for this session." : "Choose a game and challenge Pluto."}
                 </Dialog.Description>
               </div>
               <Dialog.Close asChild>
-                <button className={styles.closeButton} type="button" aria-label="Close game selection">
+                <button className={styles.closeButton} type="button" aria-label="Close play popup">
                   <X aria-hidden="true" />
                 </button>
               </Dialog.Close>
             </div>
 
             {flowState === "game-selection" ? (
-              <div className={styles.gameChoices}>
-                <article className={cn(styles.gameChoice, styles.gameChoiceAvailable)}>
-                  <div className={styles.gamePreview} aria-hidden="true">
-                    <Grid3X3 />
-                  </div>
-                  <div>
-                    <span className={styles.availableBadge}>Available</span>
-                    <h3>Tic-Tac-Toe</h3>
-                    <p>A quick match against Pluto.</p>
-                  </div>
-                  <Button onClick={chooseTicTacToe} type="button">
-                    Play now <ArrowRight aria-hidden="true" />
-                  </Button>
-                </article>
+              <>
+                <div className={styles.gameChoices}>
+                  <article className={cn(styles.gameChoice, styles.gameChoiceAvailable)}>
+                    <div className={styles.gamePreview} aria-hidden="true">
+                      <X />
+                      <Circle />
+                    </div>
+                    <div>
+                      <h3>Tic-Tac-Toe</h3>
+                      <p>A quick match against Pluto.</p>
+                    </div>
+                    <Button onClick={chooseTicTacToe} type="button">
+                      Play now <ArrowRight aria-hidden="true" />
+                    </Button>
+                  </article>
 
-                <article className={styles.gameChoice} data-disabled="true">
-                  <div className={styles.gamePreview} aria-hidden="true">
-                    <Lock />
-                  </div>
-                  <div>
-                    <span className={styles.soonBadge}>Coming soon</span>
-                    <h3>Memory Match</h3>
-                    <p>Flip cards with Pluto.</p>
-                  </div>
-                </article>
+                  <article className={styles.gameChoice} data-disabled="true">
+                    <div className={styles.gamePreview} aria-hidden="true">
+                      <PawPrint />
+                    </div>
+                    <div>
+                      <h3>Memory Match</h3>
+                      <p>Flip cards with Pluto.</p>
+                    </div>
+                    <span className={styles.soonBadge}><Lock aria-hidden="true" />Coming soon</span>
+                  </article>
 
-                <article className={styles.gameChoice} data-disabled="true">
-                  <div className={styles.gamePreview} aria-hidden="true">
-                    <Lock />
-                  </div>
-                  <div>
-                    <span className={styles.soonBadge}>Coming soon</span>
-                    <h3>Prompt Puzzle</h3>
-                    <p>A tiny AI riddle room.</p>
-                  </div>
-                </article>
-              </div>
+                  <article className={styles.gameChoice} data-disabled="true">
+                    <div className={styles.gamePreview} aria-hidden="true">
+                      <Lightbulb />
+                    </div>
+                    <div>
+                      <h3>Prompt Puzzle</h3>
+                      <p>A tiny AI riddle room.</p>
+                    </div>
+                    <span className={styles.soonBadge}><Lock aria-hidden="true" />Coming soon</span>
+                  </article>
+                </div>
+                <p className={styles.selectionFooter}>Play, win, and discover a surprise!</p>
+              </>
             ) : null}
 
             {flowState === "name-entry" ? (
@@ -449,11 +579,10 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-
       <Dialog.Root open={resultOpen} onOpenChange={() => undefined}>
         <Dialog.Portal>
           <Dialog.Overlay className={styles.resultOverlay} />
-          <Dialog.Content className={styles.resultContent}>
+          <Dialog.Content className={styles.resultContent} data-pluto-modal-scroll="true">
             {flowState === "user-won" ? (
               <div className={styles.winPanel}>
                 <Dialog.Title className={styles.resultTitle}>You beat Pluto!</Dialog.Title>

@@ -334,12 +334,18 @@ textarea::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
+button,
 button[class*="rounded-"],
+a[class*="Button"],
+a[class*="button"],
+span[class*="Button"],
+span[class*="button"],
+[role="button"],
 input[class*="rounded-"]:not([type="checkbox"]):not([type="radio"]),
 textarea[class*="rounded-"],
 select[class*="rounded-"],
 label[class*="rounded-"]:has(input:not([type="checkbox"]):not([type="radio"]), textarea, select) {
-  border-radius: 999px;
+  border-radius: 999px !important;
 }
 .nav-link {
   min-height: 40px;
@@ -593,4 +599,3 @@ label[class*="rounded-"]:has(input:not([type="checkbox"]):not([type="radio"]), t
     transition-duration: 0.01ms !important;
   }
 }
-
