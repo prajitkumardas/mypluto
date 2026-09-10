@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, ExternalLink, Star } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import { CompareButton } from "@/components/compare/compare-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import type { ToolRecord } from "@/lib/data";
 import { useCompareStore } from "@/lib/compare-store";
 
@@ -55,11 +56,9 @@ export function ToolCard({ tool, variant = "standard" }: ToolCardProps) {
           Saved on this device for compare and shortlist actions.
         </p>
         <div className="grid gap-2 sm:grid-cols-2">
-          <Button asChild variant="secondary">
-            <Link href={`/tools/${tool.slug}`}>
-              View details <ArrowRight aria-hidden="true" className="h-4 w-4" />
-            </Link>
-          </Button>
+          <PlutoButton fullWidth href={`/tools/${tool.slug}`} showArrow variant="secondary">
+            View details
+          </PlutoButton>
           <CompareButton toolName={tool.name} toolSlug={tool.slug} variant="primary" />
         </div>
         <div className="mt-2 grid gap-2 sm:grid-cols-2">

@@ -1,0 +1,292 @@
+.root {
+  --pluto-cta-x: 50%;
+  --pluto-cta-norm-x: 0.5;
+  --pluto-cta-edge-left: 0;
+  --pluto-cta-edge-right: 0;
+  --pluto-cta-glow-hot: var(--pluto-glow-hot, 238, 228, 255);
+  --pluto-cta-glow-core: var(--pluto-glow-core, 168, 85, 247);
+  --pluto-cta-glow-edge: var(--pluto-glow-edge, 109, 40, 217);
+  --pluto-cta-base-transform: translate3d(0, 0, 0);
+  --pluto-cta-motion-transform: translateY(0) scale(1);
+
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--pluto-cta-border-subtle, rgba(255, 255, 255, 0.1));
+  border-radius: 9999px;
+  color: var(--pluto-cta-text-primary, #ffffff);
+  font-family: var(--font-body);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-label-md);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transform: var(--pluto-cta-base-transform) var(--pluto-cta-motion-transform);
+  transition:
+    transform 180ms var(--ease-standard),
+    border-color 170ms var(--ease-standard),
+    background-color 180ms var(--ease-standard),
+    filter 180ms var(--ease-standard),
+    opacity 180ms var(--ease-standard);
+  will-change: transform;
+}
+
+.root::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.primary {
+  background:
+    radial-gradient(92% 170% at calc(var(--pluto-cta-norm-x) * 100%) 0%, rgba(var(--pluto-cta-glow-hot), 0.14), transparent 42%),
+    linear-gradient(100deg, var(--pluto-primary-700), var(--pluto-primary-600) 45%, var(--pluto-primary-400));
+  box-shadow: var(--pluto-shadow-cta-primary);
+}
+
+.secondary {
+  border-color: var(--pluto-cta-border-strong, rgba(255, 255, 255, 0.2));
+  background: var(--pluto-surface-secondary, rgba(255, 255, 255, 0.025));
+  box-shadow: var(--pluto-shadow-cta-secondary);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  backdrop-filter: blur(16px) saturate(120%);
+}
+
+.sm {
+  min-height: 2.35rem;
+  padding: 0 1rem;
+  font-size: var(--text-label-sm);
+  line-height: var(--leading-label-sm);
+}
+
+.md {
+  min-height: 2.875rem;
+  padding: 0 1.45rem;
+  font-size: var(--text-label-md);
+  line-height: var(--leading-label-md);
+}
+
+.lg {
+  min-height: 3.375rem;
+  padding: 0 1.9rem;
+  font-size: var(--text-label-lg);
+  line-height: var(--leading-label-lg);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.outerGlow,
+.edgeGlow,
+.cursorGlow {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 210ms var(--ease-standard);
+}
+
+.outerGlow {
+  inset: -0.85rem;
+  background:
+    radial-gradient(44% 130% at var(--pluto-cta-x) 50%, rgba(var(--pluto-cta-glow-core), 0.26), transparent 68%);
+  filter: blur(12px);
+}
+
+.cursorGlow {
+  left: var(--pluto-cta-x);
+  top: 50%;
+  width: 7.5rem;
+  height: 7.5rem;
+  background:
+    radial-gradient(
+      50% 50% at 50% 50%,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(216, 180, 254, 0.76) 18%,
+      rgba(var(--pluto-cta-glow-core), 0.48) 42%,
+      rgba(var(--pluto-cta-glow-edge), 0.22) 65%,
+      transparent 90%
+    );
+  filter: blur(7px);
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+}
+
+.edgeGlow {
+  inset: -1px;
+  background:
+    linear-gradient(90deg, rgba(var(--pluto-cta-glow-hot), calc(var(--pluto-cta-edge-left) * 0.42)), transparent 31%),
+    linear-gradient(270deg, rgba(var(--pluto-cta-glow-hot), calc(var(--pluto-cta-edge-right) * 0.42)), transparent 31%);
+  filter: blur(2px);
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.label {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.label > svg {
+  flex: 0 0 auto;
+}
+
+.arrow,
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+}
+
+.lg .arrow,
+.lg .spinner {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.arrow {
+  transition: transform 200ms var(--ease-standard);
+}
+
+.spinner {
+  animation: plutoButtonSpin 900ms linear infinite;
+}
+
+.root[data-hovering="true"] {
+  --pluto-cta-motion-transform: translateY(-1px) scale(1);
+}
+
+.root[data-hovering="true"] .outerGlow {
+  opacity: 1;
+}
+
+.primary[data-hovering="true"] {
+  border-color: rgba(255, 255, 255, 0.2);
+  filter: brightness(1.055);
+}
+
+.primary[data-hovering="true"] .cursorGlow {
+  opacity: 0.9;
+}
+
+.primary[data-hovering="true"] .edgeGlow {
+  opacity: 1;
+}
+
+.secondary[data-hovering="true"] {
+  border-color: rgba(216, 180, 254, 0.42);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.secondary[data-hovering="true"] .outerGlow {
+  opacity: 0.56;
+}
+
+.secondary[data-hovering="true"] .cursorGlow {
+  opacity: 0.5;
+}
+
+.secondary[data-hovering="true"] .edgeGlow {
+  opacity: 0.72;
+}
+
+.root[data-hovering="true"] .arrow {
+  transform: translateX(3px);
+}
+
+.root:active:not(.inactive) {
+  --pluto-cta-motion-transform: translateY(0) scale(0.985);
+}
+
+.primary:active:not(.inactive) {
+  filter: brightness(0.92);
+}
+
+.secondary:active:not(.inactive) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.root:focus-visible {
+  outline: 2px solid rgba(192, 132, 252, 0.9);
+  outline-offset: 3px;
+}
+
+.inactive,
+.root:disabled {
+  --pluto-cta-motion-transform: translateY(0) scale(1);
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.inactive .outerGlow,
+.inactive .edgeGlow,
+.inactive .cursorGlow,
+.root:disabled .outerGlow,
+.root:disabled .edgeGlow,
+.root:disabled .cursorGlow {
+  opacity: 0;
+}
+
+.inactive .arrow,
+.root:disabled .arrow {
+  transform: none;
+}
+
+@keyframes plutoButtonSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .md,
+  .lg {
+    min-height: 2.75rem;
+    padding-inline: 1.15rem;
+    font-size: var(--text-label-md);
+    line-height: var(--leading-label-md);
+  }
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .root,
+  .root::before,
+  .outerGlow,
+  .edgeGlow,
+  .cursorGlow,
+  .arrow {
+    transition: none;
+  }
+
+  .root[data-hovering="true"],
+  .root:active:not(.inactive) {
+    --pluto-cta-motion-transform: translateY(0) scale(1);
+  }
+
+  .root[data-hovering="true"] .outerGlow,
+  .root[data-hovering="true"] .edgeGlow,
+  .root[data-hovering="true"] .cursorGlow {
+    opacity: 0;
+  }
+}

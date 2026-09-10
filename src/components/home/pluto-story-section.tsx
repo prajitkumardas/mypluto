@@ -43,7 +43,7 @@ export function PlutoStorySection() {
               : { borderRadius: frameRadius, boxShadow: frameShadow, scale: frameScale, y: frameY }
           }
         >
-          <BackgroundVideo scale={reducedMotion ? 1.03 : videoScale} reducedMotion={reducedMotion} />
+          <BackgroundVideo scale={reducedMotion ? 1.03 : videoScale} />
           <div className={styles.overlay} aria-hidden="true" />
           <div className={styles.copyLayer}>
             <div className={styles.copyInner}>
@@ -60,7 +60,7 @@ export function PlutoStorySection() {
                   revealEnd={0.82}
                   revealStart={0.33}
                   splitType="chars"
-                  tag="p"
+                  tag="h1"
                   text={PLUTO_STORY_TEXT}
                   textAlign="left"
                   to={{ opacity: 1, y: 0 }}

@@ -1,10 +1,9 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CardGrid } from "@/components/layout/card-grid";
 import { PageHeader } from "@/components/layout/page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { ToolCard } from "@/components/tools/tool-card";
 import { getCategory, tools } from "@/lib/data";
 
@@ -26,9 +25,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     <PageShell>
       <PageHeader
         actions={(
-          <Button asChild variant="secondary">
-            <Link href={`/plutos-library?category=${category.slug}`}>Open in Discover</Link>
-          </Button>
+          <PlutoButton href={`/plutos-library?category=${category.slug}`} showArrow variant="secondary">Open in Discover</PlutoButton>
         )}
         eyebrow={category.name}
         title={`${category.name} AI tools`}
@@ -42,7 +39,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
       <section className="mt-12">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="type-h3 text-[var(--text-primary)]">Recommended tools</h2>
+          <h2 className="type-h2 text-[var(--text-primary)]">Recommended tools</h2>
           <p className="number type-label-md text-[var(--text-tertiary)]">{categoryTools.length} tools</p>
         </div>
         <CardGrid className="mt-6">

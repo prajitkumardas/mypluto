@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { CompareButton } from "@/components/compare/compare-button";
 import { ToolLogo } from "@/components/shared/tool-logo";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import type { LibraryTool } from "@/lib/plutos-library";
 import { getFaviconLogoUrl } from "@/lib/tool-logo";
 import { cn } from "@/lib/utils";
@@ -49,11 +50,10 @@ export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
       </div>
 
       <div className={styles.actions}>
-        <Link className={cn(styles.actionButton, styles.primaryAction)} href={detailHref} onClick={() => track("tool_view")}>
+        <PlutoButton fullWidth href={detailHref} onClick={() => track("tool_view")} showArrow variant="primary">
           View details
-          <ArrowRight aria-hidden="true" />
-        </Link>
-        <CompareButton className={cn(styles.actionButton, styles.secondaryAction)} afterSelection={() => track("compare")} toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
+        </PlutoButton>
+        <CompareButton afterSelection={() => track("compare")} toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
       </div>
     </article>
   );

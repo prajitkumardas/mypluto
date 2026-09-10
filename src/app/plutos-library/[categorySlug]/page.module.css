@@ -61,10 +61,10 @@
   margin-top: 0.75rem;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4vw, 3.55rem);
-  font-weight: 500;
-  letter-spacing: 0;
-  line-height: 1.05;
+  font-size: var(--text-page-hero-title);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-page-hero-title);
+  line-height: var(--leading-page-hero-title);
   text-wrap: balance;
   text-shadow: 0 0 34px rgba(255, 255, 255, 0.14);
 }
@@ -72,17 +72,17 @@
 .heroTitle span {
   display: inline-block;
   color: #ffffff;
-  font-size: 0.98em;
-  line-height: 1;
+  font-size: var(--text-page-hero-title);
+  line-height: var(--leading-page-hero-title);
 }
 
 .heroCopy {
   margin: 0.85rem auto 0;
   max-width: 45rem;
   color: rgba(255, 255, 255, 0.7);
-  font-size: clamp(0.9rem, 1.25vw, 1rem);
-  line-height: 1.55;
-  letter-spacing: 0;
+  font-size: var(--text-page-hero-copy);
+  line-height: var(--leading-page-hero-copy);
+  letter-spacing: var(--tracking-page-hero-copy);
   text-wrap: pretty;
 }
 
@@ -103,7 +103,4 @@
     padding-top: 5.5rem;
   }
 
-  .heroTitle {
-    font-size: clamp(1.9rem, 9vw, 2.7rem);
-  }
 }

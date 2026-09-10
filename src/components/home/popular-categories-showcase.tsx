@@ -4,6 +4,7 @@ import Link from "next/link";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { motion, type MotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
 import { ArrowRight } from "lucide-react";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { categories, type Category } from "@/lib/data";
 import styles from "./popular-categories-showcase.module.css";
 
@@ -67,11 +68,11 @@ export function PopularCategoriesShowcase() {
           <div className={styles.stageGrid}>
             <motion.div className={styles.intro} style={reducedMotion ? undefined : { opacity: introOpacity, y: introY, scale: introScale }}>
               <p className={styles.eyebrow}>Popular categories</p>
-              <h2 className={styles.title} id="popular-categories-title">Find AI for whatever<br />you&apos;re building.</h2>
+              <h1 className={styles.title} id="popular-categories-title">Find AI for whatever<br />you&apos;re building.</h1>
               <p className={styles.copy}>Explore tools by what you want to create, solve or automate.</p>
-              <Link className={`${styles.viewAll} ${styles.introCta}`} href="/plutos-library">
-                View all categories <ArrowRight aria-hidden="true" />
-              </Link>
+              <PlutoButton className={styles.introCta} href="/plutos-library" showArrow variant="secondary">
+                View all categories
+              </PlutoButton>
             </motion.div>
 
             {!reducedMotion ? (
@@ -98,9 +99,9 @@ export function PopularCategoriesShowcase() {
 
           {!reducedMotion ? (
             <motion.div className={styles.finalCtaWrap} style={{ opacity: finalCtaOpacity, y: finalCtaY }}>
-              <Link className={styles.viewAll} href="/plutos-library">
-                View all categories <ArrowRight aria-hidden="true" />
-              </Link>
+              <PlutoButton className={styles.viewAll} href="/plutos-library" showArrow variant="secondary">
+                View all categories
+              </PlutoButton>
             </motion.div>
           ) : null}
         </div>

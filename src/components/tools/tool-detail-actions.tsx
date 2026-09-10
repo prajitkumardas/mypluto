@@ -5,6 +5,7 @@ import { Copy, ExternalLink, Flag, Share2, X } from "lucide-react";
 import { useState } from "react";
 import { CompareButton } from "@/components/compare/compare-button";
 import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import styles from "./tool-detail-view.module.css";
 
 type ToolDetailActionsProps = {
@@ -40,16 +41,14 @@ export function ToolDetailActions({ officialUrl, toolName, toolSlug }: ToolDetai
   return (
     <>
       <div className={styles.heroActions} aria-label={`${toolName} actions`}>
-        <Button asChild className={styles.primaryAction} size="lg">
-          <a aria-label={`Open ${toolName}'s official website`} href={officialUrl} rel="noreferrer" target="_blank">
-            Visit official site <ExternalLink aria-hidden="true" className="h-4 w-4" />
-          </a>
-        </Button>
+        <PlutoButton ariaLabel={`Open ${toolName}'s official website`} className={styles.primaryAction} href={officialUrl} size="lg" target="_blank" variant="primary">
+          Visit official site <ExternalLink aria-hidden="true" className="h-4 w-4" />
+        </PlutoButton>
         <CompareButton className={styles.secondaryAction} selectedLabel="Added" size="lg" toolName={toolName} toolSlug={toolSlug} variant="outline" />
-        <Button className={styles.secondaryAction} onClick={sharePage} size="lg" type="button" variant="outline">
+        <PlutoButton className={styles.secondaryAction} onClick={sharePage} size="lg" type="button" variant="secondary">
           {shareLabel === "Share" ? <Share2 aria-hidden="true" className="h-4 w-4" /> : <Copy aria-hidden="true" className="h-4 w-4" />}
           {shareLabel}
-        </Button>
+        </PlutoButton>
         <div className="sr-only" aria-live="polite">{shareLabel === "Copied" ? `${toolName} link copied.` : ""}</div>
       </div>
 
@@ -88,7 +87,7 @@ export function ToolDetailActions({ officialUrl, toolName, toolSlug }: ToolDetai
                 <Dialog.Close asChild>
                   <Button type="button" variant="ghost">Cancel</Button>
                 </Dialog.Close>
-                <Button type="submit">Submit report</Button>
+                <PlutoButton type="submit" variant="primary">Submit report</PlutoButton>
               </div>
             </form>
           </Dialog.Content>

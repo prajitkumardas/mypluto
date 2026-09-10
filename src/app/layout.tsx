@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import type { ReactNode } from "react";
 import { ScrollReset } from "@/components/shared/scroll-reset";
 import { SiteFooter } from "@/components/shared/site-footer";
@@ -14,14 +15,30 @@ export const metadata: Metadata = {
     "A premium AI-tool discovery platform for finding, comparing and understanding trustworthy AI products."
 };
 
+const introSessionBootstrap = `
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let introSeen = reduceMotion;
+  try {
+    introSeen ||= sessionStorage.getItem("pluto_intro_seen") === "true";
+  } catch {}
+  if (introSeen) document.documentElement.dataset.plutoIntroSeen = "true";
+`;
+
 export default function RootLayout({
   children
 }: Readonly<{
   children: ReactNode;
 }>) {
   return (
-    <html className={`${bodyFont.variable} ${displayFont.variable} ${accentFont.variable}`} lang="en">
+    <html
+      className={`${bodyFont.variable} ${displayFont.variable} ${accentFont.variable}`}
+      lang="en"
+      suppressHydrationWarning
+    >
       <body>
+        <Script id="pluto-intro-session" strategy="beforeInteractive">
+          {introSessionBootstrap}
+        </Script>
         <ScrollReset />
         <SiteHeader />
         {children}

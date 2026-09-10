@@ -34,7 +34,7 @@ export default function CategoriesPage() {
                 </span>
                 <ArrowRight className="h-5 w-5 text-[var(--text-tertiary)] transition group-hover:translate-x-1 group-hover:text-[var(--color-pluto-purple-300)]" />
               </div>
-              <h2 className="mt-8 type-h3 text-[var(--text-primary)]">
+              <h2 className="mt-8 type-h2 text-[var(--text-primary)]">
                 {category.name}
               </h2>
               <p className="mt-3 type-body-sm text-[var(--text-secondary)]">{category.description}</p>

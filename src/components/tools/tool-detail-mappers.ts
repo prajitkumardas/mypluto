@@ -2,6 +2,7 @@ import type { ToolRecord } from "@/lib/data";
 import { tools } from "@/lib/data";
 import type { LibraryTool } from "@/lib/plutos-library";
 import { getSimilarLibraryTools, slugify } from "@/lib/plutos-library";
+import { getLibraryCategoryHref } from "@/lib/library-routes";
 import { getFaviconLogoUrl } from "@/lib/tool-logo";
 import type { ToolDetailAlternative, ToolDetailSource, ToolDetailTone, ToolDetailViewModel } from "./tool-detail-view";
 
@@ -26,7 +27,7 @@ export function mapLibraryToolToDetail(tool: LibraryTool): ToolDetailViewModel {
     bestFor: compactList([...tool.targetAudiences, ...tool.useCases], 5),
     breadcrumb: [
       { href: "/plutos-library", label: "Discover" },
-      ...(category !== NOT_AVAILABLE ? [{ href: `/plutos-library/${slugify(category)}`, label: category }] : []),
+      ...(category !== NOT_AVAILABLE ? [{ href: getLibraryCategoryHref(slugify(category)), label: category }] : []),
       { label: tool.name }
     ],
     capabilities: compactList(tool.features, 8),

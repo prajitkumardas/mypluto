@@ -2,11 +2,9 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
-import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
-  ArrowRight,
   Circle,
   Gamepad2,
   Gift,
@@ -19,6 +17,7 @@ import {
   X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import LightPillar from "@/components/ui/light-pillar";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { HeroVeil } from "@/components/shared/hero-veil";
@@ -376,9 +375,9 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
           <p className={styles.eyebrow}>Pluto&apos;s Playroom</p>
           <h1 id="play-title">Pluto&apos;s been waiting for you to play with.</h1>
           <p>He&apos;s been sitting here all alone. Stay for a little while and challenge him to a game.</p>
-          <Button className={styles.primaryCta} onClick={openInvitation} size="lg">
-            Play with Pluto <ArrowRight aria-hidden="true" />
-          </Button>
+          <PlutoButton className={styles.primaryCta} onClick={openInvitation} showArrow size="lg" type="button" variant="primary">
+            Play with Pluto
+          </PlutoButton>
         </section>
       ) : null}
 
@@ -466,12 +465,12 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
           </div>
 
           <div className={styles.gameActions}>
-            <Button onClick={restartRound} variant="outline">
+            <PlutoButton onClick={restartRound} type="button" variant="secondary">
               <RotateCcw aria-hidden="true" /> Restart
-            </Button>
-            <Button onClick={chooseAnotherGame} variant="secondary">
+            </PlutoButton>
+            <PlutoButton onClick={chooseAnotherGame} type="button" variant="secondary">
               <Gamepad2 aria-hidden="true" /> Choose game
-            </Button>
+            </PlutoButton>
           </div>
         </section>
       ) : null}
@@ -523,9 +522,9 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
                       <h3>Tic-Tac-Toe</h3>
                       <p>A quick match against Pluto.</p>
                     </div>
-                    <Button onClick={chooseTicTacToe} type="button">
-                      Play now <ArrowRight aria-hidden="true" />
-                    </Button>
+                    <PlutoButton onClick={chooseTicTacToe} showArrow type="button" variant="primary">
+                      Play now
+                    </PlutoButton>
                   </article>
 
                   <article className={styles.gameChoice} data-disabled="true">
@@ -570,9 +569,9 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
                   <Button onClick={() => setFlowState("game-selection")} type="button" variant="ghost">
                     <ArrowLeft aria-hidden="true" /> Back
                   </Button>
-                  <Button type="submit">
-                    Start game <ArrowRight aria-hidden="true" />
-                  </Button>
+                  <PlutoButton showArrow type="submit" variant="primary">
+                    Start game
+                  </PlutoButton>
                 </div>
               </form>
             ) : null}
@@ -627,12 +626,12 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
                       <Sparkles aria-hidden="true" /> {selectedReward.whyPicked}
                     </p>
                     <div className={styles.resultActions}>
-                      <Button asChild>
-                        <Link href={`/plutos-library/tool/${selectedReward.slug}`}>View tool <ArrowRight aria-hidden="true" /></Link>
-                      </Button>
-                      <Button onClick={restartRound} type="button" variant="secondary">
+                      <PlutoButton href={`/plutos-library/tool/${selectedReward.slug}`} showArrow variant="primary">
+                        View tool
+                      </PlutoButton>
+                      <PlutoButton onClick={restartRound} type="button" variant="secondary">
                         Play again <RotateCcw aria-hidden="true" />
-                      </Button>
+                      </PlutoButton>
                     </div>
                   </article>
                 ) : null}
@@ -650,12 +649,12 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
                     : "You and Pluto might be evenly matched."}
                 </Dialog.Description>
                 <div className={styles.resultActions}>
-                  <Button onClick={restartRound} type="button">
+                  <PlutoButton onClick={restartRound} type="button" variant="primary">
                     Play again <RotateCcw aria-hidden="true" />
-                  </Button>
-                  <Button onClick={chooseAnotherGame} type="button" variant="secondary">
+                  </PlutoButton>
+                  <PlutoButton onClick={chooseAnotherGame} type="button" variant="secondary">
                     Choose another game <Gamepad2 aria-hidden="true" />
-                  </Button>
+                  </PlutoButton>
                 </div>
               </div>
             ) : null}

@@ -9,10 +9,6 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary:
-          "border border-transparent bg-[var(--action-primary)] text-white shadow-[var(--shadow-brand-glow)] hover:bg-[var(--action-primary-hover)] active:bg-[var(--action-primary-active)] active:translate-y-px",
-        secondary:
-          "border border-[var(--border-default)] bg-[var(--surface-raised)] text-[var(--text-primary)] shadow-[var(--shadow-xs)] hover:border-[var(--border-brand)] hover:bg-[var(--surface-hover)]",
         outline:
           "border border-[var(--border-strong)] bg-transparent text-[var(--text-primary)] hover:border-[var(--text-brand)] hover:text-[var(--text-brand)] active:translate-y-px",
         ghost: "border border-transparent bg-transparent text-[var(--text-secondary)] hover:bg-[var(--background-interactive)] hover:text-[var(--text-primary)]",
@@ -28,7 +24,7 @@ const buttonVariants = cva(
       }
     },
     defaultVariants: {
-      variant: "primary",
+      variant: "ghost",
       size: "default"
     }
   }

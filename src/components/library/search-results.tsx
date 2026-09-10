@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, RotateCcw, ShieldAlert, X } from "lucide-react";
+import { RotateCcw, ShieldAlert, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { StatePanel } from "@/components/shared/state-panel";
 import { AutoSubmitSelect } from "@/components/library/auto-submit-select";
 import { LibraryToolCard } from "@/components/library/library-tool-card";
@@ -46,7 +47,7 @@ export function SearchResults({ result, basePath = "/plutos-library/search", com
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-5">
-          <h2 className="type-h3 text-neutral-900">
+          <h2 className="type-h2 text-neutral-900">
             {resultContext ? `${result.total} AI tools` : `${result.total} tools`}
           </h2>
           {resultContext ? (
@@ -151,16 +152,12 @@ function Pagination({ result, basePath }: { result: LibrarySearchResult; basePat
         Page {result.page} of {result.pageCount}
       </p>
       <div className="flex gap-2">
-        <Button asChild disabled={result.page <= 1} variant="secondary">
-          <Link href={buildLibraryHref(basePath, { ...common, page: Math.max(1, result.page - 1) })}>
-            Previous
-          </Link>
-        </Button>
-        <Button asChild disabled={result.page >= result.pageCount}>
-          <Link href={buildLibraryHref(basePath, { ...common, page: Math.min(result.pageCount, result.page + 1) })}>
-            Load more <ArrowRight aria-hidden="true" className="h-4 w-4" />
-          </Link>
-        </Button>
+        <PlutoButton disabled={result.page <= 1} href={buildLibraryHref(basePath, { ...common, page: Math.max(1, result.page - 1) })} variant="secondary">
+          Previous
+        </PlutoButton>
+        <PlutoButton disabled={result.page >= result.pageCount} href={buildLibraryHref(basePath, { ...common, page: Math.min(result.pageCount, result.page + 1) })} showArrow variant="primary">
+          Load more
+        </PlutoButton>
       </div>
     </nav>
   );

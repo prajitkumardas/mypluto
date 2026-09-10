@@ -75,7 +75,6 @@ export default async function PlutosLibraryPage({ searchParams }: PlutosLibraryP
             <CategoryNavigation
               categories={plutosLibrary.categories}
               currentCategorySlug={category?.slug ?? ""}
-              linkMode="query"
               variant="section"
             />
             <div className={styles.catalogueMain}>

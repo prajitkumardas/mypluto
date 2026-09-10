@@ -1,4 +1,5 @@
 import dataset from "@/data/generated/plutos-library.json";
+import { getLibraryCategoryHref } from "@/lib/library-routes";
 
 const NEEDS_VERIFICATION_STATUSES = [
   "Needs verification",
@@ -308,7 +309,7 @@ export function getLibrarySuggestions(query: string, limit = 8): LibrarySuggesti
     .map((category) => ({
       type: "category" as const,
       label: category.name,
-      href: `/plutos-library/${category.slug}`,
+      href: getLibraryCategoryHref(category.slug),
       meta: `${category.toolCount} tools`
     }));
 

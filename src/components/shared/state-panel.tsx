@@ -1,6 +1,5 @@
-import { AlertTriangle, ArrowRight, SearchX } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { AlertTriangle, SearchX } from "lucide-react";
+import { PlutoButton } from "@/components/ui/pluto-button";
 
 type StatePanelProps = {
   title: string;
@@ -28,26 +27,22 @@ export function StatePanel({
       <div className="grid h-14 w-14 place-items-center rounded-2xl bg-violet-100 text-violet-600">
         <Icon aria-hidden="true" className="h-7 w-7" />
       </div>
-      <h2 className="mt-5 type-h4 text-neutral-900">{title}</h2>
+      <h2 className="mt-5 type-h2 text-neutral-900">{title}</h2>
       <p className="mt-2 max-w-2xl type-body-sm text-neutral-700">{copy}</p>
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
         {actionHref ? (
-          <Button asChild>
-            <Link href={actionHref}>
-              {action} <ArrowRight aria-hidden="true" className="h-4 w-4" />
-            </Link>
-          </Button>
+          <PlutoButton href={actionHref} showArrow variant="primary">
+            {action}
+          </PlutoButton>
         ) : (
-          <Button>
-            {action} <ArrowRight aria-hidden="true" className="h-4 w-4" />
-          </Button>
+          <PlutoButton showArrow variant="primary">
+            {action}
+          </PlutoButton>
         )}
         {secondaryHref ? (
-          <Button asChild variant="secondary">
-            <Link href={secondaryHref}>{secondary}</Link>
-          </Button>
+          <PlutoButton href={secondaryHref} variant="secondary">{secondary}</PlutoButton>
         ) : (
-          <Button variant="secondary">{secondary}</Button>
+          <PlutoButton variant="secondary">{secondary}</PlutoButton>
         )}
       </div>
     </div>

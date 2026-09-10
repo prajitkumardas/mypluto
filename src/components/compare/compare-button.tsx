@@ -1,16 +1,17 @@
 "use client";
 
 import { Check, GitCompareArrows, Lock } from "lucide-react";
-import { Button, type ButtonProps } from "@/components/ui/button";
+import { PlutoButton, type PlutoButtonProps } from "@/components/ui/pluto-button";
 import { MAX_COMPARE_TOOLS, useCompareStore } from "@/lib/compare-store";
 import { cn } from "@/lib/utils";
 
-type CompareButtonProps = Omit<ButtonProps, "children"> & {
+type CompareButtonProps = Omit<PlutoButtonProps, "children" | "text" | "showArrow" | "variant"> & {
   afterSelection?: () => void;
   compact?: boolean;
   selectedLabel?: string;
   toolName: string;
   toolSlug: string;
+  variant?: PlutoButtonProps["variant"] | "outline" | "ghost" | "lime";
 };
 
 export function CompareButton({
@@ -30,16 +31,12 @@ export function CompareButton({
   const isSelected = selected.includes(toolSlug);
   const atLimit = selected.length >= MAX_COMPARE_TOOLS && !isSelected;
   const label = isSelected ? selectedLabel : atLimit ? "Limit 4" : "Compare";
+  const plutoVariant: PlutoButtonProps["variant"] = variant === "primary" && !isSelected ? "primary" : "secondary";
 
   return (
-    <Button
-      aria-pressed={isSelected}
-      className={cn(
-        "whitespace-nowrap",
-        isSelected && "border-lime-400/44 bg-lime-400 text-ink-950 hover:bg-lime-100 hover:text-ink-950",
-        atLimit && "cursor-not-allowed",
-        className
-      )}
+    <PlutoButton
+      ariaLabel={atLimit ? `You can compare up to ${MAX_COMPARE_TOOLS} tools` : undefined}
+      className={cn("whitespace-nowrap", isSelected && "border-lime-400/44 text-lime-200", className)}
       disabled={atLimit}
       onClick={(event) => {
         onClick?.(event);
@@ -56,11 +53,11 @@ export function CompareButton({
       }}
       title={atLimit ? `You can compare up to ${MAX_COMPARE_TOOLS} tools. Open Compare to replace a tool.` : isSelected ? `Remove ${toolName} from comparison` : `Add ${toolName} to comparison`}
       type="button"
-      variant={isSelected ? "lime" : variant}
+      variant={plutoVariant}
       {...props}
     >
       {isSelected ? <Check aria-hidden="true" className="h-4 w-4" /> : atLimit ? <Lock aria-hidden="true" className="h-4 w-4" /> : <GitCompareArrows aria-hidden="true" className="h-4 w-4" />}
       {compact ? label : isSelected ? selectedLabel : atLimit ? "Limit 4" : "Compare"}
-    </Button>
+    </PlutoButton>
   );
 }

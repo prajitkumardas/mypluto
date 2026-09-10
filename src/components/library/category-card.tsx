@@ -43,6 +43,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { LibraryCategory } from "@/lib/plutos-library";
+import { getLibraryCategoryHref } from "@/lib/library-routes";
 import styles from "./category-card.module.css";
 
 const categoryIcons: Record<string, LucideIcon> = {
@@ -167,7 +168,7 @@ export function CategoryCard({ category }: { category: LibraryCategory }) {
       <Link
         aria-label={`View ${category.name}, ${toolsAvailable} tools available`}
         className={`focus-ring flex h-full flex-col justify-between p-5 ${styles.card}`}
-        href={`/plutos-library/${category.slug}`}
+        href={getLibraryCategoryHref(category.slug)}
         onBlur={handleLeave}
         onFocus={handleEnter}
         onMouseEnter={handleEnter}

@@ -23,7 +23,7 @@ export function RecentlyViewed() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <Badge tone="lime">Saved on this device</Badge>
-            <h2 className="mt-3 flex items-center gap-2 type-h4 text-neutral-900">
+            <h2 className="mt-3 flex items-center gap-2 type-h2 text-neutral-900">
               <Clock3 aria-hidden="true" className="h-5 w-5 text-violet-600" />
               Recently viewed
             </h2>

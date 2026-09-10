@@ -7,13 +7,18 @@ import styles from "./pluto-story-section.module.css";
 
 type BackgroundVideoProps = {
   scale: MotionValue<number> | number;
-  reducedMotion: boolean;
 };
 
 const VIDEO_SRC = "/videos/hero-background.mp4";
 const POSTER_SRC = "/images/home/hero/pluto-valley-background.webp";
 
-export function BackgroundVideo({ scale, reducedMotion }: BackgroundVideoProps) {
+function requestPlayback(video: HTMLVideoElement) {
+  video.defaultMuted = true;
+  video.muted = true;
+  return video.play();
+}
+
+export function BackgroundVideo({ scale }: BackgroundVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -21,52 +26,64 @@ export function BackgroundVideo({ scale, reducedMotion }: BackgroundVideoProps) 
   useEffect(() => {
     const video = videoRef.current;
     if (!video || failed) return;
+    let disposed = false;
+    let retryTimer: number | undefined;
 
-    const tryPlay = () => {
-      if (reducedMotion) {
-        video.pause();
-        return;
-      }
-      void video.play().catch(() => {
-        // Autoplay can be blocked; the poster keeps the section readable.
-      });
+    const scheduleRetry = () => {
+      if (disposed || retryTimer || document.hidden) return;
+      retryTimer = window.setTimeout(() => {
+        retryTimer = undefined;
+        tryPlay();
+      }, 500);
     };
 
-    if (!("IntersectionObserver" in window)) {
-      tryPlay();
-      return;
-    }
+    const tryPlay = () => {
+      if (disposed || document.hidden) return;
+      void requestPlayback(video).catch(scheduleRetry);
+    };
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          tryPlay();
-        } else {
-          video.pause();
-        }
-      },
-      { rootMargin: "360px 0px" }
-    );
+    const handleVisibilityChange = () => {
+      if (!document.hidden) tryPlay();
+    };
 
-    observer.observe(video);
-    return () => observer.disconnect();
-  }, [failed, reducedMotion]);
+    tryPlay();
+    video.addEventListener("canplay", tryPlay);
+    video.addEventListener("pause", scheduleRetry);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("pageshow", tryPlay);
+
+    return () => {
+      disposed = true;
+      if (retryTimer) window.clearTimeout(retryTimer);
+      video.removeEventListener("canplay", tryPlay);
+      video.removeEventListener("pause", scheduleRetry);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pageshow", tryPlay);
+    };
+  }, [failed]);
+
+  const handleReady = (video: HTMLVideoElement) => {
+    setReady(true);
+    void requestPlayback(video).catch(() => {
+      // The mounted effect retries once the browser can begin playback.
+    });
+  };
 
   return (
     <div className={styles.videoShell} aria-hidden="true">
       <div className={styles.posterFallback} />
       <motion.video
-        autoPlay={!reducedMotion}
+        autoPlay
         className={`${styles.video} ${ready && !failed ? styles.videoReady : ""} ${failed ? styles.videoFailed : ""}`}
         disablePictureInPicture
         loop
         muted
-        onCanPlay={() => setReady(true)}
+        onCanPlay={(event) => handleReady(event.currentTarget)}
         onError={() => setFailed(true)}
-        onLoadedData={() => setReady(true)}
+        onLoadedData={(event) => handleReady(event.currentTarget)}
         playsInline
         poster={POSTER_SRC}
-        preload="metadata"
+        preload="auto"
         ref={videoRef}
         style={{ scale }}
       >

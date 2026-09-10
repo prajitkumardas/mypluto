@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, Database, FileSpreadsheet } from "lucide-react";
+import { AlertTriangle, Database, FileSpreadsheet } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { PageShell } from "@/components/layout/page-shell";
-import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import summary from "@/data/generated/plutos-library-summary.json";
 import { plutosLibrary } from "@/lib/plutos-library";
 
@@ -29,7 +29,7 @@ export default function ImportAdminPreviewPage() {
       <section className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-6 shadow-[var(--shadow-xs)]">
         <div className="flex items-center gap-3">
           <FileSpreadsheet aria-hidden="true" className="h-7 w-7 text-[var(--color-pluto-purple-300)]" />
-          <h2 className="type-h3 text-[var(--text-primary)]">Preview changes</h2>
+          <h2 className="type-h2 text-[var(--text-primary)]">Preview changes</h2>
         </div>
         <div className="mt-5 grid gap-4 md:grid-cols-3">
           <Change label="New or updated tools" value={summary.canonicalToolCount} />
@@ -44,7 +44,7 @@ export default function ImportAdminPreviewPage() {
       <section className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-6 shadow-[var(--shadow-xs)]">
         <div className="flex items-center gap-3">
           <AlertTriangle aria-hidden="true" className="h-7 w-7 text-[var(--status-warning)]" />
-          <h2 className="type-h3 text-[var(--text-primary)]">Verification review queue</h2>
+          <h2 className="type-h2 text-[var(--text-primary)]">Verification review queue</h2>
         </div>
         <div className="mt-5 overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border-default)]">
           {verificationQueue.map((tool) => (
@@ -64,15 +64,13 @@ export default function ImportAdminPreviewPage() {
 
       <section className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--background-section)] p-6 text-[var(--text-primary)] shadow-[var(--shadow-xs)]">
         <Database aria-hidden="true" className="h-8 w-8 text-[var(--text-brand)]" />
-        <h2 className="mt-4 type-h3">Database handoff</h2>
+        <h2 className="mt-4 type-h2">Database handoff</h2>
         <p className="mt-3 max-w-[var(--text-width-md)] type-body-sm text-[var(--text-secondary)]">
           The normalized PostgreSQL schema is in `supabase/migrations`. Workbook values are preserved as raw values and normalized fields so re-imports can avoid duplicates and keep admin-approved data precedence.
         </p>
-        <Button asChild className="mt-5" variant="lime">
-          <Link href="/plutos-library">
-            Open Discover <ArrowRight aria-hidden="true" className="h-4 w-4" />
-          </Link>
-        </Button>
+        <PlutoButton className="mt-5" href="/plutos-library" showArrow variant="primary">
+          Open Discover
+        </PlutoButton>
       </section>
     </PageShell>
   );

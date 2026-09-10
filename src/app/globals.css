@@ -49,6 +49,20 @@
   --action-primary: var(--color-pluto-purple-600);
   --action-primary-hover: var(--color-pluto-purple-500);
   --action-primary-active: var(--color-pluto-purple-700);
+  --pluto-primary-400: #8b5cf6;
+  --pluto-primary-500: #7c3aed;
+  --pluto-primary-600: var(--color-pluto-purple-600);
+  --pluto-primary-700: #6d28d9;
+  --pluto-glow-hot: 238, 228, 255;
+  --pluto-glow-core: 168, 85, 247;
+  --pluto-glow-edge: 109, 40, 217;
+  --pluto-cta-border-subtle: rgba(255, 255, 255, 0.1);
+  --pluto-cta-border-strong: rgba(255, 255, 255, 0.2);
+  --pluto-surface-secondary: rgba(255, 255, 255, 0.025);
+  --pluto-cta-text-primary: #ffffff;
+  --pluto-cta-text-disabled: var(--text-disabled);
+  --pluto-shadow-cta-primary: 0 14px 34px rgba(120, 37, 232, 0.28);
+  --pluto-shadow-cta-secondary: 0 12px 28px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.045);
   --status-success: #75f28e;
   --status-warning: #ffd36e;
   --status-danger: #ff8a8a;
@@ -414,6 +428,12 @@ label[class*="rounded-"]:has(input:not([type="checkbox"]):not([type="radio"]), t
   padding: max(1.35rem, env(safe-area-inset-top)) clamp(1rem, 3vw, 2.5rem) 1rem;
   color: #ffffff;
   pointer-events: none;
+  transition: opacity 320ms ease, visibility 320ms ease;
+}
+
+html:not([data-pluto-intro-seen="true"]):has([data-pluto-intro-layer]) .site-header-shell {
+  visibility: hidden;
+  opacity: 0;
 }
 
 .site-header-shell :is(a, button) {

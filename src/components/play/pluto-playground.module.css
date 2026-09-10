@@ -95,7 +95,7 @@
 .gameHeader h1 {
   font-family: var(--font-display);
   font-weight: var(--font-weight-medium);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-h1);
   text-wrap: balance;
 }
 
@@ -116,7 +116,7 @@
   color: rgba(235, 229, 255, 0.72);
   font-size: var(--text-page-hero-copy);
   line-height: var(--leading-page-hero-copy);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-page-hero-copy);
   text-align: center;
   text-wrap: pretty;
 }
@@ -125,12 +125,7 @@
   position: absolute;
   right: 50%;
   bottom: clamp(1.5rem, 4vh, 3rem);
-  transform: translateX(50%);
-  box-shadow: 0 0 34px rgba(124, 99, 255, 0.56), 0 12px 36px rgba(0, 0, 0, 0.34);
-}
-
-.primaryCta:hover {
-  box-shadow: 0 0 44px rgba(145, 61, 255, 0.68), 0 16px 42px rgba(0, 0, 0, 0.38);
+  --pluto-cta-base-transform: translateX(50%);
 }
 
 .versusScreen {
@@ -209,12 +204,12 @@
   font-family: var(--font-display);
   font-style: italic;
   font-weight: var(--font-weight-bold);
-  letter-spacing: 0;
-  line-height: 0.88;
+  letter-spacing: var(--tracking-display-xl);
+  line-height: var(--leading-play-display);
 }
 
 .versusName {
-  font-size: clamp(3.4rem, 10vw, 7.6rem);
+  font-size: var(--text-play-versus-name);
   text-shadow:
     0 4px 0 rgba(87, 55, 205, 0.58),
     0 0 24px rgba(255, 255, 255, 0.42),
@@ -240,7 +235,7 @@
 
 .versusMark {
   margin: clamp(0.15rem, 0.8vh, 0.55rem) 0;
-  font-size: clamp(3.1rem, 8.8vw, 7rem);
+  font-size: var(--text-play-versus-mark);
   text-shadow:
     0 0 20px rgba(255, 255, 255, 0.42),
     0 0 46px rgba(139, 92, 246, 0.58);
@@ -296,9 +291,9 @@
   place-items: center;
   border-radius: 20px;
   font-family: var(--font-display);
-  font-size: clamp(3rem, 7vw, 5.2rem);
+  font-size: var(--text-display-xl);
   font-weight: var(--font-weight-bold);
-  line-height: 1;
+  line-height: var(--leading-display-xl);
   pointer-events: none;
 }
 
@@ -344,10 +339,10 @@
 
 .gameTitleBlock .eyebrow {
   color: #c8ff5a;
-  font-size: clamp(0.875rem, 1.1vw, 1rem);
+  font-size: var(--text-overline);
   font-weight: var(--font-weight-bold);
-  letter-spacing: 0.04em;
-  line-height: 1;
+  letter-spacing: var(--tracking-overline);
+  line-height: var(--leading-overline);
 }
 
 .gameTitle {
@@ -357,9 +352,9 @@
   justify-content: center;
   gap: clamp(0.5rem, 1.25vw, 0.9rem);
   margin: 0;
-  font-size: clamp(34px, 4vw, 50px);
+  font-size: var(--text-play-game-title);
   font-weight: var(--font-weight-bold);
-  line-height: 1;
+  line-height: var(--leading-play-tight);
   white-space: nowrap;
 }
 
@@ -396,7 +391,7 @@
 
 .gameTitleVs {
   color: rgba(245, 241, 255, 0.8);
-  font-size: 0.78em;
+  font-size: var(--text-h4);
   font-weight: var(--font-weight-medium);
   text-shadow: 0 0 18px rgba(255, 255, 255, 0.22);
 }
@@ -412,7 +407,7 @@
   background: rgba(13, 10, 30, 0.62);
   color: rgba(239, 233, 255, 0.76);
   padding-inline: 16px;
-  font-size: 14px;
+  font-size: var(--text-label-md);
   font-weight: var(--font-weight-semibold);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(14px) saturate(120%);
@@ -455,9 +450,9 @@
   overflow: hidden;
   max-width: 100%;
   color: rgba(222, 215, 244, 0.76);
-  font-size: 12px;
+  font-size: var(--text-label-sm);
   font-weight: var(--font-weight-semibold);
-  line-height: 1;
+  line-height: var(--leading-label-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -473,9 +468,9 @@
 .playerBadge strong {
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: 26px;
+  font-size: var(--text-h3);
   font-weight: var(--font-weight-bold);
-  line-height: 1;
+  line-height: var(--leading-h3);
   text-shadow: 0 0 14px rgba(255, 255, 255, 0.16);
   animation: scorePop 220ms ease both;
 }
@@ -493,9 +488,9 @@
   background: rgba(8, 7, 18, 0.72);
   color: #ffffff;
   padding: 0 20px;
-  font-size: 14px;
+  font-size: var(--text-label-md);
   font-weight: var(--font-weight-semibold);
-  line-height: 1;
+  line-height: var(--leading-label-md);
   box-shadow: 0 0 22px rgba(145, 61, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(14px) saturate(120%);
 }
@@ -544,7 +539,7 @@
   padding: 0;
   font-family: var(--font-display);
   font-weight: var(--font-weight-bold);
-  line-height: 1;
+  line-height: var(--leading-play-tight);
   box-shadow: inset 0 0 20px rgba(140, 91, 255, 0.07), 0 0 14px rgba(124, 58, 237, 0.12);
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease, background-color 180ms ease;
 }
@@ -555,8 +550,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(42px, 5vw, 58px);
-  line-height: 1;
+  font-size: var(--text-play-board-mark);
+  line-height: var(--leading-play-tight);
   pointer-events: none;
   animation: markIn 220ms ease both;
 }
@@ -613,7 +608,7 @@
   border: 1px solid rgba(230, 225, 255, 0.28);
   background: rgba(8, 7, 18, 0.5);
   color: rgba(255, 255, 255, 0.9);
-  font-size: 14px;
+  font-size: var(--text-label-md);
   font-weight: var(--font-weight-semibold);
   white-space: nowrap;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
@@ -727,17 +722,17 @@
 .doodlePlay,
 .doodleGood,
 .selectionFooter {
-  font-family: "Comic Sans MS", "Bradley Hand", cursive;
+  font-family: var(--font-playful);
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-body);
 }
 
 .doodlePlay,
 .doodleGood {
   position: absolute;
   color: rgba(167, 139, 250, 0.62);
-  font-size: 16px;
-  line-height: 0.98;
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body-md);
   text-shadow: 0 0 12px rgba(124, 58, 237, 0.18);
 }
 
@@ -750,7 +745,7 @@
 .doodleGood {
   top: 52px;
   right: 18%;
-  font-size: 15px;
+  font-size: var(--text-body-sm);
   opacity: 0.78;
   transform: rotate(-6deg);
 }
@@ -807,10 +802,10 @@
 .resultTitle {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.6rem, 4vw, 2.25rem);
+  font-size: var(--text-h2);
   font-weight: var(--font-weight-medium);
-  line-height: 1.05;
-  letter-spacing: 0;
+  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-h2);
   text-wrap: balance;
 }
 
@@ -858,10 +853,10 @@
   margin-inline: auto;
   max-width: 680px;
   color: #ffffff;
-  font-size: clamp(34px, 2.8vw, 36px);
+  font-size: var(--text-h2);
   font-weight: var(--font-weight-bold);
-  line-height: 1.05;
-  letter-spacing: 0;
+  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-h2);
   text-shadow: 0 3px 18px rgba(0, 0, 0, 0.3);
   text-wrap: balance;
   white-space: nowrap;
@@ -890,9 +885,9 @@
   max-width: none;
   margin: 8px auto 0;
   color: rgba(220, 216, 235, 0.68);
-  font-size: 14px;
+  font-size: var(--text-body-sm);
   font-weight: var(--font-weight-medium);
-  line-height: 1.28;
+  line-height: var(--leading-body-sm);
 }
 
 .selectionModalContent .closeButton {
@@ -950,8 +945,8 @@
 .gameChoice::after {
   position: absolute;
   color: rgba(167, 139, 250, 0.045);
-  font-size: 30px;
-  line-height: 1;
+  font-size: var(--text-h2);
+  line-height: var(--leading-h2);
   content: "*";
   pointer-events: none;
 }
@@ -1077,9 +1072,10 @@
   margin: 4px 0 0;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: var(--font-weight-bold);
-  line-height: 1.08;
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.26);
 }
 
@@ -1087,8 +1083,8 @@
   max-width: 9.8rem;
   margin: 5px auto 0;
   color: rgba(226, 221, 244, 0.68);
-  font-size: 12px;
-  line-height: 1.35;
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body-sm);
 }
 
 .gameChoice button {
@@ -1097,7 +1093,7 @@
   margin-top: 0;
   border-radius: 13px;
   background: linear-gradient(180deg, #9b5cff, #7c2fff);
-  font-size: 14px;
+  font-size: var(--text-label-md);
   font-weight: var(--font-weight-semibold);
   box-shadow: 0 12px 22px rgba(124, 58, 237, 0.22);
   transition: filter 160ms ease, box-shadow 160ms ease;
@@ -1137,9 +1133,9 @@
   gap: 6px;
   border-radius: 999px;
   padding: 0 10px;
-  font-size: 10.5px;
+  font-size: var(--text-label-sm);
   font-weight: var(--font-weight-bold);
-  line-height: 1;
+  line-height: var(--leading-label-sm);
   text-transform: uppercase;
 }
 
@@ -1186,8 +1182,8 @@
   gap: 7px;
   margin: 14px auto 0;
   color: rgba(190, 171, 255, 0.76);
-  font-size: 14px;
-  line-height: 1.2;
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body-sm);
 }
 
 .selectionFooter svg {
@@ -1358,9 +1354,10 @@
   overflow: hidden;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: var(--text-h5);
+  font-size: var(--text-h3);
   font-weight: var(--font-weight-medium);
-  line-height: var(--leading-h5);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1521,7 +1518,7 @@
   }
 
   .gameStage .gameTitle {
-    font-size: clamp(32px, 3.8vw, 44px);
+    font-size: var(--text-play-game-title);
   }
 
   .gameStage .scoreRow {
@@ -1552,11 +1549,11 @@
   }
 
   .gameStage .gameTitleBlock .eyebrow {
-    font-size: 13px;
+    font-size: var(--text-overline);
   }
 
   .gameStage .gameTitle {
-    font-size: clamp(30px, 3.5vw, 40px);
+    font-size: var(--text-play-game-title);
   }
 
   .gameStage .playerBadge {
@@ -1565,7 +1562,7 @@
   }
 
   .gameStage .playerBadge strong {
-    font-size: 23px;
+    font-size: var(--text-h3);
   }
 
   .gameStage .turnPill {
@@ -1599,7 +1596,7 @@
   }
 
   .versusName {
-    font-size: clamp(3rem, 15vw, 6.6rem);
+    font-size: var(--text-play-versus-name);
   }
 
   .versusPlayer {
@@ -1608,7 +1605,7 @@
   }
 
   .versusMark {
-    font-size: clamp(3rem, 13vw, 5.8rem);
+    font-size: var(--text-play-versus-mark);
   }
 
   .gameStage .gameShell {
@@ -1620,13 +1617,13 @@
   }
 
   .gameStage .gameTitle {
-    font-size: clamp(32px, 8vw, 48px);
+    font-size: var(--text-play-game-title);
   }
 
   .gameStage .exitButton {
     min-height: 38px;
     padding-inline: 14px;
-    font-size: 13px;
+    font-size: var(--text-label-md);
   }
 
   .gameStage .scoreRow {
@@ -1641,11 +1638,11 @@
   }
 
   .gameStage .playerBadge span {
-    font-size: 12px;
+    font-size: var(--text-label-sm);
   }
 
   .gameStage .playerBadge strong {
-    font-size: 25px;
+    font-size: var(--text-h3);
   }
 
   .gameStage .gameActions {
@@ -1709,19 +1706,19 @@
   }
 
   .gameStage .gameTitleBlock .eyebrow {
-    font-size: 12px;
+    font-size: var(--text-overline);
   }
 
   .gameStage .gameTitle {
     max-width: calc(100vw - 24px);
     gap: 0.4rem;
-    font-size: clamp(30px, 9vw, 36px);
+    font-size: var(--text-play-game-title);
   }
 
   .gameStage .exitButton {
     min-height: 36px;
     padding-inline: 13px;
-    font-size: 13px;
+    font-size: var(--text-label-md);
   }
 
   .gameStage .exitButton svg {
@@ -1742,18 +1739,18 @@
   }
 
   .gameStage .playerBadge span {
-    font-size: 10px;
+    font-size: var(--text-label-sm);
   }
 
   .gameStage .playerBadge strong {
-    font-size: 22px;
+    font-size: var(--text-h3);
   }
 
   .gameStage .turnPill {
     width: 154px;
     height: 40px;
     padding-inline: 16px;
-    font-size: 13px;
+    font-size: var(--text-label-md);
   }
 
   .gameStage .turnPill svg {
@@ -1771,7 +1768,7 @@
   }
 
   .gameStage .cell span {
-    font-size: clamp(42px, 13vw, 54px);
+    font-size: var(--text-play-board-mark);
   }
 
   .gameStage .gameActions {
@@ -1784,7 +1781,7 @@
     width: 138px;
     min-height: 40px;
     padding-inline: 0.65rem;
-    font-size: 13px;
+    font-size: var(--text-label-md);
   }
 
   .gameStage .gameActions button:last-child,
@@ -1809,7 +1806,7 @@
   }
 
   .selectionModalContent .modalTitle {
-    font-size: clamp(30px, 3.8vw, 32px);
+    font-size: var(--text-h2);
     white-space: normal;
   }
 
@@ -1860,13 +1857,13 @@
 
   .selectionModalContent .modalTitle {
     max-width: 16.5rem;
-    font-size: clamp(24px, 7.4vw, 28px);
-    line-height: 1.08;
+    font-size: var(--text-h2);
+    line-height: var(--leading-h2);
   }
 
   .selectionModalContent .modalDescription {
     margin-top: 6px;
-    font-size: 13px;
+    font-size: var(--text-body-sm);
   }
 
   .gameChoices {
@@ -1952,19 +1949,18 @@
 
   .selectionModalContent .gameChoice h3 {
     margin-top: 3px;
-    font-size: 17px;
   }
 
   .selectionModalContent .gameChoice p {
     max-width: none;
     margin: 4px 0 0;
-    font-size: 12px;
+    font-size: var(--text-body-sm);
   }
 
   .selectionModalContent .gameChoiceAvailable p {
     max-width: 12rem;
     margin-inline: auto;
-    font-size: 12px;
+    font-size: var(--text-body-sm);
   }
 
   .selectionModalContent .gameChoice button,
@@ -1977,7 +1973,7 @@
   .soonBadge {
     min-height: 20px;
     padding-inline: 8px;
-    font-size: 9px;
+    font-size: var(--text-label-sm);
   }
 
   .availableBadge {
@@ -1992,7 +1988,7 @@
     display: flex;
     max-width: 17rem;
     margin-top: 12px;
-    font-size: 13px;
+    font-size: var(--text-body-sm);
     text-align: center;
   }
 }
@@ -2003,7 +1999,7 @@
   }
 
   .selectionModalContent .modalTitle {
-    font-size: 23px;
+    font-size: var(--text-h2);
   }
 
   .selectionModalContent .gameChoice {

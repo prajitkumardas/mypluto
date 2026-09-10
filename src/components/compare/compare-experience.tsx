@@ -3,9 +3,9 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight, Check, Copy, Loader2, Plus, Search, X } from "lucide-react";
+import { Check, Copy, Loader2, Plus, Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { HeroVeil } from "@/components/shared/hero-veil";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { MAX_COMPARE_TOOLS, useCompareStore } from "@/lib/compare-store";
@@ -146,17 +146,17 @@ export function CompareExperience() {
           ) : null}
 
           <div className={styles.actions}>
-            <Button disabled={!compareReady} onClick={() => setHasCompared(true)} size="lg" type="button">
-              Compare tools <ArrowRight aria-hidden="true" className="h-4 w-4" />
-            </Button>
-            <Button disabled={selectedTools.length === 0} onClick={handleClear} size="lg" type="button" variant="secondary">
+            <PlutoButton disabled={!compareReady} onClick={() => setHasCompared(true)} showArrow size="lg" type="button" variant="primary">
+              Compare tools
+            </PlutoButton>
+            <PlutoButton disabled={selectedTools.length === 0} onClick={handleClear} size="lg" type="button" variant="secondary">
               Clear all
-            </Button>
+            </PlutoButton>
             {compareReady ? (
-              <Button onClick={shareComparison} size="lg" type="button" variant="outline">
+              <PlutoButton onClick={shareComparison} size="lg" type="button" variant="secondary">
                 <Copy aria-hidden="true" className="h-4 w-4" />
                 {copied ? "Copied" : "Share comparison"}
-              </Button>
+              </PlutoButton>
             ) : null}
           </div>
           <div className="sr-only" aria-live="polite">{feedback}</div>
@@ -308,9 +308,9 @@ function RecommendedTools({ onOpenSelector, selectedSlugs }: { onOpenSelector: (
           <h2>Recommended tools</h2>
           <p>Start with popular, well-described records from the Pluto library.</p>
         </div>
-        <Button onClick={onOpenSelector} type="button" variant="secondary">
+        <PlutoButton onClick={onOpenSelector} type="button" variant="secondary">
           <Plus aria-hidden="true" className="h-4 w-4" /> Add a tool
-        </Button>
+        </PlutoButton>
       </div>
       <div className={styles.recommendedGrid}>
         {recommendations.map((tool) => (

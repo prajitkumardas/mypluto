@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowRight, ChevronDown, GitCompareArrows, Plus, X } from "lucide-react";
+import { ChevronDown, GitCompareArrows, Plus, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ToolLogo } from "@/components/shared/tool-logo";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { MAX_COMPARE_TOOLS, useCompareStore } from "@/lib/compare-store";
 import { getCompareTool, getValidCompareSlugs } from "@/lib/compare-tools";
 import { cn } from "@/lib/utils";
@@ -66,9 +67,13 @@ export function ComparisonTray() {
         <div className={styles.actionButtons}>
           <button className={styles.clearButton} onClick={clearCompare} type="button">Clear all</button>
           {validSelected.length >= 2 ? (
-            <Link className={styles.primaryButton} href={compareHref}>Compare now <ArrowRight aria-hidden="true" /></Link>
+            <PlutoButton className={styles.trayCta} href={compareHref} showArrow size="md" variant="primary">
+              Compare now
+            </PlutoButton>
           ) : (
-            <span className={cn(styles.primaryButton, styles.disabledButton)} aria-disabled="true">Compare now <ArrowRight aria-hidden="true" /></span>
+            <PlutoButton className={styles.trayCta} disabled showArrow size="md" type="button" variant="primary">
+              Compare now
+            </PlutoButton>
           )}
         </div>
       </div>

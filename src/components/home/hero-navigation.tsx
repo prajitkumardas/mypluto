@@ -6,6 +6,7 @@ import { Menu, Search, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { cn } from "@/lib/utils";
 import styles from "./pluto-hero.module.css";
 
@@ -58,9 +59,9 @@ export function HeroNavigation({ onSearchClick }: HeroNavigationProps) {
         <button className={styles.navSearchButton} type="button" onClick={onSearchClick} aria-label="Jump to AI tool search">
           <Search aria-hidden="true" />
         </button>
-        <Link className={styles.submitButton} href="/submit-tool">
+        <PlutoButton href="/submit-tool" size="md" variant="primary">
           Submit a Tool
-        </Link>
+        </PlutoButton>
         <MobileMenu onSearchClick={onSearchClick} />
       </div>
     </header>
@@ -71,7 +72,7 @@ function MobileMenu({ onSearchClick }: HeroNavigationProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
-        <Button className={styles.menuButton} size="icon" variant="secondary" aria-label="Open menu">
+        <Button className={styles.menuButton} size="icon" variant="ghost" aria-label="Open menu">
           <Menu aria-hidden="true" className="h-6 w-6" />
         </Button>
       </Dialog.Trigger>

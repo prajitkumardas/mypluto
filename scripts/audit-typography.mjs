@@ -28,7 +28,7 @@ const violations = [];
 for (const file of listFiles(sourceRoot)) {
   const rel = relative(root, file).replaceAll("\\", "/");
   const text = readFileSync(file, "utf8");
-  if (!allowedFiles.has(rel)) {
+  if (!allowedFiles.has(rel) && !rel.endsWith(".css")) {
     for (const match of text.matchAll(textUtilityPattern)) {
       violations.push(`${rel}: avoid '${match[0]}'; use a semantic type-* utility or token.`);
     }

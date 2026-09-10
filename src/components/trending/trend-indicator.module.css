@@ -1,0 +1,28 @@
+.trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--text-label-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-label-sm);
+  letter-spacing: var(--tracking-label-sm);
+  white-space: nowrap;
+}
+
+.trend svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.positive {
+  color: var(--status-success);
+}
+
+.negative {
+  color: var(--status-danger);
+}
+
+.neutral,
+.date {
+  color: var(--text-tertiary);
+}

@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { Filter, Search, SlidersHorizontal } from "lucide-react";
 import { PageHeader } from "@/components/layout/page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { StatePanel } from "@/components/shared/state-panel";
 import { ToolCard } from "@/components/tools/tool-card";
 import { RecentlyViewed } from "@/components/tools/recently-viewed";
@@ -19,7 +18,7 @@ export default function ToolsPage() {
           <aside className="h-fit rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-5 shadow-[var(--shadow-xs)] lg:sticky lg:top-28">
             <div className="flex items-center gap-2">
               <SlidersHorizontal aria-hidden="true" className="h-5 w-5 text-[var(--color-pluto-purple-300)]" />
-              <h2 className="type-h4 text-[var(--text-primary)]">Filters</h2>
+              <h2 className="type-h2 text-[var(--text-primary)]">Filters</h2>
             </div>
             <p className="mt-2 type-body-sm text-[var(--text-secondary)]">
               URL-backed filter state will make every result set shareable.
@@ -37,9 +36,7 @@ export default function ToolsPage() {
           <div>
             <PageHeader
               actions={(
-                <Button asChild variant="secondary">
-                  <Link href="/pluto-guides">Pluto Guides</Link>
-                </Button>
+                <PlutoButton href="/pluto-guides" variant="secondary">Pluto Guides</PlutoButton>
               )}
               eyebrow="All AI Tools"
               title="Find tools by requirement, not by list fatigue."

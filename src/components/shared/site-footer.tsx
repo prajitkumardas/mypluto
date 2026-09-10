@@ -64,9 +64,9 @@ export function SiteFooter() {
         <div className={styles.grid}>
           {footerGroups.map((group) => (
             <section aria-labelledby={`footer-${group.label.toLowerCase().replace(/\s+/g, "-")}`} className={styles.group} key={group.label}>
-              <h2 className={styles.groupLabel} id={`footer-${group.label.toLowerCase().replace(/\s+/g, "-")}`}>
+              <p className={styles.groupLabel} id={`footer-${group.label.toLowerCase().replace(/\s+/g, "-")}`}>
                 {group.label}
-              </h2>
+              </p>
               <ul className={styles.linkList}>
                 {group.links.map((link) => (
                   <li key={`${group.label}-${link.href}`}>
@@ -80,7 +80,7 @@ export function SiteFooter() {
           ))}
 
           <section aria-labelledby="footer-connect" className={styles.group}>
-            <h2 className={styles.groupLabel} id="footer-connect">Connect</h2>
+            <p className={styles.groupLabel} id="footer-connect">Connect</p>
             <a className={styles.emailLink} href={`mailto:${contactEmail}`}>
               {contactEmail}
             </a>

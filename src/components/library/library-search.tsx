@@ -95,7 +95,7 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
               aria-autocomplete="list"
               aria-controls={listboxId}
               aria-expanded={open}
-              className="h-full min-h-10 w-full bg-transparent py-0 text-[0.72rem] font-medium leading-none text-white outline-none placeholder:text-white/48"
+              className="h-full min-h-10 w-full bg-transparent py-0 type-label-sm text-white outline-none placeholder:text-white/48"
               name="q"
               onChange={(event) => {
                 const value = event.target.value;
@@ -154,7 +154,7 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
               role="listbox"
             >
               {loading ? (
-                <div className="flex min-h-10 items-center gap-2 rounded-md px-3 text-[0.76rem] font-semibold text-white/72">
+                <div className="flex min-h-10 items-center gap-2 rounded-md px-3 type-label-sm text-white/72">
                   <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />
                   Loading suggestions
                 </div>
@@ -163,7 +163,7 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
                   <button
                     aria-selected={activeIndex === index}
                     className={cn(
-                      "flex min-h-10 w-full items-center justify-between gap-3 rounded-md px-3 text-left text-[0.76rem] font-semibold text-white/78 transition hover:bg-white/8 hover:text-white",
+                      "flex min-h-10 w-full items-center justify-between gap-3 rounded-md px-3 text-left type-label-sm text-white/78 transition hover:bg-white/8 hover:text-white",
                       activeIndex === index && "bg-violet-500/18 text-white"
                     )}
                     key={`${suggestion.type}-${suggestion.href}`}
@@ -182,14 +182,14 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
                   </button>
                 ))
               ) : (
-                <div className="px-3 py-2 text-[0.76rem] font-semibold text-white/68">No matches found</div>
+                <div className="px-3 py-2 type-label-sm text-white/68">No matches found</div>
               )}
             </div>
           ) : null}
         </div>
 
         <button
-          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md bg-gradient-to-b from-violet-500 to-violet-600 px-4 text-[0.72rem] font-bold leading-none text-white shadow-[0_10px_24px_rgba(108,77,255,0.24)] transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-lime-400/25"
+          className="inline-flex min-h-10 items-center justify-center gap-1.5 rounded-md bg-gradient-to-b from-violet-500 to-violet-600 px-4 type-label-sm text-white shadow-[0_10px_24px_rgba(108,77,255,0.24)] transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-lime-400/25"
           type="submit"
         >
           Find my tools
@@ -197,7 +197,7 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
       </div>
 
       <div className="mt-2.5 flex flex-wrap items-center justify-center gap-1.5">
-        <span className="mr-1 text-[0.62rem] font-semibold leading-none text-white/46">Try:</span>
+        <span className="mr-1 type-label-sm text-white/46">Try:</span>
         {quickSearches.map((chip) => {
           const href = buildLibraryHref("/plutos-library/search", {
             q: chip.params.query,
@@ -208,7 +208,7 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
 
           return (
             <button
-              className="focus-ring min-h-6 shrink-0 rounded-full border border-white/10 bg-white/10 px-2.5 text-[0.58rem] font-semibold leading-none text-white/66 transition hover:border-lime-400/40 hover:text-white"
+              className="focus-ring min-h-6 shrink-0 rounded-full border border-white/10 bg-white/10 px-2.5 type-label-sm text-white/66 transition hover:border-lime-400/40 hover:text-white"
               key={chip.id}
               onClick={() => {
                 setQuery(chip.params.query);

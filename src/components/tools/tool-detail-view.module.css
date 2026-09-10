@@ -169,10 +169,10 @@
   margin: 0.75rem 0 0;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: clamp(2rem, 4.2vw, 2.75rem);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.04;
-  letter-spacing: 0;
+  font-size: var(--text-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-h1);
+  letter-spacing: var(--tracking-h1);
   text-wrap: balance;
 }
 
@@ -181,7 +181,7 @@
   margin: 0.75rem 0 0;
   color: rgba(244, 241, 255, 0.76);
   font-size: var(--text-body-md);
-  line-height: 1.62;
+  line-height: var(--leading-body-md);
 }
 
 .chips {
@@ -374,7 +374,16 @@
 .sectionHeading,
 .sectionTitleRow h2,
 .sidebarCard h2,
-.similarHeader h2,
+.similarHeader h2 {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-h2);
+}
+
 .sourcesCard summary span {
   margin: 0;
   color: #ffffff;
@@ -382,13 +391,14 @@
   font-size: var(--text-h5);
   font-weight: var(--font-weight-medium);
   line-height: var(--leading-h5);
+  letter-spacing: var(--tracking-h5);
 }
 
 .card p,
 .sourcesCard p {
   color: rgba(244, 241, 255, 0.76);
   font-size: var(--text-body-md);
-  line-height: 1.62;
+  line-height: var(--leading-body-md);
 }
 
 .takeNotes {
@@ -507,9 +517,10 @@
   margin: 0;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: var(--text-label-lg);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--leading-label-lg);
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
 }
 
 .pointPanel ul {
@@ -709,9 +720,10 @@
   overflow: hidden;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: var(--text-h5);
+  font-size: var(--text-h3);
   font-weight: var(--font-weight-medium);
-  line-height: var(--leading-h5);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -782,8 +794,10 @@
 .dialogHeader h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--text-h5);
+  font-size: var(--text-h2);
   font-weight: var(--font-weight-medium);
+  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-h2);
 }
 
 .dialogHeader p {
@@ -898,10 +912,6 @@
   .logo {
     width: 5.5rem;
     height: 5.5rem;
-  }
-
-  .identity h1 {
-    font-size: clamp(1.8rem, 9vw, 2.1rem);
   }
 
   .heroActions,

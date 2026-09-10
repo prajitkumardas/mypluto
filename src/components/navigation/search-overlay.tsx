@@ -12,6 +12,7 @@ import {
   X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 
 type SearchOverlayProps = {
   open: boolean;
@@ -57,10 +58,10 @@ export function SearchOverlay({ open, onOpenChange }: SearchOverlayProps) {
 
           <div className="mt-6 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
             <section className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
-              <h3 className="flex items-center gap-2 type-label-md text-neutral-900">
+              <p className="flex items-center gap-2 type-label-md text-neutral-900">
                 <Sparkles aria-hidden="true" className="h-4 w-4 text-violet-600" />
                 Popular searches
-              </h3>
+              </p>
               <div className="mt-3 grid gap-2">
                 {suggestions.map((suggestion) => (
                   <Link
@@ -74,18 +75,16 @@ export function SearchOverlay({ open, onOpenChange }: SearchOverlayProps) {
                   </Link>
                 ))}
               </div>
-              <Button asChild className="mt-4" variant="lime">
-                <Link href="/pluto-guides" onClick={() => onOpenChange(false)}>
-                  Pluto Guides <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
-                </Link>
-              </Button>
+              <PlutoButton className="mt-4" href="/pluto-guides" onClick={() => onOpenChange(false)} showArrow variant="primary">
+                Pluto Guides
+              </PlutoButton>
             </section>
 
             <section className="rounded-2xl bg-ink-950 p-4 text-white">
-              <h3 className="flex items-center gap-2 type-label-md">
+              <p className="flex items-center gap-2 type-label-md">
                 <BrainCircuit aria-hidden="true" className="h-4 w-4 text-lime-400" />
                 Pluto Guides instead
-              </h3>
+              </p>
               <p className="mt-2 type-body-sm text-white/70">
                 Turn a messy goal into ranked recommendations with tradeoffs and
                 verification context.

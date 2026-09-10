@@ -26,8 +26,8 @@ const widthClass = {
 
 const titleClass = {
   default: "type-h1",
-  compact: "type-h2",
-  hero: "font-display text-[var(--text-page-hero-title)] font-medium leading-[var(--leading-page-hero-title)] tracking-[0] [text-wrap:balance]"
+  compact: "type-h1",
+  hero: "type-h1"
 };
 
 export function PageHeader({

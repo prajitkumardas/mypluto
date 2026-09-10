@@ -3,6 +3,7 @@
   --font-heading: var(--font-display);
   --font-body: var(--font-inter), "Inter", sans-serif;
   --font-accent: var(--font-instrument-serif), "Instrument Serif", serif;
+  --font-playful: "Comic Sans MS", "Bradley Hand", cursive;
 
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -12,8 +13,8 @@
   --text-display-xl: clamp(3rem, 2.25rem + 3.75vw, 4.5rem);
   --text-display-lg: clamp(2.625rem, 1.9375rem + 3.4375vw, 4rem);
 
-  --text-h1: clamp(2.25rem, 1.875rem + 1.875vw, 3rem);
-  --text-h2: clamp(1.875rem, 1.5625rem + 1.5625vw, 2.5rem);
+  --text-h1: clamp(1.625rem, 0.05rem + 7.875vw, 3rem);
+  --text-h2: clamp(1.625rem, -0.05rem + 8vw, 2.5rem);
   --text-h3: clamp(1.625rem, 1.4375rem + 0.9375vw, 2rem);
   --text-h4: clamp(1.375rem, 1.3125rem + 0.3125vw, 1.5rem);
   --text-h5: 1.25rem;
@@ -32,12 +33,16 @@
   --text-overline: clamp(0.6875rem, 0.65625rem + 0.15625vw, 0.75rem);
 
   --text-hero-brand: clamp(4.75rem, 15vw, 17rem);
-  --text-hero-greeting-eyebrow: clamp(1.5rem, 1.1rem + 1.25vw, 2.35rem);
+  --text-hero-greeting-eyebrow: clamp(1.375rem, 1.05rem + 1vw, 2.1rem);
   --text-hero-greeting-title: clamp(3rem, 2.2rem + 4vw, 6rem);
   --text-hero-search-greeting: clamp(1.125rem, 0.95rem + 0.75vw, 1.5rem);
-  --text-hero-search-title: clamp(3.25rem, 2rem + 5.4vw, 5.95rem);
-  --text-page-hero-title: clamp(2rem, 3.7vw, 3.05rem);
-  --text-page-hero-copy: clamp(0.82rem, 1.05vw, 0.98rem);
+  --text-hero-search-title: var(--text-hero-greeting-title);
+  --text-page-hero-title: var(--text-h1);
+  --text-page-hero-copy: var(--text-body-md);
+  --text-play-versus-name: clamp(3rem, 10vw, 7.6rem);
+  --text-play-versus-mark: clamp(3rem, 8.8vw, 7rem);
+  --text-play-game-title: clamp(1.875rem, 4vw, 3.125rem);
+  --text-play-board-mark: clamp(2.625rem, 5vw, 3.625rem);
 
   --leading-display-xl: 1.05;
   --leading-display-lg: 1.08;
@@ -61,9 +66,11 @@
   --leading-hero-greeting-eyebrow: 1.18;
   --leading-hero-greeting-title: 1.04;
   --leading-hero-search-greeting: 1.35;
-  --leading-hero-search-title: 1.04;
-  --leading-page-hero-title: 1.05;
-  --leading-page-hero-copy: 1.55;
+  --leading-hero-search-title: var(--leading-hero-greeting-title);
+  --leading-page-hero-title: var(--leading-h1);
+  --leading-page-hero-copy: var(--leading-body-md);
+  --leading-play-display: 0.88;
+  --leading-play-tight: 1;
 
   --tracking-display-xl: -0.025em;
   --tracking-display-lg: -0.024em;
@@ -84,7 +91,9 @@
   --tracking-hero-greeting-eyebrow: -0.018em;
   --tracking-hero-greeting-title: -0.04em;
   --tracking-hero-search-greeting: -0.006em;
-  --tracking-hero-search-title: -0.042em;
+  --tracking-hero-search-title: var(--tracking-hero-greeting-title);
+  --tracking-page-hero-title: var(--tracking-h1);
+  --tracking-page-hero-copy: var(--tracking-body);
 
   --content-reading-width: 65ch;
 }

@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ArrowRight, CheckCircle2, Loader2, RotateCcw } from "lucide-react";
+import { CheckCircle2, Loader2, RotateCcw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { ToolCard } from "@/components/tools/tool-card";
 import { tools } from "@/lib/data";
 
@@ -80,12 +79,12 @@ export function PlutoWizard() {
                   ))}
                 </div>
                 <div className="mt-6 flex justify-between gap-3">
-                  <Button disabled={step === 0} onClick={() => setStep((value) => value - 1)} variant="secondary">
+                  <PlutoButton disabled={step === 0} onClick={() => setStep((value) => value - 1)} type="button" variant="secondary">
                     Back
-                  </Button>
-                  <Button onClick={() => setStep((value) => value + 1)}>
-                    Continue <ArrowRight aria-hidden="true" className="h-4 w-4" />
-                  </Button>
+                  </PlutoButton>
+                  <PlutoButton onClick={() => setStep((value) => value + 1)} showArrow type="button" variant="primary">
+                    Continue
+                  </PlutoButton>
                 </div>
               </>
             ) : (
@@ -103,13 +102,11 @@ export function PlutoWizard() {
                   ))}
                 </div>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  <Button asChild>
-                    <Link href="/compare">Compare recommendations</Link>
-                  </Button>
-                  <Button onClick={() => { setStep(0); setAnswers([]); }} variant="secondary">
+                  <PlutoButton href="/compare" showArrow variant="primary">Compare recommendations</PlutoButton>
+                  <PlutoButton onClick={() => { setStep(0); setAnswers([]); }} type="button" variant="secondary">
                     <RotateCcw aria-hidden="true" className="h-4 w-4" />
                     Start over
-                  </Button>
+                  </PlutoButton>
                 </div>
               </>
             )}

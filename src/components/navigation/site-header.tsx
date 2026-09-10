@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import type { MouseEvent } from "react";
 import { useState } from "react";
 import { ArrowRight, Menu, Search, X } from "lucide-react";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { useCompareStore } from "@/lib/compare-store";
 
 const HOME_SEARCH_HASH = "#home-search";
@@ -76,9 +77,9 @@ export function SiteHeader() {
           >
             <Search aria-hidden="true" className="nav-icon" />
           </Link>
-          <Link className="focus-ring site-header-submit" href="/submit-tool">
+          <PlutoButton href="/submit-tool" size="sm" variant="primary">
             Submit a Tool
-          </Link>
+          </PlutoButton>
         </div>
 
         <div className="site-header-mobile-actions">

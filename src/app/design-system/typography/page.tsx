@@ -226,7 +226,7 @@ export default function TypographyDocumentationPage() {
               <div className="grid gap-5 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
                 <div>
                   <p className="type-overline text-[var(--text-tertiary)]">{token.className}</p>
-                  <h2 className="mt-2 type-h4 text-[var(--text-primary)]">{token.name}</h2>
+                  <h2 className="mt-2 type-h2 text-[var(--text-primary)]">{token.name}</h2>
                   <dl className="mt-4 grid gap-2 type-body-sm text-[var(--text-secondary)] sm:grid-cols-2">
                     <div>
                       <dt className="type-label-sm text-[var(--text-tertiary)]">Font</dt>

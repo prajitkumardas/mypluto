@@ -68,7 +68,8 @@
   gap: 0.75rem;
   color: rgba(255, 255, 255, 0.52);
   text-align: center;
-  font-size: 0.74rem;
+  font-size: var(--text-label-sm);
+  line-height: var(--leading-label-sm);
 }
 
 .breadcrumb a {
@@ -98,7 +99,7 @@
 .categoryBadge {
   justify-content: center;
   color: #c8ff5a;
-  font-size: 0.64rem;
+  font-size: var(--text-label-sm);
 }
 
 .heroTitle {
@@ -106,7 +107,7 @@
   font-family: var(--font-display);
   font-size: var(--text-page-hero-title);
   font-weight: var(--font-weight-medium);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-page-hero-title);
   line-height: var(--leading-page-hero-title);
   text-wrap: balance;
   text-shadow: 0 0 28px rgba(255, 255, 255, 0.12);
@@ -115,8 +116,8 @@
 .heroTitle span {
   display: inline-block;
   color: #a875ff;
-  font-size: 0.96em;
-  line-height: 1;
+  font-size: var(--text-page-hero-title);
+  line-height: var(--leading-page-hero-title);
   text-shadow: 0 0 30px rgba(124, 99, 255, 0.24);
 }
 
@@ -126,7 +127,7 @@
   color: rgba(235, 229, 255, 0.72);
   font-size: var(--text-page-hero-copy);
   line-height: var(--leading-page-hero-copy);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-page-hero-copy);
   text-wrap: pretty;
 }
 
@@ -171,7 +172,7 @@
   background: transparent;
   color: #ffffff;
   font-size: var(--text-body-md);
-  line-height: 1;
+  line-height: var(--leading-body-md);
   outline: none;
 }
 

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import {
-  ArrowRight,
   BookOpen,
   CheckCircle2,
   Briefcase,
@@ -21,7 +20,7 @@ import {
 } from "lucide-react";
 import { CompareButton } from "@/components/compare/compare-button";
 import { ToolLogo } from "@/components/shared/tool-logo";
-import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { HeroVeil } from "@/components/shared/hero-veil";
 import { getFaviconLogoUrl } from "@/lib/tool-logo";
 import {
@@ -196,14 +195,12 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
       </ol>
 
       <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-        <Button className="min-w-40" onClick={onStart} type="button">
-          Start guide <Sparkles aria-hidden="true" className="h-5 w-5" />
-        </Button>
-        <Button asChild className="min-w-40" variant="outline">
-          <Link href="/plutos-library">
-            Browse Discover <Search aria-hidden="true" className="h-5 w-5" />
-          </Link>
-        </Button>
+        <PlutoButton className="min-w-40" onClick={onStart} showArrow type="button" variant="primary">
+          Start guide
+        </PlutoButton>
+        <PlutoButton className="min-w-40" href="/plutos-library" showArrow variant="secondary">
+          Browse Discover
+        </PlutoButton>
       </div>
 
       <p className="mt-5 type-body-sm text-white/48">Takes about 2 minutes - No account required</p>
@@ -295,17 +292,16 @@ function GuideQuestionScreen({
         {error ? <p className="mt-5 type-label-md text-rose-200">{error}</p> : null}
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3 sm:items-end">
-          <Button className="justify-self-start" onClick={onBack} type="button" variant="outline">
+          <PlutoButton className="justify-self-start" onClick={onBack} type="button" variant="secondary">
             Back
-          </Button>
+          </PlutoButton>
           <button className="justify-self-center type-label-sm text-white/86 transition hover:text-lime-300" onClick={onSaveExit} type="button">
             Save & exit
           </button>
           <div className="grid justify-self-stretch sm:justify-self-end">
-            <Button disabled={!canContinue} onClick={onContinue} type="button">
+            <PlutoButton disabled={!canContinue} onClick={onContinue} showArrow type="button" variant="primary">
               {step === steps.length - 1 ? "See recommendations" : "Continue"}
-              <ArrowRight aria-hidden="true" className="h-5 w-5" />
-            </Button>
+            </PlutoButton>
             <span className="mt-2 text-center type-label-sm text-white/38 sm:text-right">Press Enter</span>
           </div>
         </div>
@@ -601,8 +597,8 @@ function GuideOptionCard({
         {icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[18px] font-semibold leading-[1.3] text-white">{title}</span>
-        <span className="mt-1 line-clamp-2 block text-[15px] leading-[1.45] text-white/62" id={descriptionId}>
+        <span className="block type-h6 text-white">{title}</span>
+        <span className="mt-1 line-clamp-2 block type-body-sm text-white/62" id={descriptionId}>
           {description}
         </span>
       </span>
@@ -645,7 +641,7 @@ function LoadingScreen() {
     <section className="mx-auto grid min-h-[46vh] max-w-3xl place-items-center text-center">
       <div className="rounded-3xl border border-white/12 bg-white/8 p-8 shadow-card backdrop-blur">
         <Loader2 aria-hidden="true" className="mx-auto h-10 w-10 animate-spin text-lime-300" />
-        <h1 className="mt-5 type-h3 text-white">Ranking trusted matches</h1>
+        <h1 className="mt-5 type-h1 text-white">Ranking trusted matches</h1>
         <p className="mt-3 type-body-md text-white/66">
           Pluto is checking task fit, budget, platform, requirements, and verification signals.
         </p>
@@ -679,7 +675,7 @@ function ResultsScreen({
     <section className="mx-auto w-full">
       <div className="mx-auto max-w-3xl text-center">
         <p className="type-overline text-lime-300">Pluto Guides</p>
-        <h1 className="mt-3 font-display text-[var(--text-page-hero-title)] font-medium leading-[var(--leading-page-hero-title)] tracking-[0] text-white [text-wrap:balance]">
+        <h1 className="mt-3 type-h1 text-white">
           Your recommended tools
         </h1>
         <p className="mx-auto mt-4 max-w-2xl text-[var(--text-page-hero-copy)] leading-[var(--leading-page-hero-copy)] tracking-[0] text-white/72 [text-wrap:pretty]">
@@ -688,14 +684,14 @@ function ResultsScreen({
       </div>
 
       <div className="mx-auto mt-7 flex max-w-3xl flex-col items-center justify-center gap-2 sm:flex-row">
-        <Button className="w-full sm:w-auto" onClick={onAdjust} type="button" variant="outline">
+        <PlutoButton className="w-full sm:w-auto" onClick={onAdjust} type="button" variant="secondary">
           <SlidersHorizontal aria-hidden="true" className="h-5 w-5" />
           Adjust answers
-        </Button>
-        <Button className="w-full sm:w-auto" onClick={onStartAgain} type="button" variant="outline">
+        </PlutoButton>
+        <PlutoButton className="w-full sm:w-auto" onClick={onStartAgain} type="button" variant="secondary">
           <RotateCcw aria-hidden="true" className="h-5 w-5" />
           Start over
-        </Button>
+        </PlutoButton>
       </div>
 
       {selectedAnswers.length > 0 ? (
@@ -710,7 +706,7 @@ function ResultsScreen({
 
       {recommendations.length === 0 ? (
         <div className="mx-auto mt-9 max-w-3xl rounded-[1.25rem] border border-white/12 bg-white/8 p-8 text-center shadow-card backdrop-blur">
-          <h2 className="type-h4 text-white">No confident match yet</h2>
+          <h2 className="type-h2 text-white">No confident match yet</h2>
           <p className="mt-3 type-body-md text-white/66">Try loosening budget, platform, or API requirements.</p>
         </div>
       ) : (
@@ -771,11 +767,10 @@ function ResultCard({
       </div>
 
       <div className={cardStyles.actions}>
-        <Link className={cn(cardStyles.actionButton, cardStyles.primaryAction)} href={recommendation.href}>
+        <PlutoButton fullWidth href={recommendation.href} showArrow variant="primary">
           View details
-          <ArrowRight aria-hidden="true" />
-        </Link>
-        <CompareButton className={cn(cardStyles.actionButton, cardStyles.secondaryAction)} compact toolName={recommendation.name} toolSlug={recommendation.slug} variant="secondary" />
+        </PlutoButton>
+        <CompareButton compact toolName={recommendation.name} toolSlug={recommendation.slug} variant="secondary" />
       </div>
     </article>
   );
@@ -788,7 +783,7 @@ function QuestionShell({ children, copy, eyebrow, title }: { children: ReactNode
   return (
     <div>
       <p className="type-overline text-lime-300">{eyebrow}</p>
-      <h2 className="mt-2 type-h3 text-white">{title}</h2>
+      <h2 className="mt-2 type-h2 text-white">{title}</h2>
       <p className="mt-2 type-body-sm text-white/62">{copy}</p>
       {children}
     </div>

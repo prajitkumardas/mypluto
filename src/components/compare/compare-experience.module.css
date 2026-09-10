@@ -52,7 +52,7 @@
   font-size: var(--text-page-hero-title);
   font-weight: var(--font-weight-medium);
   line-height: var(--leading-page-hero-title);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-page-hero-title);
   text-wrap: balance;
 }
 
@@ -62,6 +62,7 @@
   color: rgba(235, 229, 255, 0.72);
   font-size: var(--text-page-hero-copy);
   line-height: var(--leading-page-hero-copy);
+  letter-spacing: var(--tracking-page-hero-copy);
 }
 
 .builder,
@@ -94,9 +95,10 @@
   margin: 0;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: var(--text-h5);
+  font-size: var(--text-h2);
   font-weight: var(--font-weight-medium);
-  line-height: var(--leading-h5);
+  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-h2);
 }
 
 .builderHeader p,
@@ -199,9 +201,11 @@
   margin: 0;
   overflow: hidden;
   color: #ffffff;
-  font-size: var(--text-label-lg);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--leading-label-lg);
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -437,8 +441,10 @@
 .selectorHeader h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--text-h4);
+  font-size: var(--text-h2);
   font-weight: var(--font-weight-medium);
+  line-height: var(--leading-h2);
+  letter-spacing: var(--tracking-h2);
 }
 
 .selectorHeader p {
@@ -494,11 +500,11 @@
 .selectorSection h3 {
   margin: 0 0 0.7rem;
   color: #c8ff5a;
-  font-size: var(--text-label-md);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-label-md);
-  letter-spacing: var(--tracking-overline);
-  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
 }
 
 .selectorStatus {
@@ -540,8 +546,11 @@
 
 .selectorTool h4 {
   color: #ffffff;
-  font-size: var(--text-label-lg);
-  font-weight: var(--font-weight-semibold);
+  font-family: var(--font-display);
+  font-size: var(--text-h4);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-h4);
+  letter-spacing: var(--tracking-h4);
 }
 
 .selectorTool p,

@@ -15,7 +15,7 @@ export default function VerificationPage() {
         {["Website available", "Pricing checked", "Features reviewed"].map((item) => (
           <div className="rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-6 shadow-[var(--shadow-xs)]" key={item}>
             <ShieldCheck aria-hidden="true" className="h-7 w-7 text-[var(--color-pluto-purple-300)]" />
-            <h2 className="mt-5 type-h4 text-[var(--text-primary)]">{item}</h2>
+            <h2 className="mt-5 type-h2 text-[var(--text-primary)]">{item}</h2>
             <p className="mt-3 type-body-sm text-[var(--text-secondary)]">
               AI can detect possible changes, but admin review is required before critical data is published.
             </p>

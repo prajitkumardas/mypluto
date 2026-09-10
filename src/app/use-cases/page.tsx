@@ -20,7 +20,7 @@ export default function UseCasesPage() {
             href={`/use-cases/${useCase.slug}`}
             key={useCase.slug}
           >
-            <h2 className="type-h3 text-[var(--text-primary)]">{useCase.title}</h2>
+            <h2 className="type-h2 text-[var(--text-primary)]">{useCase.title}</h2>
             <p className="mt-3 type-body-sm text-[var(--text-secondary)]">{useCase.query}</p>
             <span className="mt-6 inline-flex items-center gap-2 type-label-md text-[var(--color-pluto-purple-300)]">
               View recommendations <ArrowRight aria-hidden="true" className="h-4 w-4 transition group-hover:translate-x-1" />

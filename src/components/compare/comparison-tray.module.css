@@ -183,6 +183,10 @@
   box-shadow: 0 14px 34px rgba(112, 71, 255, 0.28);
 }
 
+.trayCta {
+  flex: 0 0 auto;
+}
+
 .disabledButton {
   opacity: 0.5;
 }
@@ -213,6 +217,7 @@
   }
 
   .actionButtons,
+  .trayCta,
   .primaryButton,
   .clearButton {
     width: 100%;

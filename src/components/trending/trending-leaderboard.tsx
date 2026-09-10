@@ -4,9 +4,11 @@ import * as Select from "@radix-ui/react-select";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { ArrowDown, ArrowRight, ArrowUp, Check, ChevronDown, Minus } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { CompareButton } from "@/components/compare/compare-button";
 import { ToolLogo } from "@/components/shared/tool-logo";
+import { TrendIndicator } from "@/components/trending/trend-indicator";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { cn } from "@/lib/utils";
 import type { TrendingResponse, TrendingTool, TrendPeriod } from "@/lib/trending";
 import styles from "./trending.module.css";
@@ -175,13 +177,13 @@ function TrendingRow({ period, tool }: { period: TrendPeriod; tool: TrendingTool
       </td>
       <td><p className={styles.bestFor}>{tool.bestFor}</p></td>
       <td className={styles.price}>{tool.pricingType}</td>
-      <td><TrendCell period={period} tool={tool} /></td>
+      <td><TrendIndicator period={period} tool={tool} /></td>
       <td>
         <div className={styles.actionGroup}>
-          <Link className={styles.actionLink} href={href} onClick={(event) => event.stopPropagation()}>
-            View details <ArrowRight aria-hidden="true" />
-          </Link>
-          <CompareButton compact className={styles.compareAction} onClick={(event) => event.stopPropagation()} toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
+          <PlutoButton href={href} onClick={(event) => event.stopPropagation()} showArrow size="sm" variant="secondary">
+            View details
+          </PlutoButton>
+          <CompareButton compact onClick={(event) => event.stopPropagation()} toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
         </div>
       </td>
     </tr>
@@ -195,11 +197,11 @@ function MobileTrendingItem({ period, tool }: { period: TrendPeriod; tool: Trend
         <span className={styles.mobileTop}>
           <span className={styles.mobileRank}>{String(tool.currentRank).padStart(2, "0")}</span>
           <ToolIdentity tool={tool} />
-          <TrendCell period={period} tool={tool} />
+          <TrendIndicator period={period} tool={tool} />
         </span>
         <span className={styles.mobileCopy}>{tool.bestFor}</span>
       </Link>
-      <CompareButton compact className={styles.mobileCompareAction} toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
+      <CompareButton compact toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
     </article>
   );
 }
@@ -212,50 +214,6 @@ function ToolIdentity({ tool }: { tool: TrendingTool }) {
         <span className={styles.toolName}>{tool.name}</span>
         <span className={styles.toolMeta}>{tool.category} - {tool.pricingType}</span>
       </span>
-    </span>
-  );
-}
-
-function TrendCell({ period, tool }: { period: TrendPeriod; tool: TrendingTool }) {
-  if (period === "new") {
-    return (
-      <span className={cn(styles.trend, styles.trendPositive)} title="Newly added to the verified Pluto library.">
-        New {tool.releaseDate ? <span className="text-white/48">{formatShortDate(tool.releaseDate)}</span> : null}
-      </span>
-    );
-  }
-
-  if (period === "updated") {
-    return (
-      <span className={cn(styles.trend, styles.trendPositive)} title={tool.updateLabel || "Recently verified material update."}>
-        Updated {tool.lastMaterialUpdateAt ? <span className="text-white/48">{formatShortDate(tool.lastMaterialUpdateAt)}</span> : null}
-      </span>
-    );
-  }
-
-  if (tool.rankChange === null) {
-    return <span className={cn(styles.trend, styles.trendNeutral)} title="Insufficient history for movement.">New</span>;
-  }
-
-  if (tool.rankChange > 0) {
-    return (
-      <span className={cn(styles.trend, styles.trendPositive)} title={`Moved up ${tool.rankChange} positions compared with the previous ${getPeriodWindow(period)}.`}>
-        <ArrowUp aria-hidden="true" className="h-4 w-4" /> {tool.rankChange}
-      </span>
-    );
-  }
-
-  if (tool.rankChange < 0) {
-    return (
-      <span className={cn(styles.trend, styles.trendNegative)} title={`Moved down ${Math.abs(tool.rankChange)} positions compared with the previous ${getPeriodWindow(period)}.`}>
-        <ArrowDown aria-hidden="true" className="h-4 w-4" /> {Math.abs(tool.rankChange)}
-      </span>
-    );
-  }
-
-  return (
-    <span className={cn(styles.trend, styles.trendNeutral)} title={`No rank change compared with the previous ${getPeriodWindow(period)}.`}>
-      <Minus aria-hidden="true" className="h-4 w-4" />
     </span>
   );
 }
@@ -306,18 +264,4 @@ function MobileSkeletonRows() {
       </span>
     </div>
   ));
-}
-
-function getPeriodWindow(period: TrendPeriod) {
-  if (period === "today") return "rolling 24-hour period";
-  if (period === "month") return "rolling 30-day period";
-  if (period === "new") return "recent 30-day release window";
-  if (period === "updated") return "recent 30-day update window";
-  return "rolling seven-day period";
-}
-
-function formatShortDate(value: string) {
-  const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return "";
-  return new Intl.DateTimeFormat("en", { day: "2-digit", month: "short" }).format(date);
 }

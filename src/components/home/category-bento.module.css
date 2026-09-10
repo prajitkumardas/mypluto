@@ -206,10 +206,10 @@
   margin: 0;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 2.35vw, 2.25rem);
-  font-weight: var(--font-weight-semibold);
-  line-height: 1.04;
-  letter-spacing: 0;
+  font-size: var(--text-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--leading-h3);
+  letter-spacing: var(--tracking-h3);
 }
 
 .description {
@@ -218,7 +218,7 @@
   overflow: hidden;
   color: rgba(255, 255, 255, 0.72);
   font-size: var(--text-body-sm);
-  line-height: 1.55;
+  line-height: var(--leading-body-sm);
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -272,11 +272,6 @@
 .featureLeft .cardBody,
 .featureRight .cardBody {
   max-width: min(100%, 24rem);
-}
-
-.featureLeft .cardTitle,
-.featureRight .cardTitle {
-  font-size: clamp(2rem, 3vw, 2.5rem);
 }
 
 .grid > * {
@@ -380,12 +375,6 @@
   .featureLeft .cardHeader,
   .featureRight .cardHeader {
     gap: 1.5rem;
-  }
-
-  .cardTitle,
-  .featureLeft .cardTitle,
-  .featureRight .cardTitle {
-    font-size: clamp(1.6rem, 8vw, 2rem);
   }
 
   .cardFooter {

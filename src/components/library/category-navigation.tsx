@@ -43,12 +43,12 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { LibraryCategory } from "@/lib/plutos-library";
+import { getLibraryCategoryHref } from "@/lib/library-routes";
 import { cn } from "@/lib/utils";
 
 type CategoryNavigationProps = {
   categories: LibraryCategory[];
   currentCategorySlug: string;
-  linkMode?: "path" | "query";
   showAllTools?: boolean;
   variant?: "rail" | "section";
 };
@@ -96,13 +96,10 @@ const categoryIcons: Record<string, LucideIcon> = {
 export function CategoryNavigation({
   categories,
   currentCategorySlug,
-  linkMode = "path",
   showAllTools = false,
   variant = "rail"
 }: CategoryNavigationProps) {
   const [collapsed, setCollapsed] = useState(false);
-  const getCategoryHref = (slug: string) =>
-    linkMode === "query" ? `/plutos-library?category=${slug}` : `/plutos-library/${slug}`;
 
   return (
     <aside
@@ -120,7 +117,7 @@ export function CategoryNavigation({
         )}
       >
         <div className={cn("flex items-center gap-3", collapsed ? "justify-center" : "justify-between")}>
-          {collapsed ? null : <h2 className="type-label-sm uppercase text-white/72">Categories</h2>}
+          {collapsed ? null : <p className="type-label-sm uppercase text-white/72">Categories</p>}
           <button
             aria-expanded={!collapsed}
             aria-label={collapsed ? "Expand categories" : "Collapse categories"}
@@ -142,7 +139,7 @@ export function CategoryNavigation({
             ) : null}
             {categories.map((category) => (
               <CategoryNavLink
-                href={getCategoryHref(category.slug)}
+                href={getLibraryCategoryHref(category.slug)}
                 icon={categoryIcons[category.slug] ?? Sparkles}
                 isActive={category.slug === currentCategorySlug}
                 key={category.id}

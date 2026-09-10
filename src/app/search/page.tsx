@@ -4,6 +4,7 @@ import { CardGrid } from "@/components/layout/card-grid";
 import { PageHeader } from "@/components/layout/page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { Button } from "@/components/ui/button";
+import { PlutoButton } from "@/components/ui/pluto-button";
 import { StatePanel } from "@/components/shared/state-panel";
 import { ToolCard } from "@/components/tools/tool-card";
 import { categories, collections, searchTools, useCases } from "@/lib/data";
@@ -36,13 +37,13 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             placeholder="Free image generator with commercial use"
           />
         </label>
-        <Button type="submit">Search again</Button>
+        <PlutoButton type="submit" variant="primary">Search again</PlutoButton>
       </form>
 
       {results.length > 0 ? (
         <section className="mt-10">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="type-h3 text-[var(--text-primary)]">Recommended tools</h2>
+            <h2 className="type-h2 text-[var(--text-primary)]">Recommended tools</h2>
             <p className="number type-label-md text-[var(--text-tertiary)]">{results.length} results</p>
           </div>
           <CardGrid className="mt-5">
@@ -74,7 +75,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 function SuggestionGroup({ title, items }: { title: string; items: string[][] }) {
   return (
     <section className="rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-5 shadow-[var(--shadow-xs)]">
-      <h2 className="type-h5 text-[var(--text-primary)]">{title}</h2>
+      <h2 className="type-h2 text-[var(--text-primary)]">{title}</h2>
       <div className="mt-4 grid gap-2">
         {items.slice(0, 4).map(([label, href]) => (
           <Button asChild key={href} variant="ghost">
