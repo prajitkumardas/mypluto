@@ -65,6 +65,13 @@
   outline-offset: 4px;
 }
 
+@media (max-width: 767px) {
+  .logoLink:active,
+  .titleBlock:active {
+    transform: scale(0.985);
+  }
+}
+
 .logoTile {
   display: grid;
   width: clamp(2.85rem, 4.6vw, 3.75rem);

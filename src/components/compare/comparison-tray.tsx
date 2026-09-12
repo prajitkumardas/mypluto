@@ -28,7 +28,7 @@ export function ComparisonTray() {
   }
 
   return (
-    <aside className={cn(styles.tray, expanded && styles.expanded)} aria-label="Prepared comparison">
+    <aside className={cn(styles.tray, "comparison-tray-shell", expanded && styles.expanded)} aria-label="Prepared comparison">
       <div className={styles.live} aria-live="polite">{feedback}</div>
       <div className={styles.headerRow}>
         <div className={styles.titleBlock}>

@@ -781,7 +781,7 @@
   background: rgba(17, 16, 35, 0.98);
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
   color: #ffffff;
-  padding: 1.15rem;
+  padding: var(--popup-padding);
 }
 
 .dialogHeader {

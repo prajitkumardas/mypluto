@@ -9,6 +9,8 @@
     "lint": "eslint src scripts *.config.*",
     "typecheck": "next typegen && tsc --noEmit",
     "test:trending": "node scripts/test-trending.mjs",
+    "test:pwa": "node scripts/test-pwa.mjs",
+    "test:navigation:runtime": "node scripts/test-navigation-runtime.mjs",
     "audit:typography": "node scripts/audit-typography.mjs",
     "import:xlsx": "node scripts/import-ai-tools.mjs",
     "import:supabase": "node scripts/import-plutos-library-to-supabase.mjs",

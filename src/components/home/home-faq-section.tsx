@@ -110,7 +110,18 @@ export function HomeFaqSection() {
           <span key={particle.id} style={particle.style} />
         ))}
       </div>
-      <div aria-hidden='true' className={styles.artwork}>
+      <motion.div
+        aria-hidden='true'
+        className={styles.artwork}
+        initial={reducedMotion ? false : { opacity: 0, scale: 0.98, y: '24%' }}
+        transition={
+          reducedMotion
+            ? { duration: 0 }
+            : { duration: 1.05, ease: [0.22, 1, 0.36, 1] }
+        }
+        viewport={{ amount: 0.18, margin: '0px 0px -8% 0px', once: true }}
+        whileInView={reducedMotion ? undefined : { opacity: 1, scale: 1, y: '0%' }}
+      >
         <Image
           alt=''
           className={styles.artworkImage}
@@ -119,7 +130,7 @@ export function HomeFaqSection() {
           src='/images/home/faq-corner.png'
           width={1672}
         />
-      </div>
+      </motion.div>
       <div className={styles.inner}>
         <div className={styles.intro}>
           <p className={styles.eyebrow}>FAQs</p>

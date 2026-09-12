@@ -391,6 +391,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .artwork {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   .fireflies span {
     animation: none;
   }

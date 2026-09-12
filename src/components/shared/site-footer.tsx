@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Instagram, Linkedin, Twitter } from "lucide-react";
 import styles from "./site-footer.module.css";
+import { SubmitToolLink } from "@/components/submissions/submit-tool-trigger";
 
 type FooterLink = {
   label: string;
@@ -70,9 +71,11 @@ export function SiteFooter() {
               <ul className={styles.linkList}>
                 {group.links.map((link) => (
                   <li key={`${group.label}-${link.href}`}>
-                    <Link className={styles.footerLink} href={link.href}>
-                      {link.label}
-                    </Link>
+                    {link.href === "/submit-tool" ? (
+                      <SubmitToolLink className={styles.footerLink}>{link.label}</SubmitToolLink>
+                    ) : (
+                      <Link className={styles.footerLink} href={link.href}>{link.label}</Link>
+                    )}
                   </li>
                 ))}
               </ul>

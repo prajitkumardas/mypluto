@@ -12,10 +12,17 @@ export type CompareActionResult = {
   selected: string[];
 };
 
+export type RecentToolRecord = {
+  slug: string;
+  name: string;
+  logoUrl: string | null;
+  visitedAt: string;
+};
+
 type CompareState = {
   selected: string[];
   saved: string[];
-  recentlyViewed: string[];
+  recentlyViewed: RecentToolRecord[];
   hydrated: boolean;
   feedback: string;
   lastUpdated: string | null;
@@ -25,7 +32,7 @@ type CompareState = {
   setSelectedTools: (slugs: string[]) => void;
   clearCompare: () => void;
   toggleSaved: (slug: string) => void;
-  addRecent: (slug: string) => void;
+  addRecent: (tool: Omit<RecentToolRecord, "visitedAt">) => void;
   setFeedback: (message: string) => void;
   markHydrated: () => void;
 };
@@ -117,15 +124,28 @@ export const useCompareStore = create<CompareState>()(
             ? state.saved.filter((item) => item !== slug)
             : [...state.saved, slug]
         })),
-      addRecent: (slug) =>
+      addRecent: (tool) =>
         set((state) => ({
-          recentlyViewed: [slug, ...state.recentlyViewed.filter((item) => item !== slug)].slice(0, 6)
+          recentlyViewed: [
+            { ...tool, visitedAt: now() },
+            ...state.recentlyViewed.filter((item) => item.slug !== tool.slug)
+          ].slice(0, 24)
         })),
       setFeedback: (message) => set({ feedback: message }),
       markHydrated: () => set({ hydrated: true })
     }),
     {
       name: "pluto-local-journey",
+      version: 2,
+      migrate: (persistedState) => {
+        const state = persistedState as Partial<CompareState> & { recentlyViewed?: Array<RecentToolRecord | string> };
+        return {
+          ...state,
+          recentlyViewed: (state.recentlyViewed || []).map((item) => typeof item === "string"
+            ? { slug: item, name: item, logoUrl: null, visitedAt: now() }
+            : item).slice(0, 24)
+        } as CompareState;
+      },
       partialize: (state) => ({
         selected: state.selected,
         saved: state.saved,

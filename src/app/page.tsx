@@ -10,7 +10,7 @@ import {
   WordReveal
 } from "@/components/motion/scroll-reveals";
 import { Badge } from "@/components/ui/badge";
-import { PlutoButton } from "@/components/ui/pluto-button";
+import { SubmitToolButton } from "@/components/submissions/submit-tool-trigger";
 import { getTrendingResponse } from "@/lib/trending";
 import Silk from "@/components/ui/silk";
 
@@ -64,9 +64,9 @@ function SubmitCta() {
               platform support and verification notes without one long form.
             </ContentBlockReveal>
           </div>
-          <PlutoButton className="relative z-20" href="/submit-tool" showArrow size="lg" variant="primary">
+          <SubmitToolButton className="relative z-20" showArrow size="lg" variant="primary">
             Start submission
-          </PlutoButton>
+          </SubmitToolButton>
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { CSSProperties, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   Circle,
@@ -12,7 +12,7 @@ import {
   Lock,
   PawPrint,
   RotateCcw,
-  Sparkles,
+  Share2,
   Trophy,
   X
 } from "lucide-react";
@@ -23,6 +23,7 @@ import { ToolLogo } from "@/components/shared/tool-logo";
 import { HeroVeil } from "@/components/shared/hero-veil";
 import { getFaviconLogoUrl } from "@/lib/tool-logo";
 import { cn } from "@/lib/utils";
+import { readLocalRecord, writeLocalRecord } from "@/lib/local-persistence";
 import styles from "./pluto-playground.module.css";
 
 type Mark = "X" | "O" | null;
@@ -75,9 +76,31 @@ type BodyScrollSnapshot = {
   bodyOverscrollBehavior: string;
 };
 
+type ConfettiStyle = CSSProperties & {
+  "--confetti-delay": string;
+  "--confetti-duration": string;
+  "--confetti-rotation": string;
+  "--confetti-size": string;
+  "--confetti-x": string;
+  "--confetti-y": string;
+};
+
+type GiftDustStyle = CSSProperties & {
+  "--gift-dust-delay": string;
+  "--gift-dust-drift-x": string;
+  "--gift-dust-drift-y": string;
+  "--gift-dust-duration": string;
+  "--gift-dust-opacity": string;
+  "--gift-dust-size": string;
+  "--gift-dust-x": string;
+  "--gift-dust-y": string;
+};
+
 const VIDEO_SRC = "/videos/play/plutoplay.mp4";
 const POSTER_SRC = "/images/home/hero/pluto-valley-background.webp";
-const PLAYER_NAME_KEY = "pluto-play-player-name";
+const PLAY_PROFILE_KEY = "pluto-play-profile";
+const PLAY_PROFILE_VERSION = 1;
+type PlayProfile = { playerName: string; score: Score; unlockedRewardSlugs: string[] };
 const emptyBoard: Mark[] = Array.from({ length: 9 }, () => null);
 const winLines = [
   [0, 1, 2],
@@ -89,6 +112,38 @@ const winLines = [
   [0, 4, 8],
   [2, 4, 6]
 ];
+const WIN_CONFETTI: Array<{ id: number; style: ConfettiStyle }> = Array.from({ length: 72 }, (_, index) => ({
+  id: index,
+  style: {
+    "--confetti-delay": `${(0.58 + confettiValue(index, 1, 0, 0.24)).toFixed(2)}s`,
+    "--confetti-duration": `${confettiValue(index, 2, 1.85, 2.9).toFixed(2)}s`,
+    "--confetti-rotation": `${confettiValue(index, 3, -1080, 1080).toFixed(0)}deg`,
+    "--confetti-size": `${confettiValue(index, 4, 0.34, 0.72).toFixed(2)}rem`,
+    "--confetti-x": `${confettiValue(index, 5, -48, 48).toFixed(2)}vw`,
+    "--confetti-y": `${confettiValue(index, 6, -46, 38).toFixed(2)}vh`
+  }
+}));
+
+const WIN_GIFT_DUST: Array<{ id: number; style: GiftDustStyle }> = Array.from({ length: 20 }, (_, index) => ({
+  id: index,
+  style: {
+    "--gift-dust-delay": `${confettiValue(index, 7, -6, 0).toFixed(2)}s`,
+    "--gift-dust-drift-x": `${confettiValue(index, 8, -1.1, 1.1).toFixed(2)}rem`,
+    "--gift-dust-drift-y": `${confettiValue(index, 9, -1.5, -0.45).toFixed(2)}rem`,
+    "--gift-dust-duration": `${confettiValue(index, 10, 3.8, 6.8).toFixed(2)}s`,
+    "--gift-dust-opacity": confettiValue(index, 11, 0.35, 0.82).toFixed(2),
+    "--gift-dust-size": `${confettiValue(index, 12, 0.1, 0.24).toFixed(2)}rem`,
+    "--gift-dust-x": `${confettiValue(index, 13, 8, 92).toFixed(2)}%`,
+    "--gift-dust-y": `${confettiValue(index, 14, 10, 90).toFixed(2)}%`
+  }
+}));
+
+function confettiValue(index: number, salt: number, minimum: number, maximum: number) {
+  let value = Math.imul(index + 1, 0x45d9f3b) ^ Math.imul(salt + 1, 0x27d4eb2d);
+  value = Math.imul(value ^ (value >>> 16), 0x45d9f3b);
+  const normalized = ((value ^ (value >>> 16)) >>> 0) / 4294967295;
+  return minimum + (maximum - minimum) * normalized;
+}
 
 export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[] }) {
   const [flowState, setFlowState] = useState<FlowState>("landing");
@@ -101,6 +156,8 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
   const [nameInput, setNameInput] = useState("");
   const [selectedReward, setSelectedReward] = useState<PlayRewardTool | null>(null);
   const [giftOpening, setGiftOpening] = useState(false);
+  const [profileHydrated, setProfileHydrated] = useState(false);
+  const [unlockedRewardSlugs, setUnlockedRewardSlugs] = useState<string[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const scrollLockRef = useRef<BodyScrollSnapshot | null>(null);
 
@@ -115,15 +172,29 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
   const rewardLogo = useMemo(() => getFaviconLogoUrl(selectedReward?.domain), [selectedReward?.domain]);
 
   useEffect(() => {
+    document.documentElement.toggleAttribute("data-play-immersive", flowState === "versus" || gameVisible || resultOpen);
+    return () => document.documentElement.removeAttribute("data-play-immersive");
+  }, [flowState, gameVisible, resultOpen]);
+
+  useEffect(() => {
     const timer = window.setTimeout(() => {
-      const storedName = window.sessionStorage.getItem(PLAYER_NAME_KEY);
-      if (!storedName) return;
-      setPlayerName(storedName);
-      setNameInput(storedName === "You" ? "" : storedName);
+      const profile = readLocalRecord<PlayProfile>(PLAY_PROFILE_KEY, PLAY_PROFILE_VERSION);
+      if (profile) {
+        setPlayerName(profile.playerName || "You");
+        setNameInput(profile.playerName === "You" ? "" : profile.playerName);
+        setScore(profile.score);
+        setUnlockedRewardSlugs(profile.unlockedRewardSlugs || []);
+      }
+      setProfileHydrated(true);
     }, 0);
 
     return () => window.clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!profileHydrated) return;
+    writeLocalRecord<PlayProfile>(PLAY_PROFILE_KEY, PLAY_PROFILE_VERSION, { playerName, score, unlockedRewardSlugs });
+  }, [playerName, profileHydrated, score, unlockedRewardSlugs]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -268,7 +339,6 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
     event?.preventDefault();
     const nextName = sanitizePlayerName(nameInput);
     setPlayerName(nextName);
-    window.sessionStorage.setItem(PLAYER_NAME_KEY, nextName);
     resetBoard();
     setSelectedReward(null);
     setGiftOpening(false);
@@ -307,8 +377,10 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
     setWinningLine(result.line);
 
     if (result.outcome === "user") {
+      const reward = selectedReward ?? randomItem(rewardTools);
       setScore((current) => ({ ...current, user: current.user + 1 }));
-      setSelectedReward((current) => current ?? randomItem(rewardTools));
+      setSelectedReward(reward);
+      setUnlockedRewardSlugs((current) => current.includes(reward.slug) ? current : [...current, reward.slug]);
       setFlowState("user-won");
       return;
     }
@@ -321,6 +393,20 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
 
     setScore((current) => ({ ...current, draws: current.draws + 1 }));
     setFlowState("draw");
+  }
+
+  async function shareReward() {
+    if (!selectedReward) return;
+    const url = new URL(`/tools/${selectedReward.slug}`, window.location.origin).toString();
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `${selectedReward.name} on Pluto Finds`, text: "I unlocked this AI tool by beating Pluto.", url });
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+      }
+    }
+    await navigator.clipboard?.writeText(url).catch(() => undefined);
   }
 
   function makeMove(index: number) {
@@ -581,22 +667,74 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
       <Dialog.Root open={resultOpen} onOpenChange={() => undefined}>
         <Dialog.Portal>
           <Dialog.Overlay className={styles.resultOverlay} />
-          <Dialog.Content className={styles.resultContent} data-pluto-modal-scroll="true">
+          {flowState === "user-won" ? (
+            <div aria-hidden="true" className={styles.winConfetti}>
+              {WIN_CONFETTI.map((piece) => (
+                <span className={styles.confettiPiece} key={piece.id} style={piece.style} />
+              ))}
+            </div>
+          ) : null}
+          <Dialog.Content
+            className={cn(
+              styles.resultContent,
+              flowState === "user-won" && styles.winResultContent,
+              flowState === "reward-reveal" && styles.rewardResultContent
+            )}
+            data-pluto-modal-scroll="true"
+          >
             {flowState === "user-won" ? (
-              <div className={styles.winPanel}>
-                <Dialog.Title className={styles.resultTitle}>You beat Pluto!</Dialog.Title>
-                <Dialog.Description className={styles.resultCopy}>
-                  That was a great game. Pluto has a surprise for you.
-                </Dialog.Description>
-                <button
-                  className={cn(styles.giftButton, giftOpening && styles.giftOpening)}
-                  onClick={revealReward}
-                  type="button"
-                >
-                  <Gift aria-hidden="true" />
-                  <span>Tap to reveal your surprise</span>
-                </button>
-              </div>
+              <>
+                <div className={styles.modalMascotFrame} aria-hidden="true">
+                  <Image
+                    alt=""
+                    className={styles.modalMascot}
+                    height={1321}
+                    priority
+                    sizes="(max-width: 700px) 105px, 136px"
+                    src="/images/play/plutopopup.webp"
+                    width={1191}
+                  />
+                </div>
+                <div className={styles.winPanel}>
+                  <div className={styles.winMessage}>
+                    <div className={styles.winGiftVisual} aria-hidden="true">
+                      <div className={styles.winGiftDust}>
+                        {WIN_GIFT_DUST.map((particle) => (
+                          <span key={particle.id} style={particle.style} />
+                        ))}
+                      </div>
+                      <Image
+                        alt=""
+                        className={styles.winGiftImage}
+                        height={1195}
+                        sizes="(max-width: 700px) 92px, 112px"
+                        src="/images/play/rewardbox.webp"
+                        width={1316}
+                      />
+                    </div>
+                    <p className={styles.winHooray}>Hooray!</p>
+                    <Dialog.Title className={cn(styles.resultTitle, styles.winTitle)}>
+                      You beat <span>Pluto!</span>
+                    </Dialog.Title>
+                    <Dialog.Description className={cn(styles.resultCopy, styles.winCopy)}>
+                      That was a great game.{" "}
+                      <span>Pluto has a surprise for you.</span>
+                    </Dialog.Description>
+                    <PlutoButton
+                      className={styles.winRewardCta}
+                      loading={giftOpening}
+                      onClick={revealReward}
+                      showArrow
+                      size="lg"
+                      type="button"
+                      variant="primary"
+                    >
+                      <Gift aria-hidden="true" />
+                      <span>Tap to Reveal Surprise</span>
+                    </PlutoButton>
+                  </div>
+                </div>
+              </>
             ) : null}
 
             {flowState === "reward-reveal" ? (
@@ -604,36 +742,33 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
                 <div className={styles.particles} aria-hidden="true">
                   {Array.from({ length: 10 }, (_, index) => <span key={index} />)}
                 </div>
-                <Dialog.Title className={styles.resultTitle}>Pluto picked this for you.</Dialog.Title>
-                <Dialog.Description className={styles.resultCopy}>
-                  A small find for a sharp win.
-                </Dialog.Description>
                 {selectedReward ? (
-                  <article className={styles.toolCard}>
-                    <div className={styles.toolHeader}>
-                      <ToolLogo className={styles.toolLogo} name={selectedReward.name} src={rewardLogo} />
-                      <div>
-                        <h3>{selectedReward.name}</h3>
-                        <p>{selectedReward.description}</p>
+                  <>
+                    <div className={styles.rewardToolSummary}>
+                      <div className={styles.rewardLogoOrbit}>
+                        <ToolLogo className={styles.toolLogo} name={selectedReward.name} src={rewardLogo} />
                       </div>
+                      <h3>{selectedReward.name}</h3>
+                      <p>{selectedReward.description}</p>
                     </div>
-                    <div className={styles.toolMeta}>
-                      <span>{selectedReward.category}</span>
-                      <span>{selectedReward.useCase}</span>
-                      {selectedReward.pricing ? <span>{selectedReward.pricing}</span> : null}
-                    </div>
-                    <p className={styles.whyPicked}>
-                      <Sparkles aria-hidden="true" /> {selectedReward.whyPicked}
-                    </p>
+                    <Dialog.Title className={cn(styles.resultTitle, styles.rewardTitle)}>
+                      Pluto picked <span>this for you.</span>
+                    </Dialog.Title>
+                    <Dialog.Description className={cn(styles.resultCopy, styles.rewardCopy)}>
+                      A small find for a sharp win.
+                    </Dialog.Description>
                     <div className={styles.resultActions}>
-                      <PlutoButton href={`/plutos-library/tool/${selectedReward.slug}`} showArrow variant="primary">
+                      <PlutoButton className={styles.rewardAction} href={`/plutos-library/tool/${selectedReward.slug}`} showArrow variant="primary">
                         View tool
                       </PlutoButton>
-                      <PlutoButton onClick={restartRound} type="button" variant="secondary">
+                      <PlutoButton className={styles.rewardAction} onClick={restartRound} type="button" variant="secondary">
                         Play again <RotateCcw aria-hidden="true" />
                       </PlutoButton>
+                      <PlutoButton className={styles.rewardAction} onClick={() => void shareReward()} type="button" variant="secondary">
+                        <Share2 aria-hidden="true" /> Share
+                      </PlutoButton>
                     </div>
-                  </article>
+                  </>
                 ) : null}
               </div>
             ) : null}

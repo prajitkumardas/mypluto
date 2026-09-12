@@ -12,6 +12,7 @@ import {
   PenLine,
   RotateCcw,
   Search,
+  Share2,
   Settings,
   ShieldCheck,
   SlidersHorizontal,
@@ -37,8 +38,10 @@ import {
 } from "@/lib/pluto-guides-options";
 import { cn } from "@/lib/utils";
 import cardStyles from "@/components/library/library-tool-card.module.css";
+import { readLocalRecord, removeLocalRecord, writeLocalRecord } from "@/lib/local-persistence";
 
 const STORAGE_KEY = "pluto-guides-draft";
+const STORAGE_VERSION = 1;
 const steps = ["Your goal", "Task", "Preferences", "Requirements"];
 
 export function PlutoGuidesFlow() {
@@ -49,16 +52,12 @@ export function PlutoGuidesFlow() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const saved = window.sessionStorage.getItem(STORAGE_KEY);
-    if (!saved) return;
     const frame = window.requestAnimationFrame(() => {
-      try {
-        const parsed = JSON.parse(saved) as { answers: GuideAnswers; step: number };
+      const parsed = readLocalRecord<{ answers: GuideAnswers; step: number }>(STORAGE_KEY, STORAGE_VERSION);
+      if (parsed) {
         setAnswers({ ...emptyGuideAnswers, ...parsed.answers });
         setStep(Math.min(Math.max(parsed.step, 0), steps.length - 1));
         setScreen("questions");
-      } catch {
-        window.sessionStorage.removeItem(STORAGE_KEY);
       }
     });
     return () => window.cancelAnimationFrame(frame);
@@ -66,7 +65,7 @@ export function PlutoGuidesFlow() {
 
   useEffect(() => {
     if (screen !== "questions") return;
-    window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ answers, step }));
+    writeLocalRecord(STORAGE_KEY, STORAGE_VERSION, { answers, step });
   }, [answers, screen, step]);
 
   const currentGoal = useMemo(
@@ -85,7 +84,7 @@ export function PlutoGuidesFlow() {
   };
 
   const startAgain = () => {
-    window.sessionStorage.removeItem(STORAGE_KEY);
+    removeLocalRecord(STORAGE_KEY);
     setAnswers(emptyGuideAnswers);
     setRecommendations([]);
     setError("");
@@ -105,7 +104,7 @@ export function PlutoGuidesFlow() {
       if (!response.ok) throw new Error("Recommendation request failed");
       const data = (await response.json()) as { recommendations: GuideRecommendation[] };
       setRecommendations(data.recommendations);
-      window.sessionStorage.removeItem(STORAGE_KEY);
+      removeLocalRecord(STORAGE_KEY);
       setScreen("results");
     } catch {
       setError("Pluto Guides could not finish the match. Please try again.");
@@ -733,6 +732,18 @@ function ResultCard({
 }) {
   const verified = recommendation.verification.toLowerCase() === "verified";
   const logoSrc = getFaviconLogoUrl(recommendation.officialUrl);
+  const shareRecommendation = async () => {
+    const url = new URL(recommendation.href, window.location.origin).toString();
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: `${recommendation.name} on Pluto Finds`, text: "Check out this AI tool I found with Pluto.", url });
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+      }
+    }
+    await navigator.clipboard?.writeText(url).catch(() => undefined);
+  };
 
   return (
     <article className={cardStyles.card}>
@@ -771,6 +782,9 @@ function ResultCard({
           View details
         </PlutoButton>
         <CompareButton compact toolName={recommendation.name} toolSlug={recommendation.slug} variant="secondary" />
+        <PlutoButton aria-label={`Share ${recommendation.name}`} onClick={() => void shareRecommendation()} type="button" variant="secondary">
+          <Share2 aria-hidden="true" className="h-4 w-4" /> Share
+        </PlutoButton>
       </div>
     </article>
   );

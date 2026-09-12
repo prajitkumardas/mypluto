@@ -1,30 +1,32 @@
 "use client";
 
+import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { MouseEvent } from "react";
 import { useState } from "react";
 import { ArrowRight, Menu, Search, X } from "lucide-react";
-import { PlutoButton } from "@/components/ui/pluto-button";
+import { getActivePrimaryRoute, primaryRoutes } from "@/components/navigation/primary-routes";
+import { SubmitToolButton, SubmitToolLink } from "@/components/submissions/submit-tool-trigger";
 import { useCompareStore } from "@/lib/compare-store";
 
 const HOME_SEARCH_HASH = "#home-search";
 const HOME_SEARCH_EVENT = "pluto:focus-home-search";
 const HOME_SEARCH_HREF = `/${HOME_SEARCH_HASH}`;
 
-const navItems = [
-  ["Discover", "/plutos-library"],
-  ["Pluto Guides", "/pluto-guides"],
-  ["Trending", "/trending"],
-  ["Compare", "/compare"],
-  ["Play", "/play"]
+const secondaryItems = [
+  ["About Pluto", "/pluto"],
+  ["Submit a Tool", "/submit-tool"],
+  ["Verification", "/verification"],
+  ["Privacy", "/privacy"]
 ] as const;
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const compareCount = useCompareStore((state) => state.selected.length);
+  const internalProductRoute = Boolean(getActivePrimaryRoute(pathname));
 
   const handleHomeSearchClick = (event: MouseEvent<HTMLAnchorElement>) => {
     setMenuOpen(false);
@@ -42,7 +44,7 @@ export function SiteHeader() {
   return (
     <header className="site-header-shell">
       <div className="site-header-frame">
-        <Link aria-label="PlutoFinds home" className="focus-ring site-header-logo" href="/">
+        <Link aria-label="PlutoFinds home" className="focus-ring site-header-logo" data-scroll-top="true" href="/">
           <Image
             alt="PlutoFinds"
             className="site-header-logo-image"
@@ -54,7 +56,7 @@ export function SiteHeader() {
         </Link>
 
         <nav aria-label="Primary" className="site-header-nav">
-          {navItems.map(([label, href]) => (
+          {primaryRoutes.map(({ href, longLabel: label }) => (
             <Link
               className="nav-link"
               href={href}
@@ -77,9 +79,9 @@ export function SiteHeader() {
           >
             <Search aria-hidden="true" className="nav-icon" />
           </Link>
-          <PlutoButton href="/submit-tool" size="sm" variant="primary">
+          <SubmitToolButton size="sm" variant="primary">
             Submit a Tool
-          </PlutoButton>
+          </SubmitToolButton>
         </div>
 
         <div className="site-header-mobile-actions">
@@ -91,39 +93,71 @@ export function SiteHeader() {
           >
             <Search aria-hidden="true" className="nav-icon" />
           </Link>
-          <button
-            aria-label="Open menu"
-            className="focus-ring nav-icon-button rounded-xl border border-white/24 bg-white/8 text-white hover:border-lime-400 hover:text-lime-400"
-            onClick={() => setMenuOpen((value) => !value)}
-            type="button"
-          >
-            {menuOpen ? (
-              <X aria-hidden="true" className="nav-icon" />
-            ) : (
-              <Menu aria-hidden="true" className="nav-icon" />
-            )}
-          </button>
+          <Dialog.Root onOpenChange={setMenuOpen} open={menuOpen}>
+            <Dialog.Trigger asChild>
+              <button
+                aria-label="Open menu"
+                className="focus-ring nav-icon-button rounded-xl border border-white/24 bg-white/8 text-white hover:border-lime-400 hover:text-lime-400"
+                type="button"
+              >
+                <Menu aria-hidden="true" className="nav-icon" />
+              </button>
+            </Dialog.Trigger>
+            <Dialog.Portal>
+              <Dialog.Overlay className="site-header-mobile-overlay" />
+              <Dialog.Content className="site-header-mobile-menu" data-product-route={internalProductRoute ? "true" : "false"}>
+                <div className="site-header-mobile-menu-heading">
+                  <Dialog.Title>Pluto menu</Dialog.Title>
+                  <Dialog.Description className="sr-only">
+                    {internalProductRoute ? "Secondary Pluto links" : "Pluto navigation"}
+                  </Dialog.Description>
+                  <Dialog.Close asChild>
+                    <button aria-label="Close menu" className="focus-ring nav-icon-button" type="button">
+                      <X aria-hidden="true" className="nav-icon" />
+                    </button>
+                  </Dialog.Close>
+                </div>
+                <nav aria-label="Mobile primary" className="site-header-mobile-primary grid gap-2">
+                  {primaryRoutes.map(({ href, longLabel }) => (
+                    <MenuLink href={href} key={href} label={itemLabel(longLabel)} />
+                  ))}
+                </nav>
+                {internalProductRoute ? (
+                  <nav aria-label="Secondary" className="site-header-mobile-secondary grid gap-2">
+                    {secondaryItems.map(([label, href]) => <MenuLink href={href} key={href} label={label} />)}
+                  </nav>
+                ) : (
+                  <nav aria-label="More" className="site-header-mobile-secondary grid gap-2">
+                    <MenuLink href="/submit-tool" label="Submit a Tool" />
+                  </nav>
+                )}
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
         </div>
       </div>
-
-      {menuOpen ? (
-        <div className="site-header-mobile-menu lg:hidden">
-          <div className="grid gap-2">
-            {[...navItems, ["Submit a Tool", "/submit-tool"] as const].map(([item, href]) => (
-              <Link
-                className="focus-ring flex min-h-10 items-center justify-between rounded-xl px-3 type-label-md text-white/86 hover:bg-white/8"
-                href={href}
-                key={item}
-                onClick={() => setMenuOpen(false)}
-              >
-                {itemLabel(item)}
-                <ArrowRight aria-hidden="true" className="nav-icon" />
-              </Link>
-            ))}
-          </div>
-        </div>
-      ) : null}
     </header>
+  );
+}
+
+function MenuLink({ href, label }: { href: string; label: string }) {
+  if (href === "/submit-tool") {
+    return (
+      <Dialog.Close asChild>
+        <SubmitToolLink className="focus-ring flex min-h-11 items-center justify-between rounded-xl px-3 type-label-md text-white/86 hover:bg-white/8">
+          {label}
+          <ArrowRight aria-hidden="true" className="nav-icon" />
+        </SubmitToolLink>
+      </Dialog.Close>
+    );
+  }
+  return (
+    <Dialog.Close asChild>
+      <Link className="focus-ring flex min-h-11 items-center justify-between rounded-xl px-3 type-label-md text-white/86 hover:bg-white/8" href={href}>
+        {label}
+        <ArrowRight aria-hidden="true" className="nav-icon" />
+      </Link>
+    </Dialog.Close>
   );
 }
 

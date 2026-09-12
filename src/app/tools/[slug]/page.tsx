@@ -45,7 +45,7 @@ export default async function ToolDetailPage({ params }: ToolDetailProps) {
 
   return (
     <>
-      <ViewedMarker slug={model.slug} />
+      <ViewedMarker logoUrl={model.logoUrl} name={model.name} slug={model.slug} />
       <ToolDetailView tool={model} />
     </>
   );

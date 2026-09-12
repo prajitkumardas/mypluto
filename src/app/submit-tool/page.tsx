@@ -1,5 +1,5 @@
-import { SubmitToolFlow } from "@/components/submissions/submit-tool-flow";
+import { redirect } from "next/navigation";
 
 export default function SubmitToolPage() {
-  return <SubmitToolFlow />;
+  redirect("/?submit-tool=open");
 }

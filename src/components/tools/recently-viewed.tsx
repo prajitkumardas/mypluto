@@ -7,9 +7,9 @@ import { tools } from "@/lib/data";
 import { useCompareStore } from "@/lib/compare-store";
 
 export function RecentlyViewed() {
-  const recentSlugs = useCompareStore((state) => state.recentlyViewed);
-  const recentTools = recentSlugs
-    .map((slug) => tools.find((tool) => tool.slug === slug))
+  const recentRecords = useCompareStore((state) => state.recentlyViewed);
+  const recentTools = recentRecords
+    .map((record) => tools.find((tool) => tool.slug === record.slug))
     .filter(Boolean)
     .slice(0, 4);
 

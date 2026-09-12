@@ -6,17 +6,10 @@ import { Menu, Search, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { PlutoButton } from "@/components/ui/pluto-button";
 import { cn } from "@/lib/utils";
+import { primaryRoutes } from "@/components/navigation/primary-routes";
+import { SubmitToolButton, SubmitToolLink } from "@/components/submissions/submit-tool-trigger";
 import styles from "./pluto-hero.module.css";
-
-const navItems = [
-  ["Discover", "/plutos-library"],
-  ["Pluto Guides", "/pluto-guides"],
-  ["Trending", "/trending"],
-  ["Compare", "/compare"],
-  ["Play", "/play"]
-];
 
 type HeroNavigationProps = {
   onSearchClick: () => void;
@@ -36,7 +29,7 @@ export function HeroNavigation({ onSearchClick }: HeroNavigationProps) {
 
   return (
     <header className={cn(styles.heroHeader, hasScrolled && styles.heroHeaderScrolled)}>
-      <Link className={styles.logo} href="/" aria-label="PlutoFinds home">
+      <Link className={styles.logo} data-scroll-top="true" href="/" aria-label="PlutoFinds home">
         <Image
           alt="PlutoFinds"
           className={styles.logoImage}
@@ -48,7 +41,7 @@ export function HeroNavigation({ onSearchClick }: HeroNavigationProps) {
       </Link>
 
       <nav aria-label="Primary" className={styles.desktopNav}>
-        {navItems.map(([label, href]) => (
+        {primaryRoutes.map(({ href, longLabel: label }) => (
           <Link className={styles.heroNavLink} href={href} key={href}>
             {label}
           </Link>
@@ -59,9 +52,9 @@ export function HeroNavigation({ onSearchClick }: HeroNavigationProps) {
         <button className={styles.navSearchButton} type="button" onClick={onSearchClick} aria-label="Jump to AI tool search">
           <Search aria-hidden="true" />
         </button>
-        <PlutoButton href="/submit-tool" size="md" variant="primary">
+        <SubmitToolButton size="md" variant="primary">
           Submit a Tool
-        </PlutoButton>
+        </SubmitToolButton>
         <MobileMenu onSearchClick={onSearchClick} />
       </div>
     </header>
@@ -88,7 +81,7 @@ function MobileMenu({ onSearchClick }: HeroNavigationProps) {
             </Dialog.Close>
           </div>
           <nav aria-label="Mobile primary" className={styles.mobileNav}>
-            {navItems.map(([label, href]) => (
+            {primaryRoutes.map(({ href, longLabel: label }) => (
               <Dialog.Close asChild key={href}>
                 <Link className={styles.mobileNavLink} href={href}>
                   {label}
@@ -101,9 +94,9 @@ function MobileMenu({ onSearchClick }: HeroNavigationProps) {
               </button>
             </Dialog.Close>
             <Dialog.Close asChild>
-              <Link className={styles.mobileSubmitLink} href="/submit-tool">
+              <SubmitToolLink className={styles.mobileSubmitLink}>
                 Submit a Tool
-              </Link>
+              </SubmitToolLink>
             </Dialog.Close>
           </nav>
         </Dialog.Content>

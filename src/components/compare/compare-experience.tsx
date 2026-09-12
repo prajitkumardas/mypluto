@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { HeroVeil } from "@/components/shared/hero-veil";
 import { ToolLogo } from "@/components/shared/tool-logo";
-import { MAX_COMPARE_TOOLS, useCompareStore } from "@/lib/compare-store";
+import { MAX_COMPARE_TOOLS, type RecentToolRecord, useCompareStore } from "@/lib/compare-store";
 import { compareTools, getCompareTool, getValidCompareSlugs, searchCompareTools, type CompareTool } from "@/lib/compare-tools";
 import styles from "./compare-experience.module.css";
 
@@ -100,6 +100,15 @@ export function CompareExperience() {
   const shareComparison = async () => {
     if (!compareReady) return;
     const href = `${window.location.origin}${compareUrl}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: "My Pluto Finds comparison", text: "Compare these AI tools with Pluto.", url: href });
+        setFeedback("Comparison shared.");
+        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+      }
+    }
     await navigator.clipboard?.writeText(href).catch(() => undefined);
     setCopied(true);
     setFeedback("Comparison link copied.");
@@ -334,7 +343,7 @@ function ToolSelector({
 }: {
   onClose: () => void;
   onSelect: (tool: CompareTool) => void;
-  recentlyViewed: string[];
+  recentlyViewed: RecentToolRecord[];
   selectedSlugs: string[];
   selector: SelectorState | null;
 }) {
@@ -345,7 +354,7 @@ function ToolSelector({
     const base = searchCompareTools(query, selectedSlugs, 36).filter((tool) => category === "All categories" || tool.category === category);
     return base.slice(0, 18);
   }, [category, query, selectedSlugs]);
-  const recentTools = recentlyViewed.map((slug) => getCompareTool(slug)).filter(Boolean).slice(0, 4) as CompareTool[];
+  const recentTools = recentlyViewed.map((item) => getCompareTool(item.slug)).filter(Boolean).slice(0, 4) as CompareTool[];
 
   return (
     <Dialog.Root open={Boolean(selector)} onOpenChange={(open) => !open && onClose()}>

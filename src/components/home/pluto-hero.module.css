@@ -320,7 +320,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 1.5rem;
   background: rgba(16, 14, 36, 0.96);
-  padding: 1.1rem;
+  padding: var(--popup-padding);
   color: #ffffff;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.36);
 }

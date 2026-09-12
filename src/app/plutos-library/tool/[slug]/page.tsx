@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ToolDetailView } from "@/components/tools/tool-detail-view";
+import { ViewedMarker } from "@/components/tools/viewed-marker";
 import { mapLibraryToolToDetail } from "@/components/tools/tool-detail-mappers";
 import { getLibraryTool, plutosLibrary } from "@/lib/plutos-library";
 
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: ToolDetailProps): Promise<Met
     title: `${tool.name} - AI Tool Details | Pluto Finds`,
     description: tool.shortDescription || `Review ${tool.name} details, verification, pricing and similar AI tools on PlutoFinds.`,
     alternates: {
-      canonical: `/plutos-library/tool/${tool.slug}`
+      canonical: `/tools/${tool.slug}`
     }
   };
 }
@@ -41,5 +42,12 @@ export default async function LibraryToolDetailPage({ params }: ToolDetailProps)
     notFound();
   }
 
-  return <ToolDetailView tool={mapLibraryToolToDetail(tool)} />;
+  const model = mapLibraryToolToDetail(tool);
+
+  return (
+    <>
+      <ViewedMarker logoUrl={model.logoUrl} name={model.name} slug={model.slug} />
+      <ToolDetailView tool={model} />
+    </>
+  );
 }

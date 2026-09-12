@@ -31,7 +31,7 @@ export function SearchOverlay({ open, onOpenChange }: SearchOverlayProps) {
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-40 bg-ink-950/70 backdrop-blur-sm" />
-        <Dialog.Content className="fixed left-1/2 top-8 z-50 w-[calc(100%-32px)] max-w-4xl -translate-x-1/2 rounded-3xl border border-white/16 bg-white p-4 shadow-overlay focus:outline-none sm:top-14 sm:p-6">
+        <Dialog.Content className="fixed left-1/2 top-8 z-50 w-[calc(100%-32px)] max-w-4xl -translate-x-1/2 rounded-3xl border border-white/16 bg-white p-[var(--popup-padding)] shadow-overlay focus:outline-none sm:top-14">
           <div className="flex items-center justify-between gap-4 border-b border-neutral-200 pb-4">
             <Dialog.Title className="type-h4 text-neutral-900">
               Search the AI universe
