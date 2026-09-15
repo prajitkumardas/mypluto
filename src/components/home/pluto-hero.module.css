@@ -60,7 +60,7 @@
 }
 
 .glowField,
-.lineWavesLayer,
+.moltenLayer,
 .introLayer,
 .navWrap,
 .catLayer,
@@ -78,16 +78,16 @@
   transform-origin: center;
 }
 
-.lineWavesLayer {
-  inset: 0;
+.moltenLayer {
+  inset: -2%;
   z-index: 1;
   overflow: hidden;
-  opacity: 0.56;
-  pointer-events: auto;
-  mix-blend-mode: screen;
+  opacity: 0.6;
+  filter: saturate(0.82) contrast(1.06);
+  pointer-events: none;
 }
 
-.lineWavesLayer canvas {
+.moltenLayer canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;

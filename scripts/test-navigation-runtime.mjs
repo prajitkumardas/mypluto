@@ -43,7 +43,9 @@ function call(method, params = {}) {
 
 async function evaluate(expression) {
   const result = await call("Runtime.evaluate", { expression, awaitPromise: true, returnByValue: true });
-  if (result.exceptionDetails) throw new Error(result.exceptionDetails.text);
+  if (result.exceptionDetails) {
+    throw new Error(result.exceptionDetails.exception?.description || result.exceptionDetails.text);
+  }
   return result.result.value;
 }
 
@@ -140,5 +142,73 @@ await delay(250);
 assert.equal(await evaluate("getComputedStyle(document.querySelector('.pwa-bottom-nav')).display"), "none", "Bottom navigation is hidden on desktop");
 assert.equal(await evaluate("getComputedStyle(document.querySelector('.site-header-nav')).display"), "flex", "Desktop navigation remains visible");
 
+await call("Page.navigate", { url: `${origin}/plutos-library` });
+await waitFor("location.pathname === '/plutos-library'");
+await waitFor("(document.documentElement?.scrollHeight ?? 0) > innerHeight + 200");
+await delay(1200);
+await evaluate("window.scrollTo(0, 0); true");
+await waitFor("document.querySelector('.site-header-shell')?.dataset.navbarState === 'expanded'");
+const expandedNav = await evaluate("(() => { const frame=document.querySelector('.site-header-frame'); const rect=frame.getBoundingClientRect(); return {left:rect.left, right:rect.right, top:rect.top, width:rect.width, state:frame.dataset.state}; })()");
+
+await evaluate("window.scrollTo(0, 80); true");
+await waitFor("document.querySelector('.site-header-shell')?.dataset.navbarState === 'floating'");
+await delay(50);
+const morphTransforms = await evaluate("({frame:getComputedStyle(document.querySelector('.site-header-frame')).transform, logo:getComputedStyle(document.querySelector('.site-header-logo-region')).transform, nav:getComputedStyle(document.querySelector('.site-header-nav')).transform, actions:getComputedStyle(document.querySelector('.site-header-actions')).transform, reduced:matchMedia('(prefers-reduced-motion: reduce)').matches})");
+const hasSpatialTransform = Object.entries(morphTransforms).some(([key, transform]) => key !== "reduced" && transform !== "none");
+if (morphTransforms.reduced) {
+  assert.equal(hasSpatialTransform, false, "Reduced motion skips the spatial layout animation");
+} else {
+  assert.equal(hasSpatialTransform, true, `Existing navigation regions move through a spatial layout animation: ${JSON.stringify(morphTransforms)}`);
+}
+await delay(550);
+const floatingNav = await evaluate("(() => { const frame=document.querySelector('.site-header-frame'); const rect=frame.getBoundingClientRect(); const style=getComputedStyle(frame); return {left:rect.left, right:rect.right, top:rect.top, width:rect.width, state:frame.dataset.state, shellState:document.querySelector('.site-header-shell').dataset.navbarState, scrollY:window.scrollY, radius:style.borderRadius, backdrop:style.backdropFilter, logoCount:frame.querySelectorAll('.site-header-logo').length, actionsCount:frame.querySelectorAll('.site-header-actions').length}; })()");
+assert.ok(floatingNav.width < expandedNav.width * 0.9, `Floating navigation becomes materially narrower: ${JSON.stringify({ expandedNav, floatingNav })}`);
+assert.ok(floatingNav.left >= 24 && floatingNav.right <= 1416, "Floating navigation keeps desktop side space");
+assert.equal(floatingNav.logoCount, 1, "The morph keeps one logo instance");
+assert.equal(floatingNav.actionsCount, 1, "The morph keeps one desktop actions region");
+assert.match(floatingNav.backdrop, /blur\(18px\)/, "Floating navigation uses the intended glass blur");
+
+await evaluate("window.scrollTo(0, 50); true");
+await delay(150);
+assert.equal(await evaluate("document.querySelector('.site-header-shell')?.dataset.navbarState"), "floating", "Hysteresis keeps the capsule formed above the exit threshold");
+await evaluate("window.scrollTo(0, 20); true");
+await waitFor("document.querySelector('.site-header-shell')?.dataset.navbarState === 'expanded'");
+
+await evaluate("window.scrollTo(0, 100); true");
+await waitFor("document.querySelector('.site-header-shell')?.dataset.navbarState === 'floating'");
+await evaluate("document.querySelector('.site-header-submit-button')?.click(); true");
+await waitFor("Boolean(document.querySelector('button[aria-label=\"Close submission\"]'))");
+const modalLayers = await evaluate("({header:Number(getComputedStyle(document.querySelector('.site-header-shell')).zIndex), modal:Number(getComputedStyle(document.querySelector('[role=dialog]')).zIndex)})");
+assert.ok(modalLayers.modal > modalLayers.header, "Submit Tool modal remains above the floating navigation");
+await evaluate("document.querySelector('button[aria-label=\"Close submission\"]')?.click(); true");
+await waitFor("!document.querySelector('button[aria-label=\"Close submission\"]')");
+
+await evaluate("document.querySelector('.site-header-nav a[href=\"/trending\"]')?.click(); true");
+await waitFor("location.pathname === '/trending'");
+await waitFor("window.scrollY === 0 && document.querySelector('.site-header-shell')?.dataset.navbarState === 'expanded'");
+assert.equal(await evaluate("document.querySelector('.site-header-nav [aria-current=page]')?.textContent.trim()"), "Trending", "Desktop navigation exposes the active route");
+
+await call("Page.navigate", { url: `${origin}/plutos-library` });
+await waitFor("location.pathname === '/plutos-library'");
+await waitFor("(document.documentElement?.scrollHeight ?? 0) > innerHeight + 200");
+await delay(1200);
+
+const responsiveMorph = {};
+for (const width of [1920, 1280, 1024]) {
+  await call("Emulation.setDeviceMetricsOverride", { width, height: 900, deviceScaleFactor: 1, mobile: false });
+  await evaluate("window.scrollTo(0, 100); true");
+  await waitFor("document.querySelector('.site-header-shell')?.dataset.navbarState === 'floating'");
+  await delay(550);
+  responsiveMorph[width] = await evaluate("(() => { const rect=document.querySelector('.site-header-frame').getBoundingClientRect(); return {width:rect.width, left:rect.left, right:rect.right, overflow:document.documentElement.scrollWidth > innerWidth, navDisplay:getComputedStyle(document.querySelector('.site-header-nav')).display}; })()");
+  assert.equal(responsiveMorph[width].overflow, false, `${width}px floating navigation has no horizontal overflow`);
+  assert.equal(responsiveMorph[width].navDisplay, "flex", `${width}px floating navigation keeps all desktop links visible`);
+  assert.ok(responsiveMorph[width].left >= 24 && responsiveMorph[width].right <= width - 24, `${width}px floating navigation keeps side space`);
+}
+
+await call("Emulation.setDeviceMetricsOverride", { width: 1000, height: 900, deviceScaleFactor: 1, mobile: false });
+await delay(250);
+assert.equal(await evaluate("document.querySelector('.site-header-shell')?.dataset.navbarState"), "expanded", "The morph stays disabled below 1024px");
+assert.equal(await evaluate("getComputedStyle(document.querySelector('.site-header-nav')).display"), "flex", "Existing tablet navigation remains unchanged at 1000px");
+
 socket.close();
-console.log(JSON.stringify({ discoverPosition, restoredPosition, mobileNav, status: "passed" }, null, 2));
+console.log(JSON.stringify({ discoverPosition, restoredPosition, mobileNav, expandedNav, floatingNav, morphTransforms, modalLayers, responsiveMorph, status: "passed" }, null, 2));

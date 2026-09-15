@@ -230,8 +230,7 @@
   display: grid;
   width: 3.375rem;
   height: 3.375rem;
-  align-items: center;
-  justify-items: center;
+  place-items: center;
   margin-top: auto;
   overflow: hidden;
   border: 1px solid rgba(var(--category-accent-rgb), 0.78);
@@ -256,7 +255,7 @@
 }
 
 .card:hover .cardFooter svg {
-  transform: translateX(3px);
+  transform: scale(1.06);
 }
 
 .accentSurface {

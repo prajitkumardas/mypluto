@@ -4,6 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion, useReducedMotion } from "motion/react";
 import type { MouseEvent } from "react";
 import { useEffect, useState } from "react";
 import { ArrowRight, Menu, Search, X } from "lucide-react";
@@ -14,6 +15,12 @@ import { useCompareStore } from "@/lib/compare-store";
 const HOME_SEARCH_HASH = "#home-search";
 const HOME_SEARCH_EVENT = "pluto:focus-home-search";
 const HOME_SEARCH_HREF = `/${HOME_SEARCH_HASH}`;
+const ENTER_FLOATING_AT = 72;
+const EXIT_FLOATING_AT = 28;
+const DESKTOP_NAV_QUERY = "(min-width: 1024px)";
+const NAV_EASING = [0.22, 1, 0.36, 1] as const;
+
+type NavbarState = "expanded" | "floating";
 
 const secondaryItems = [
   ["About Pluto", "/pluto"],
@@ -25,31 +32,46 @@ const secondaryItems = [
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [navbarState, setNavbarState] = useState<NavbarState>("expanded");
   const pathname = usePathname();
+  const reduceMotion = useReducedMotion();
   const compareCount = useCompareStore((state) => state.selected.length);
-  const internalProductRoute = Boolean(getActivePrimaryRoute(pathname));
+  const activePrimaryRoute = getActivePrimaryRoute(pathname);
+  const internalProductRoute = Boolean(activePrimaryRoute);
   const landingRoute = pathname === "/";
 
   useEffect(() => {
     let frameId: number | null = null;
+    const desktopQuery = window.matchMedia(DESKTOP_NAV_QUERY);
 
-    const updateScrolledState = () => {
+    const updateNavbarState = () => {
       frameId = null;
+      const scrollY = window.scrollY;
+
       setScrolled((current) => {
-        const next = window.scrollY > 8;
+        const next = scrollY > 8;
         return current === next ? current : next;
+      });
+
+      setNavbarState((current) => {
+        if (!desktopQuery.matches) return current === "expanded" ? current : "expanded";
+        if (current === "expanded" && scrollY > ENTER_FLOATING_AT) return "floating";
+        if (current === "floating" && scrollY < EXIT_FLOATING_AT) return "expanded";
+        return current;
       });
     };
 
-    const handleScroll = () => {
-      if (frameId === null) frameId = window.requestAnimationFrame(updateScrolledState);
+    const scheduleUpdate = () => {
+      if (frameId === null) frameId = window.requestAnimationFrame(updateNavbarState);
     };
 
-    updateScrolledState();
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    updateNavbarState();
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    desktopQuery.addEventListener("change", scheduleUpdate);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", scheduleUpdate);
+      desktopQuery.removeEventListener("change", scheduleUpdate);
       if (frameId !== null) window.cancelAnimationFrame(frameId);
     };
   }, [pathname]);
@@ -68,23 +90,46 @@ export function SiteHeader() {
     label === "Compare" && compareCount > 0 ? `${label} ${compareCount}` : label;
 
   return (
-    <header className="site-header-shell" data-scrolled={scrolled ? "true" : "false"}>
-      <div className="site-header-frame">
-        <Link aria-label="PlutoFinds home" className="focus-ring site-header-logo" data-scroll-top="true" href="/">
-          <Image
-            alt="PlutoFinds"
-            className="site-header-logo-image"
-            height={120}
-            priority
-            src="/images/plutofinds-logo.png"
-            width={450}
-          />
-        </Link>
+    <header
+      className="site-header-shell"
+      data-navbar-state={navbarState}
+      data-scrolled={scrolled ? "true" : "false"}
+    >
+      <motion.div
+        className="site-header-frame"
+        data-state={navbarState}
+        initial={false}
+        layout={!reduceMotion}
+        transition={{ layout: { duration: reduceMotion ? 0.01 : 0.48, ease: NAV_EASING } }}
+      >
+        <motion.div
+          className="site-header-logo-region"
+          layout={!reduceMotion ? "position" : false}
+          transition={{ layout: { duration: 0.48, ease: NAV_EASING } }}
+        >
+          <Link aria-label="PlutoFinds home" className="focus-ring site-header-logo" data-scroll-top="true" href="/">
+            <Image
+              alt="PlutoFinds"
+              className="site-header-logo-image"
+              height={120}
+              priority
+              src="/images/plutofinds-logo.png"
+              width={450}
+            />
+          </Link>
+        </motion.div>
 
-        <nav aria-label="Primary" className="site-header-nav">
+        <motion.nav
+          aria-label="Primary"
+          className="site-header-nav"
+          layout={!reduceMotion ? "position" : false}
+          transition={{ layout: { duration: 0.48, ease: NAV_EASING } }}
+        >
           {primaryRoutes.map(({ href, longLabel: label }) => (
             <Link
+              aria-current={activePrimaryRoute?.href === href ? "page" : undefined}
               className="nav-link"
+              data-primary-nav="true"
               href={href}
               key={href}
             >
@@ -94,9 +139,13 @@ export function SiteHeader() {
               ) : null}
             </Link>
           ))}
-        </nav>
+        </motion.nav>
 
-        <div className="site-header-actions">
+        <motion.div
+          className="site-header-actions"
+          layout={!reduceMotion ? "position" : false}
+          transition={{ layout: { duration: 0.48, ease: NAV_EASING } }}
+        >
           <Link
             aria-label="Go to landing page search"
             className="focus-ring site-header-search-button"
@@ -105,10 +154,10 @@ export function SiteHeader() {
           >
             <Search aria-hidden="true" className="nav-icon" />
           </Link>
-          <SubmitToolButton size="sm" variant="primary">
+          <SubmitToolButton className="site-header-submit-button" size="sm" variant="primary">
             Submit a Tool
           </SubmitToolButton>
-        </div>
+        </motion.div>
 
         <div className="site-header-mobile-actions">
           <Link
@@ -180,7 +229,7 @@ export function SiteHeader() {
             </Dialog.Portal>
           </Dialog.Root>
         </div>
-      </div>
+      </motion.div>
     </header>
   );
 }

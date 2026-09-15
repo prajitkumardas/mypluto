@@ -15,10 +15,10 @@ import { Mouse } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { GlobalLoader } from "@/components/loading/global-loader";
+import MoltenMetal from "@/components/MoltenMetal";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { HeroParticleIntro } from "./hero-particle-intro";
 import { HeroSearch } from "./hero-search";
-import LineWaves from "./line-waves";
 import styles from "./pluto-hero.module.css";
 
 const HERO_INTRO_STORAGE_KEY = "pluto_intro_seen";
@@ -194,31 +194,37 @@ export function PlutoHero() {
   return (
     <section className={styles.hero} ref={heroRef} onPointerMove={handlePointerMove} aria-labelledby="home-hero-title">
       <div className={styles.heroSticky}>
+        {!prefersReducedMotion && introComplete ? (
+          <div aria-hidden="true" className={styles.moltenLayer}>
+            <MoltenMetal
+              blackPoint={0.09}
+              brightness={1.3}
+              color1="#5227FF"
+              color2="#FF9FFC"
+              color3="#FFFFFF"
+              colorMode="molten"
+              coreSize={0.14}
+              detail={3}
+              fold={-0.1}
+              glow={2.2}
+              grain
+              grainIntensity={0.09}
+              mouseInteraction
+              mouseStrength={0.3}
+              opacity={1}
+              scale={4}
+              speed={0.15}
+              swirl={0.4}
+            />
+          </div>
+        ) : null}
+
         <HeroGlow
           scale={glowScale}
           layerA={{ x: glowAX, y: glowAY }}
           layerB={{ x: glowBX, y: glowBY }}
           layerC={{ x: glowCX, y: glowCY }}
         />
-
-        {!prefersReducedMotion && introComplete ? (
-          <LineWaves
-            className={styles.lineWavesLayer}
-            speed={0.14}
-            innerLineCount={32}
-            outerLineCount={36}
-            warpIntensity={1}
-            rotation={-45}
-            edgeFadeWidth={0}
-            colorCycleSpeed={1}
-            brightness={0.26}
-            color1="#7a4cff"
-            color2="#b9a7ff"
-            color3="#5e35f2"
-            enableMouseInteraction
-            mouseInfluence={2}
-          />
-        ) : null}
 
         {!introComplete ? <HeroIntro onComplete={finishIntro} /> : null}
 

@@ -61,6 +61,7 @@ export function PopularCategoriesShowcase() {
   const introOpacity = useTransform(progress, [0.34, 0.62], [1, 0]);
   const introY = useTransform(progress, [0.24, 0.62], [0, -24]);
   const introScale = useTransform(progress, [0.24, 0.62], [1, 0.96]);
+  const introPointerEvents = useTransform(progress, (value) => value >= 0.62 ? "none" : "auto");
   const finalCtaOpacity = useTransform(progress, [0.64, 0.8, 0.92], [0, 0.72, 1]);
   const finalCtaY = useTransform(progress, [0.64, 0.92], [24, 0]);
 
@@ -74,7 +75,10 @@ export function PopularCategoriesShowcase() {
       <div className={styles.stickyStage}>
         <div className={styles.inner}>
           <div className={styles.stageGrid}>
-            <motion.div className={styles.intro} style={reducedMotion ? undefined : { opacity: introOpacity, y: introY, scale: introScale }}>
+            <motion.div
+              className={styles.intro}
+              style={reducedMotion ? undefined : { opacity: introOpacity, pointerEvents: introPointerEvents, y: introY, scale: introScale }}
+            >
               <p className={styles.eyebrow}>Popular categories</p>
               <h1 className={styles.title} id="popular-categories-title">Find AI for whatever<br />you&apos;re building.</h1>
               <p className={styles.copy}>Explore tools by what you want to create, solve or automate.</p>
@@ -211,7 +215,7 @@ function CategoryCard({ category, index }: { category: Category; index: number }
         ))}
       </span>
       <span aria-hidden="true" className={styles.cardFooter}>
-        Explore <ArrowRight aria-hidden="true" />
+        <ArrowRight aria-hidden="true" />
       </span>
     </Link>
   );
