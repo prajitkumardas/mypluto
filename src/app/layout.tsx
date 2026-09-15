@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Suspense, type ReactNode } from "react";
+import { LoadingProvider } from "@/components/loading/loading-provider";
 import { ScrollReset } from "@/components/shared/scroll-reset";
 import { SiteFooter } from "@/components/shared/site-footer";
 import { accentFont, bodyFont, displayFont } from "./fonts";
@@ -40,11 +41,24 @@ export const viewport: Viewport = {
 
 const introSessionBootstrap = `
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let introSeen = reduceMotion;
-  try {
-    introSeen ||= sessionStorage.getItem("pluto_intro_seen") === "true";
-  } catch {}
-  if (introSeen) document.documentElement.dataset.plutoIntroSeen = "true";
+  const navigationEntry = performance.getEntriesByType("navigation")[0];
+  const replayLandingIntro =
+    !reduceMotion &&
+    location.pathname === "/" &&
+    !location.hash &&
+    navigationEntry?.type === "reload";
+
+  if (replayLandingIntro) {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    document.documentElement.dataset.plutoLandingReload = "true";
+    window.scrollTo(0, 0);
+  } else {
+    let introSeen = reduceMotion;
+    try {
+      introSeen ||= sessionStorage.getItem("pluto_intro_seen") === "true";
+    } catch {}
+    if (introSeen) document.documentElement.dataset.plutoIntroSeen = "true";
+  }
 `;
 
 export default function RootLayout({
@@ -62,17 +76,19 @@ export default function RootLayout({
         <Script id="pluto-intro-session" strategy="beforeInteractive">
           {introSessionBootstrap}
         </Script>
-        <Suspense fallback={null}>
-          <ScrollReset />
-        </Suspense>
-        <SiteHeader />
-        <RouteTransition>{children}</RouteTransition>
-        <ComparisonTray />
-        <PwaShell />
-        <Suspense fallback={null}>
-          <SubmitToolModal categories={plutosLibrary.categories.map(({ name, slug }) => ({ name, slug }))} />
-        </Suspense>
-        <SiteFooter />
+        <LoadingProvider>
+          <Suspense fallback={null}>
+            <ScrollReset />
+          </Suspense>
+          <SiteHeader />
+          <RouteTransition>{children}</RouteTransition>
+          <ComparisonTray />
+          <PwaShell />
+          <Suspense fallback={null}>
+            <SubmitToolModal categories={plutosLibrary.categories.map(({ name, slug }) => ({ name, slug }))} />
+          </Suspense>
+          <SiteFooter />
+        </LoadingProvider>
       </body>
     </html>
   );

@@ -12,7 +12,9 @@ import {
   useTransform
 } from "motion/react";
 import { Mouse } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
+import { GlobalLoader } from "@/components/loading/global-loader";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { HeroParticleIntro } from "./hero-particle-intro";
 import { HeroSearch } from "./hero-search";
@@ -26,6 +28,12 @@ const heroMotion = {
   ease: [0.22, 1, 0.36, 1] as const,
   introFallbackDuration: 7.2
 };
+type IntroMode = "first-visit" | "pending" | "reload";
+
+const subscribeToIntroMode = () => () => {};
+const getClientIntroModeSnapshot = (): IntroMode =>
+  document.documentElement.dataset.plutoLandingReload === "true" ? "reload" : "first-visit";
+const getServerIntroModeSnapshot = (): IntroMode => "pending";
 
 function mapScrollRange(value: number, start: number, end: number, from: number, to: number) {
   const progress = Math.min(Math.max((value - start) / (end - start), 0), 1);
@@ -85,6 +93,7 @@ export function PlutoHero() {
       } catch {
         // The intro can still complete when browser storage is unavailable.
       }
+      delete document.documentElement.dataset.plutoLandingReload;
       document.documentElement.dataset.plutoIntroSeen = "true";
     }
   }, []);
@@ -112,13 +121,19 @@ export function PlutoHero() {
       return () => window.clearTimeout(timer);
     }
 
+    const replayLandingIntro = document.documentElement.dataset.plutoLandingReload === "true";
+    if (replayLandingIntro) {
+      if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
+      window.scrollTo({ left: 0, top: 0, behavior: "auto" });
+    }
+
     let seenIntro = false;
     try {
       seenIntro = sessionStorage.getItem(HERO_INTRO_STORAGE_KEY) === "true";
     } catch {
       // Treat storage-restricted sessions as a fresh visit.
     }
-    if (seenIntro) {
+    if (seenIntro && !replayLandingIntro) {
       const timer = window.setTimeout(finishIntro, 0);
       return () => window.clearTimeout(timer);
     }
@@ -163,7 +178,8 @@ export function PlutoHero() {
 
   useMotionValueEvent(scrollYProgress, "change", (value) => {
     setSearchInteractive(value >= 0.6);
-    if (!introComplete && value > 0.02) {
+    const replayLandingIntro = document.documentElement.dataset.plutoLandingReload === "true";
+    if (!introComplete && !replayLandingIntro && value > 0.02) {
       finishIntro();
     }
   });
@@ -204,7 +220,7 @@ export function PlutoHero() {
           />
         ) : null}
 
-        {!introComplete ? <HeroIntro onComplete={finishIntro} onSkip={finishIntro} /> : null}
+        {!introComplete ? <HeroIntro onComplete={finishIntro} /> : null}
 
         <motion.div
           aria-hidden="true"
@@ -293,8 +309,14 @@ function HeroGlow({ scale, layerA, layerB, layerC }: HeroGlowProps) {
   );
 }
 
-function HeroIntro({ onComplete, onSkip }: { onComplete: () => void; onSkip: () => void }) {
+function HeroIntro({ onComplete }: { onComplete: () => void }) {
   const [isExiting, setIsExiting] = useState(false);
+  const [progress, setProgress] = useState(14);
+  const introMode = useSyncExternalStore(
+    subscribeToIntroMode,
+    getClientIntroModeSnapshot,
+    getServerIntroModeSnapshot
+  );
   const completionTimerRef = useRef<number | null>(null);
 
   const handleSequenceComplete = useCallback(() => {
@@ -309,6 +331,21 @@ function HeroIntro({ onComplete, onSkip }: { onComplete: () => void; onSkip: () 
     }
   }, []);
 
+  useEffect(() => {
+    if (introMode !== "reload") return;
+
+    const timers = [
+      window.setTimeout(() => setProgress(34), 280),
+      window.setTimeout(() => setProgress(58), 1_180),
+      window.setTimeout(() => setProgress(78), 2_300),
+      window.setTimeout(() => setProgress(92), 3_350),
+      window.setTimeout(() => setProgress(100), 4_050),
+      window.setTimeout(handleSequenceComplete, 4_280)
+    ];
+
+    return () => timers.forEach(window.clearTimeout);
+  }, [handleSequenceComplete, introMode]);
+
   return (
     <motion.div
       className={styles.introLayer}
@@ -316,13 +353,24 @@ function HeroIntro({ onComplete, onSkip }: { onComplete: () => void; onSkip: () 
       initial={{ opacity: 1 }}
       animate={{ opacity: isExiting ? 0 : 1 }}
       transition={{ duration: 0.55, ease: heroMotion.ease }}
-      onPointerDown={onSkip}
+      onPointerDown={onComplete}
     >
-      <HeroParticleIntro onSequenceComplete={handleSequenceComplete} />
+      <div className={styles.firstVisitIntro}>
+        {introMode !== "reload" ? (
+          <HeroParticleIntro onSequenceComplete={handleSequenceComplete} />
+        ) : null}
+      </div>
 
-      <button className={styles.skipIntro} type="button" onClick={(event) => { event.stopPropagation(); onSkip(); }}>
-        Skip intro
-      </button>
+      <div className={styles.reloadIntro}>
+        {introMode === "first-visit"
+          ? null
+          : introMode === "reload"
+            ? createPortal(
+                <GlobalLoader exiting={isExiting} mode="determinate" progress={progress} />,
+                document.body
+              )
+            : <GlobalLoader exiting={isExiting} mode="determinate" progress={progress} />}
+      </div>
     </motion.div>
   );
 }

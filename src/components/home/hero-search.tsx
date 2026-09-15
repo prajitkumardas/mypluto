@@ -4,6 +4,7 @@ import { ArrowRight, Loader2, Search } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import { useGlobalLoading } from "@/components/loading/loading-provider";
 import type { HeroSearchResponse, HeroSearchResult } from "./hero.types";
 import styles from "./pluto-hero.module.css";
 
@@ -11,6 +12,7 @@ type SearchStatus = "idle" | "loading" | "success" | "empty" | "error";
 
 export function HeroSearch() {
   const router = useRouter();
+  const { startLoading } = useGlobalLoading();
   const listboxId = useId();
   const activeOptionId = useId();
   const wrapperRef = useRef<HTMLFormElement>(null);
@@ -72,11 +74,13 @@ export function HeroSearch() {
     const trimmed = query.trim();
     if (!trimmed) return;
     const exact = results.find((result) => result.name.toLowerCase() === trimmed.toLowerCase());
+    startLoading();
     router.push(exact?.href ?? `/plutos-library/search?q=${encodeURIComponent(trimmed)}`);
     setOpen(false);
   };
 
   const selectResult = (result: HeroSearchResult) => {
+    startLoading();
     router.push(result.href);
     setOpen(false);
   };

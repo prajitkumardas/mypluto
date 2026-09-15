@@ -111,7 +111,7 @@
   color: #ffffff;
   font-family: var(--font-display);
   max-width: min(100%, 62rem);
-  font-size: var(--text-h1);
+  font-size: var(--text-h2);
   font-weight: var(--font-weight-medium);
   line-height: var(--leading-h1);
   letter-spacing: var(--tracking-h1);

@@ -6,7 +6,7 @@ import { BackgroundVideo } from "./background-video";
 import { SplitText } from "./split-text";
 import styles from "./pluto-story-section.module.css";
 
-const PLUTO_STORY_TEXT = "My name is Pluto. It\u2019s been a while since I left the world, but I\u2019m still here\u2014helping you discover the best AI tools for your needs.";
+const PLUTO_STORY_TEXT = "\u201cMy name is Pluto. It\u2019s been a while since I left the world, but I\u2019m still here\u2014helping you discover the best AI tools for your needs.\u201d";
 
 export function PlutoStorySection() {
   const sectionRef = useRef<HTMLElement>(null);

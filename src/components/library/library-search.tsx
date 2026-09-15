@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Loader2, Search, X } from "lucide-react";
+import { useGlobalLoading } from "@/components/loading/loading-provider";
 import { buildLibraryHref, quickSearches, type LibrarySuggestion } from "@/lib/plutos-library";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +15,7 @@ type LibrarySearchProps = {
 
 export function LibrarySearch({ initial }: LibrarySearchProps) {
   const router = useRouter();
+  const { startLoading } = useGlobalLoading();
   const listboxId = useId();
   const wrapperRef = useRef<HTMLFormElement>(null);
   const [query, setQuery] = useState(initial.q ?? "");
@@ -67,11 +69,13 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
   }, [query]);
 
   const submitSearch = () => {
+    startLoading();
     router.push(buildLibraryHref("/plutos-library/search", { q: query }));
     setOpen(false);
   };
 
   const selectSuggestion = (suggestion: LibrarySuggestion) => {
+    startLoading();
     router.push(suggestion.href);
     setOpen(false);
   };
@@ -212,6 +216,7 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
               key={chip.id}
               onClick={() => {
                 setQuery(chip.params.query);
+                startLoading();
                 router.push(href);
               }}
               type="button"

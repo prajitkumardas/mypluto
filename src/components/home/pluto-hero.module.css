@@ -389,6 +389,24 @@
   display: none;
 }
 
+.firstVisitIntro,
+.reloadIntro {
+  position: absolute;
+  inset: 0;
+}
+
+.reloadIntro {
+  display: none;
+}
+
+:global(html[data-pluto-landing-reload="true"]) .firstVisitIntro {
+  display: none;
+}
+
+:global(html[data-pluto-landing-reload="true"]) .reloadIntro {
+  display: block;
+}
+
 .particleIntroCanvas {
   position: absolute;
   inset: 0;
@@ -415,24 +433,6 @@
   filter: blur(18px);
   transform: translate(-50%, -50%);
   animation: particleLoading 1.1s ease-in-out infinite alternate;
-}
-
-.skipIntro {
-  position: absolute;
-  right: clamp(1rem, 3vw, 2.5rem);
-  bottom: clamp(1rem, 3vw, 2.5rem);
-  z-index: 3;
-  min-height: 3rem;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.78);
-  padding: 0 1rem;
-  font-size: var(--text-label-sm);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--leading-label-sm);
-  letter-spacing: var(--tracking-label-sm);
-  backdrop-filter: blur(12px);
 }
 
 .catLayer {

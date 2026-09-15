@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { CompareButton } from "@/components/compare/compare-button";
+import { useGlobalLoading } from "@/components/loading/loading-provider";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { TrendIndicator } from "@/components/trending/trend-indicator";
 import { PlutoButton } from "@/components/ui/pluto-button";
@@ -160,14 +161,19 @@ function CategorySelect({
 
 function TrendingRow({ period, tool }: { period: TrendPeriod; tool: TrendingTool }) {
   const router = useRouter();
+  const { startLoading } = useGlobalLoading();
   const href = `/tools/${tool.slug}`;
+  const openTool = () => {
+    startLoading();
+    router.push(href);
+  };
 
   return (
     <tr
       className={styles.row}
-      onClick={() => router.push(href)}
+      onClick={openTool}
       onKeyDown={(event) => {
-        if (event.key === "Enter") router.push(href);
+        if (event.key === "Enter") openTool();
       }}
       tabIndex={0}
     >

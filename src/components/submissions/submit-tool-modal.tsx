@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { AlertTriangle, Check, CheckCircle2, FileCheck2, Fingerprint, LockKeyhole, Mail, PawPrint, RotateCcw, Search, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useGlobalLoading } from "@/components/loading/loading-provider";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { getFaviconLogoUrl } from "@/lib/tool-logo";
@@ -23,6 +24,7 @@ const DRAFT_VERSION = 1;
 type StoredDraft = { draft: ToolSubmissionDraft; stage: SubmissionStage; timestamp: string };
 
 export function SubmitToolModal({ categories }: { categories: SubmissionCategory[] }) {
+  const { startLoading } = useGlobalLoading();
   const [open, setOpen] = useState(false);
   const [stage, setStage] = useState<SubmissionStage>("intro");
   const [draft, setDraft] = useState<ToolSubmissionDraft>(emptySubmissionDraft);
@@ -147,6 +149,7 @@ export function SubmitToolModal({ categories }: { categories: SubmissionCategory
   };
 
   const closeAndNavigate = (href: string) => {
+    startLoading();
     setOpen(false);
     router.push(href, { scroll: true });
     window.setTimeout(() => window.scrollTo({ top: 0, behavior: "auto" }), 0);

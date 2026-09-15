@@ -38,7 +38,6 @@ export function DiscoverGuideSection() {
         startHeight={56}
         startRadius={28}
         startWidth={44}
-        title="Discover"
         useWindowScroll
       >
         <div aria-hidden="true" className={styles.textVeil} />

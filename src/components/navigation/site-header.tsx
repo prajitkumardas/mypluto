@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { MouseEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, Menu, Search, X } from "lucide-react";
 import { getActivePrimaryRoute, primaryRoutes } from "@/components/navigation/primary-routes";
 import { SubmitToolButton, SubmitToolLink } from "@/components/submissions/submit-tool-trigger";
@@ -24,9 +24,35 @@ const secondaryItems = [
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const compareCount = useCompareStore((state) => state.selected.length);
   const internalProductRoute = Boolean(getActivePrimaryRoute(pathname));
+  const landingRoute = pathname === "/";
+
+  useEffect(() => {
+    let frameId: number | null = null;
+
+    const updateScrolledState = () => {
+      frameId = null;
+      setScrolled((current) => {
+        const next = window.scrollY > 8;
+        return current === next ? current : next;
+      });
+    };
+
+    const handleScroll = () => {
+      if (frameId === null) frameId = window.requestAnimationFrame(updateScrolledState);
+    };
+
+    updateScrolledState();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (frameId !== null) window.cancelAnimationFrame(frameId);
+    };
+  }, [pathname]);
 
   const handleHomeSearchClick = (event: MouseEvent<HTMLAnchorElement>) => {
     setMenuOpen(false);
@@ -42,7 +68,7 @@ export function SiteHeader() {
     label === "Compare" && compareCount > 0 ? `${label} ${compareCount}` : label;
 
   return (
-    <header className="site-header-shell">
+    <header className="site-header-shell" data-scrolled={scrolled ? "true" : "false"}>
       <div className="site-header-frame">
         <Link aria-label="PlutoFinds home" className="focus-ring site-header-logo" data-scroll-top="true" href="/">
           <Image
@@ -105,32 +131,51 @@ export function SiteHeader() {
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="site-header-mobile-overlay" />
-              <Dialog.Content className="site-header-mobile-menu" data-product-route={internalProductRoute ? "true" : "false"}>
-                <div className="site-header-mobile-menu-heading">
-                  <Dialog.Title>Pluto menu</Dialog.Title>
-                  <Dialog.Description className="sr-only">
-                    {internalProductRoute ? "Secondary Pluto links" : "Pluto navigation"}
-                  </Dialog.Description>
-                  <Dialog.Close asChild>
-                    <button aria-label="Close menu" className="focus-ring nav-icon-button" type="button">
-                      <X aria-hidden="true" className="nav-icon" />
-                    </button>
-                  </Dialog.Close>
+              <Dialog.Content
+                className="site-header-mobile-menu"
+                data-landing-route={landingRoute ? "true" : "false"}
+                data-product-route={internalProductRoute ? "true" : "false"}
+              >
+                {landingRoute ? (
+                  <div aria-hidden="true" className="site-header-mobile-menu-layers">
+                    <span />
+                    <span />
+                  </div>
+                ) : null}
+                <div className="site-header-mobile-menu-surface">
+                  <div className="site-header-mobile-menu-heading">
+                    <div>
+                      {landingRoute ? <span className="site-header-mobile-menu-eyebrow">Explore Pluto</span> : null}
+                      <Dialog.Title>Pluto menu</Dialog.Title>
+                    </div>
+                    <Dialog.Description className="sr-only">
+                      {internalProductRoute ? "Secondary Pluto links" : "Pluto navigation"}
+                    </Dialog.Description>
+                    <Dialog.Close asChild>
+                      <button
+                        aria-label="Close menu"
+                        className="focus-ring nav-icon-button site-header-mobile-menu-close"
+                        type="button"
+                      >
+                        <X aria-hidden="true" className="nav-icon" />
+                      </button>
+                    </Dialog.Close>
+                  </div>
+                  <nav aria-label="Mobile primary" className="site-header-mobile-primary grid gap-2">
+                    {primaryRoutes.map(({ href, longLabel }) => (
+                      <MenuLink href={href} key={href} label={itemLabel(longLabel)} />
+                    ))}
+                  </nav>
+                  {internalProductRoute ? (
+                    <nav aria-label="Secondary" className="site-header-mobile-secondary grid gap-2">
+                      {secondaryItems.map(([label, href]) => <MenuLink href={href} key={href} label={label} />)}
+                    </nav>
+                  ) : (
+                    <nav aria-label="More" className="site-header-mobile-secondary grid gap-2">
+                      <MenuLink href="/submit-tool" label="Submit a Tool" />
+                    </nav>
+                  )}
                 </div>
-                <nav aria-label="Mobile primary" className="site-header-mobile-primary grid gap-2">
-                  {primaryRoutes.map(({ href, longLabel }) => (
-                    <MenuLink href={href} key={href} label={itemLabel(longLabel)} />
-                  ))}
-                </nav>
-                {internalProductRoute ? (
-                  <nav aria-label="Secondary" className="site-header-mobile-secondary grid gap-2">
-                    {secondaryItems.map(([label, href]) => <MenuLink href={href} key={href} label={label} />)}
-                  </nav>
-                ) : (
-                  <nav aria-label="More" className="site-header-mobile-secondary grid gap-2">
-                    <MenuLink href="/submit-tool" label="Submit a Tool" />
-                  </nav>
-                )}
               </Dialog.Content>
             </Dialog.Portal>
           </Dialog.Root>
@@ -144,7 +189,7 @@ function MenuLink({ href, label }: { href: string; label: string }) {
   if (href === "/submit-tool") {
     return (
       <Dialog.Close asChild>
-        <SubmitToolLink className="focus-ring flex min-h-11 items-center justify-between rounded-xl px-3 type-label-md text-white/86 hover:bg-white/8">
+        <SubmitToolLink className="site-header-mobile-link focus-ring flex min-h-11 items-center justify-between rounded-xl px-3 type-label-md text-white/86 hover:bg-white/8">
           {label}
           <ArrowRight aria-hidden="true" className="nav-icon" />
         </SubmitToolLink>
@@ -153,7 +198,10 @@ function MenuLink({ href, label }: { href: string; label: string }) {
   }
   return (
     <Dialog.Close asChild>
-      <Link className="focus-ring flex min-h-11 items-center justify-between rounded-xl px-3 type-label-md text-white/86 hover:bg-white/8" href={href}>
+      <Link
+        className="site-header-mobile-link focus-ring flex min-h-11 items-center justify-between rounded-xl px-3 type-label-md text-white/86 hover:bg-white/8"
+        href={href}
+      >
         {label}
         <ArrowRight aria-hidden="true" className="nav-icon" />
       </Link>

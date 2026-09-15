@@ -33,13 +33,21 @@ const stackOffsets = [
   { x: 42, y: -24, rotate: -3, scale: 0.96 }
 ];
 const fanOrder = [0.04, 0.02, 0, 0.02, 0.04];
-const cardThemes = [
-  { background: "#e9e5da", foreground: "#11121a", muted: "#5a5962", line: "rgba(17,18,26,0.14)", chip: "rgba(17,18,26,0.08)" },
-  { background: "#6c4dff", foreground: "#ffffff", muted: "rgba(255,255,255,0.72)", line: "rgba(255,255,255,0.22)", chip: "rgba(255,255,255,0.14)" },
-  { background: "#171923", foreground: "#ffffff", muted: "rgba(255,255,255,0.68)", line: "rgba(255,255,255,0.16)", chip: "rgba(255,255,255,0.09)" },
-  { background: "#b7d7a8", foreground: "#101510", muted: "#40533c", line: "rgba(16,21,16,0.15)", chip: "rgba(16,21,16,0.08)" },
-  { background: "#a9d8ee", foreground: "#101721", muted: "#405461", line: "rgba(16,23,33,0.15)", chip: "rgba(16,23,33,0.08)" }
-];
+
+type CategoryCardStyle = CSSProperties & {
+  "--category-accent": string;
+  "--category-accent-rgb": string;
+};
+
+const cardThemes: Record<string, { accent: string; accentRgb: string }> = {
+  writing: { accent: "#e8dabe", accentRgb: "232, 218, 190" },
+  creative: { accent: "#8b5cf6", accentRgb: "139, 92, 246" },
+  development: { accent: "#5278ff", accentRgb: "82, 120, 255" },
+  productivity: { accent: "#56dc96", accentRgb: "86, 220, 150" },
+  research: { accent: "#4bd2eb", accentRgb: "75, 210, 235" }
+};
+
+const fallbackCardTheme = { accent: "#8b5cf6", accentRgb: "139, 92, 246" };
 
 export function PopularCategoriesShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -169,7 +177,7 @@ function StaticCategoryCard({ category, index }: { category: Category; index: nu
 function CategoryCard({ category, index }: { category: Category; index: number }) {
   const Icon = category.icon;
   const href = getCategoryDiscoverHref(category.slug);
-  const theme = cardThemes[index % cardThemes.length];
+  const theme = cardThemes[category.slug] ?? fallbackCardTheme;
 
   return (
     <Link
@@ -177,14 +185,19 @@ function CategoryCard({ category, index }: { category: Category; index: number }
       className={styles.card}
       href={href}
       style={{
-        "--card-bg": theme.background,
-        "--card-fg": theme.foreground,
-        "--card-muted": theme.muted,
-        "--card-line": theme.line,
-        "--card-chip": theme.chip,
-        "--category-accent": category.accent
-      } as CSSProperties}
+        "--category-accent": theme.accent,
+        "--category-accent-rgb": theme.accentRgb
+      } as CategoryCardStyle}
     >
+      <span aria-hidden="true" className={styles.accentSurface} />
+      <span aria-hidden="true" className={styles.illustrationGlow} />
+      <span aria-hidden="true" className={styles.cardIllustration}>
+        <span className={`${styles.illustrationPanel} ${styles.illustrationPanelBack}`} />
+        <span className={`${styles.illustrationPanel} ${styles.illustrationPanelMiddle}`} />
+        <span className={`${styles.illustrationPanel} ${styles.illustrationPanelMain}`}>
+          <Icon />
+        </span>
+      </span>
       <span className={styles.cardTopline}>
         <span>{getDisplayTitle(category)}</span>
         <span>{String(index + 1).padStart(2, "0")}</span>
@@ -197,7 +210,7 @@ function CategoryCard({ category, index }: { category: Category; index: number }
           <span key={subcategory}>{subcategory}</span>
         ))}
       </span>
-      <span className={styles.cardFooter}>
+      <span aria-hidden="true" className={styles.cardFooter}>
         Explore <ArrowRight aria-hidden="true" />
       </span>
     </Link>
@@ -222,12 +235,12 @@ function useElementWidth<T extends HTMLElement>() {
 }
 
 function getCardWidth(stageWidth: number) {
-  if (!stageWidth) return 300;
-  return Math.min(340, Math.max(300, stageWidth * 0.25));
+  if (!stageWidth) return 320;
+  return Math.min(360, Math.max(320, stageWidth * 0.25));
 }
 
 function getCardHeight(width: number) {
-  return Math.min(450, Math.max(410, width * 1.34));
+  return Math.min(500, Math.max(460, width / 0.72));
 }
 
 function getRowScale(stageWidth: number, width: number, total: number) {
