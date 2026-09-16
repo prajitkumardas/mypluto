@@ -11,6 +11,7 @@
     "test:trending": "node scripts/test-trending.mjs",
     "test:pwa": "node scripts/test-pwa.mjs",
     "test:navigation:runtime": "node scripts/test-navigation-runtime.mjs",
+    "test:search:runtime": "node scripts/test-search-route-runtime.mjs",
     "audit:typography": "node scripts/audit-typography.mjs",
     "import:xlsx": "node scripts/import-ai-tools.mjs",
     "import:supabase": "node scripts/import-plutos-library-to-supabase.mjs",

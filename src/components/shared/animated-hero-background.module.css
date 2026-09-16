@@ -1,0 +1,90 @@
+.root {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.moltenLayer {
+  position: absolute;
+  inset: -2%;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0.6;
+  filter: saturate(0.82) contrast(1.06);
+}
+
+.moltenLayer canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.glowField {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  transform-origin: center;
+}
+
+.glowA,
+.glowB,
+.glowC {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 999px;
+  animation: glowBreath 7s ease-in-out infinite;
+}
+
+.glowA {
+  width: min(78vw, 80rem);
+  height: min(78vw, 80rem);
+  background: radial-gradient(circle, rgba(83, 52, 190, 0.18), rgba(8, 8, 23, 0) 68%);
+  filter: blur(10px);
+}
+
+.glowB {
+  width: min(56vw, 56rem);
+  height: min(56vw, 56rem);
+  background: radial-gradient(circle, rgba(108, 77, 255, 0.2), rgba(8, 8, 23, 0) 64%);
+  animation-delay: -2.2s;
+}
+
+.glowC {
+  width: min(35vw, 35rem);
+  height: min(35vw, 35rem);
+  background: radial-gradient(circle, rgba(128, 88, 255, 0.14), rgba(8, 8, 23, 0) 62%);
+  animation-delay: -4.4s;
+}
+
+@keyframes glowBreath {
+  0%,
+  100% {
+    opacity: 0.88;
+    scale: 1;
+  }
+
+  50% {
+    opacity: 1;
+    scale: 1.025;
+  }
+}
+
+@media (pointer: coarse) {
+  .glowA,
+  .glowB,
+  .glowC {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glowA,
+  .glowB,
+  .glowC {
+    animation: none;
+  }
+}

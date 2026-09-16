@@ -10,14 +10,20 @@ import styles from "./pluto-hero.module.css";
 
 type SearchStatus = "idle" | "loading" | "success" | "empty" | "error";
 
-export function HeroSearch() {
+type HeroSearchProps = {
+  initialQuery?: string;
+  resultsPath?: string;
+};
+
+export function HeroSearch({ initialQuery = "", resultsPath = "/search" }: HeroSearchProps) {
   const router = useRouter();
   const { startLoading } = useGlobalLoading();
   const listboxId = useId();
   const activeOptionId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLFormElement>(null);
   const requestIdRef = useRef(0);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<HeroSearchResult[]>([]);
   const [status, setStatus] = useState<SearchStatus>("idle");
   const [open, setOpen] = useState(false);
@@ -55,12 +61,13 @@ export function HeroSearch() {
         if (requestIdRef.current !== requestId) return;
         setResults(data.results);
         setStatus(data.results.length > 0 ? "success" : "empty");
+        setOpen(document.activeElement === inputRef.current);
         setActiveIndex(data.results.length > 0 ? 0 : -1);
       } catch (error) {
         if ((error as DOMException).name === "AbortError") return;
         setResults([]);
         setStatus("error");
-        setOpen(true);
+        setOpen(document.activeElement === inputRef.current);
       }
     }, 300);
 
@@ -75,7 +82,7 @@ export function HeroSearch() {
     if (!trimmed) return;
     const exact = results.find((result) => result.name.toLowerCase() === trimmed.toLowerCase());
     startLoading();
-    router.push(exact?.href ?? `/plutos-library/search?q=${encodeURIComponent(trimmed)}`);
+    router.push(exact?.href ?? `${resultsPath}?q=${encodeURIComponent(trimmed)}`);
     setOpen(false);
   };
 
@@ -98,7 +105,7 @@ export function HeroSearch() {
 
   return (
     <form
-      action="/plutos-library/search"
+      action={resultsPath}
       className={styles.searchForm}
       onSubmit={(event) => {
         event.preventDefault();
@@ -148,6 +155,7 @@ export function HeroSearch() {
             }
           }}
           placeholder="Search your AI tools"
+          ref={inputRef}
           role="combobox"
           value={query}
         />

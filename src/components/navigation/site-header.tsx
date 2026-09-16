@@ -5,16 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
-import type { MouseEvent } from "react";
 import { useEffect, useState } from "react";
 import { ArrowRight, Menu, Search, X } from "lucide-react";
 import { getActivePrimaryRoute, primaryRoutes } from "@/components/navigation/primary-routes";
 import { SubmitToolButton, SubmitToolLink } from "@/components/submissions/submit-tool-trigger";
 import { useCompareStore } from "@/lib/compare-store";
 
-const HOME_SEARCH_HASH = "#home-search";
-const HOME_SEARCH_EVENT = "pluto:focus-home-search";
-const HOME_SEARCH_HREF = `/${HOME_SEARCH_HASH}`;
+const SEARCH_HREF = "/search";
 const ENTER_FLOATING_AT = 72;
 const EXIT_FLOATING_AT = 28;
 const DESKTOP_NAV_QUERY = "(min-width: 1024px)";
@@ -39,6 +36,7 @@ export function SiteHeader() {
   const activePrimaryRoute = getActivePrimaryRoute(pathname);
   const internalProductRoute = Boolean(activePrimaryRoute);
   const landingRoute = pathname === "/";
+  const searchRoute = pathname === SEARCH_HREF;
 
   useEffect(() => {
     let frameId: number | null = null;
@@ -75,16 +73,6 @@ export function SiteHeader() {
       if (frameId !== null) window.cancelAnimationFrame(frameId);
     };
   }, [pathname]);
-
-  const handleHomeSearchClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    setMenuOpen(false);
-
-    if (pathname !== "/") return;
-
-    event.preventDefault();
-    window.history.pushState(null, "", HOME_SEARCH_HREF);
-    window.dispatchEvent(new Event(HOME_SEARCH_EVENT));
-  };
 
   const itemLabel = (label: string) =>
     label === "Compare" && compareCount > 0 ? `${label} ${compareCount}` : label;
@@ -147,10 +135,11 @@ export function SiteHeader() {
           transition={{ layout: { duration: 0.48, ease: NAV_EASING } }}
         >
           <Link
-            aria-label="Go to landing page search"
+            aria-current={searchRoute ? "page" : undefined}
+            aria-label="Search AI tools"
             className="focus-ring site-header-search-button"
-            href={HOME_SEARCH_HREF}
-            onClick={handleHomeSearchClick}
+            data-search-action="true"
+            href={SEARCH_HREF}
           >
             <Search aria-hidden="true" className="nav-icon" />
           </Link>
@@ -161,10 +150,12 @@ export function SiteHeader() {
 
         <div className="site-header-mobile-actions">
           <Link
-            aria-label="Go to landing page search"
+            aria-current={searchRoute ? "page" : undefined}
+            aria-label="Search AI tools"
             className="focus-ring nav-icon-button rounded-xl border border-white/24 bg-white/8 text-white hover:border-lime-400 hover:text-lime-400"
-            href={HOME_SEARCH_HREF}
-            onClick={handleHomeSearchClick}
+            data-search-action="true"
+            href={SEARCH_HREF}
+            onClick={() => setMenuOpen(false)}
           >
             <Search aria-hidden="true" className="nav-icon" />
           </Link>

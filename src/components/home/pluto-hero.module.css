@@ -11,8 +11,8 @@
   --hero-radius: 999px;
 
   position: relative;
-  height: 260svh;
-  min-height: 1320px;
+  height: 160svh;
+  min-height: 900px;
   background: var(--hero-bg);
   color: #ffffff;
 }
@@ -59,70 +59,12 @@
   pointer-events: none;
 }
 
-.glowField,
-.moltenLayer,
 .introLayer,
 .navWrap,
 .catLayer,
 .greetingState,
-.searchState,
 .scrollCue {
   position: absolute;
-}
-
-.glowField {
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-  pointer-events: none;
-  transform-origin: center;
-}
-
-.moltenLayer {
-  inset: -2%;
-  z-index: 1;
-  overflow: hidden;
-  opacity: 0.6;
-  filter: saturate(0.82) contrast(1.06);
-  pointer-events: none;
-}
-
-.moltenLayer canvas {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.glowA,
-.glowB,
-.glowC {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  border-radius: 999px;
-  pointer-events: none;
-  animation: glowBreath 7s ease-in-out infinite;
-}
-
-.glowA {
-  width: min(78vw, 80rem);
-  height: min(78vw, 80rem);
-  background: radial-gradient(circle, rgba(83, 52, 190, 0.18), rgba(8, 8, 23, 0) 68%);
-  filter: blur(10px);
-}
-
-.glowB {
-  width: min(56vw, 56rem);
-  height: min(56vw, 56rem);
-  background: radial-gradient(circle, rgba(108, 77, 255, 0.2), rgba(8, 8, 23, 0) 64%);
-  animation-delay: -2.2s;
-}
-
-.glowC {
-  width: min(35vw, 35rem);
-  height: min(35vw, 35rem);
-  background: radial-gradient(circle, rgba(128, 88, 255, 0.14), rgba(8, 8, 23, 0) 62%);
-  animation-delay: -4.4s;
 }
 
 .navWrap {
@@ -389,24 +331,6 @@
   display: none;
 }
 
-.firstVisitIntro,
-.reloadIntro {
-  position: absolute;
-  inset: 0;
-}
-
-.reloadIntro {
-  display: none;
-}
-
-:global(html[data-pluto-landing-reload="true"]) .firstVisitIntro {
-  display: none;
-}
-
-:global(html[data-pluto-landing-reload="true"]) .reloadIntro {
-  display: block;
-}
-
 .particleIntroCanvas {
   position: absolute;
   inset: 0;
@@ -527,19 +451,6 @@
   width: 1.35rem;
   height: 1.35rem;
   color: rgba(255, 255, 255, 0.88);
-}
-
-.searchState {
-  inset-inline: 0;
-  top: 44%;
-  z-index: 34;
-  width: min(100% - 2rem, 78rem);
-  margin-inline: auto;
-  text-align: center;
-}
-
-.searchContent {
-  transform: translateY(-50%);
 }
 
 .searchGreeting {
@@ -765,17 +676,6 @@
   display: none;
 }
 
-@keyframes glowBreath {
-  0%, 100% {
-    opacity: 0.88;
-    scale: 1;
-  }
-  50% {
-    opacity: 1;
-    scale: 1.025;
-  }
-}
-
 @keyframes scrollNudge {
   0%, 100% {
     translate: 0 0;
@@ -798,8 +698,8 @@
 
 @media (max-width: 1180px) {
   .hero {
-    height: 235svh;
-    min-height: 1180px;
+    height: 155svh;
+    min-height: 860px;
     --hero-cat-width: clamp(20rem, 52vw, 35rem);
   }
 
@@ -852,15 +752,12 @@
     height: 2.85rem;
   }
 
-  .searchState {
-    top: 45%;
-  }
 }
 
 @media (max-width: 980px) {
   .hero {
-    height: 215svh;
-    min-height: 1040px;
+    height: 150svh;
+    min-height: 780px;
     --hero-cat-width: clamp(20rem, 62vw, 34rem);
   }
 
@@ -894,8 +791,8 @@
 
 @media (max-width: 767px) {
   .hero {
-    height: 195svh;
-    min-height: 900px;
+    height: 135svh;
+    min-height: 680px;
     --hero-cat-width: clamp(18rem, 88vw, 28rem);
     --hero-search-width: 100%;
   }
@@ -934,12 +831,6 @@
   .greetingActions {
     gap: 0.65rem;
     margin-top: 1rem;
-  }
-
-
-  .searchState {
-    top: 44%;
-    width: min(100% - 1.25rem, 34rem);
   }
 
   .searchGreeting {
@@ -987,30 +878,19 @@
 
 @media (max-width: 390px) {
   .hero {
-    min-height: 720px;
-  }
-}
-
-@media (pointer: coarse) {
-  .glowA,
-  .glowB,
-  .glowC {
-    transform: none !important;
+    min-height: 620px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero {
-    height: 165svh;
+    height: 110svh;
   }
 
   .introLayer {
     display: none;
   }
 
-  .glowA,
-  .glowB,
-  .glowC,
   .scrollCue,
   .particleIntroLoading {
     animation: none;
@@ -1018,7 +898,6 @@
 
   .catLayer,
   .greetingState,
-  .searchState,
   .navWrap {
     transition: none;
   }

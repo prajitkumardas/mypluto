@@ -783,6 +783,13 @@ html:not([data-pluto-intro-seen="true"]):has([data-pluto-intro-layer]) .site-hea
   color: #ffffff;
 }
 
+[data-search-action="true"][aria-current="page"] {
+  border-color: rgba(168, 137, 255, 0.42);
+  background: rgba(111, 82, 255, 0.18);
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), 0 0 18px rgba(112, 71, 255, 0.16);
+}
+
 @media (min-width: 1024px) {
   .site-header-frame {
     transition:
@@ -807,15 +814,13 @@ html:not([data-pluto-intro-seen="true"]):has([data-pluto-intro-layer]) .site-hea
     width: max-content;
     max-width: calc(100vw - 3rem);
     min-height: 64px;
-    border-color: rgba(168, 85, 247, 0.22);
-    border-radius: 9999px;
-    background: rgba(14, 11, 32, 0.72);
+    border-color: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
     padding: 0.65rem 0.8rem;
-    box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.28),
-      0 0 30px rgba(124, 58, 237, 0.08);
-    -webkit-backdrop-filter: blur(18px) saturate(130%);
-    backdrop-filter: blur(18px) saturate(130%);
+    box-shadow: 0 0 22px rgba(255, 255, 255, 0.12);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
   }
 
   .site-header-frame[data-state="floating"] .site-header-logo-image {
@@ -833,11 +838,6 @@ html:not([data-pluto-intro-seen="true"]):has([data-pluto-intro-layer]) .site-hea
 
   .site-header-frame[data-state="floating"] .nav-link {
     padding-inline: clamp(0.5rem, 0.65vw, 0.7rem);
-  }
-
-  .site-header-frame[data-state="floating"] .nav-link[aria-current="page"] {
-    background: rgba(139, 92, 246, 0.12);
-    color: #ffffff;
   }
 
   .site-header-frame[data-state="floating"] .site-header-actions {

@@ -1,90 +1,84 @@
-import Link from "next/link";
-import { ArrowRight, Search } from "lucide-react";
-import { CardGrid } from "@/components/layout/card-grid";
-import { PageHeader } from "@/components/layout/page-header";
-import { PageShell } from "@/components/layout/page-shell";
-import { Button } from "@/components/ui/button";
-import { PlutoButton } from "@/components/ui/pluto-button";
-import { StatePanel } from "@/components/shared/state-panel";
-import { ToolCard } from "@/components/tools/tool-card";
-import { categories, collections, searchTools, useCases } from "@/lib/data";
+import type { Metadata } from "next";
+import { HeroSearch } from "@/components/home/hero-search";
+import heroStyles from "@/components/home/pluto-hero.module.css";
+import { CategoryDiscoverFilters } from "@/components/library/category-discover-filters";
+import { SearchResults } from "@/components/library/search-results";
+import { AnimatedHeroBackground } from "@/components/shared/animated-hero-background";
+import {
+  getLibrarySearchResults,
+  getPlatformOptions,
+  plutosLibrary
+} from "@/lib/plutos-library";
+import styles from "./page.module.css";
+
+export const metadata: Metadata = {
+  title: "Search AI Tools | Pluto Finds",
+  description: "Search and filter Pluto Finds' directory of AI tools."
+};
 
 type SearchPageProps = {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    category?: string;
+    pricing?: string;
+    platform?: string;
+    api?: string;
+    verification?: string;
+    sort?: string;
+    page?: string;
+  }>;
 };
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { q = "" } = await searchParams;
-  const results = searchTools(q);
+  const params = await searchParams;
+  const result = getLibrarySearchResults({
+    query: params.q,
+    category: params.category,
+    pricing: params.pricing,
+    platform: params.platform,
+    api: params.api,
+    verification: params.verification,
+    sort: params.sort,
+    page: params.page,
+    limit: 24
+  });
 
   return (
-    <PageShell>
-      <PageHeader
-        eyebrow="Global search"
-        eyebrowTone="lime"
-        title={`Search results for ${q ? `\"${q}\"` : "your next task"}`}
-        description="Results are grouped by recommendation fit, exact matches, categories, use cases and curated collections."
-      />
-
-      <form className="mt-8 flex flex-col gap-3 rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-3 shadow-[var(--shadow-xs)] sm:flex-row" action="/search">
-        <label className="flex min-h-14 flex-1 items-center gap-3 rounded-[var(--radius-xl)] bg-[var(--background-interactive)] px-4">
-          <Search aria-hidden="true" className="h-5 w-5 text-[var(--color-pluto-purple-300)]" />
-          <span className="sr-only">Search query</span>
-          <input
-            className="w-full bg-transparent type-body-md outline-none placeholder:text-[var(--text-tertiary)]"
-            defaultValue={q}
-            name="q"
-            placeholder="Free image generator with commercial use"
-          />
-        </label>
-        <PlutoButton type="submit" variant="primary">Search again</PlutoButton>
-      </form>
-
-      {results.length > 0 ? (
-        <section className="mt-10">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="type-h2 text-[var(--text-primary)]">Recommended tools</h2>
-            <p className="number type-label-md text-[var(--text-tertiary)]">{results.length} results</p>
+    <main className={styles.page}>
+      <section aria-labelledby="search-page-title" className={styles.hero}>
+        <AnimatedHeroBackground />
+        <div aria-hidden="true" className={styles.heroVeil} />
+        <div className={styles.heroContent}>
+          <p className={heroStyles.searchGreeting}>Hey buddy, great to have you here!</p>
+          <h1 className={heroStyles.searchTitle} id="search-page-title">
+            Let&apos;s Find your perfect AI tool.
+          </h1>
+          <div className={heroStyles.searchShell}>
+            <HeroSearch initialQuery={params.q} key={params.q ?? "empty"} resultsPath="/search" />
           </div>
-          <CardGrid className="mt-5">
-            {results.map((tool) => (
-              <ToolCard key={tool.slug} tool={tool} />
-            ))}
-          </CardGrid>
-        </section>
-      ) : (
-        <div className="mt-10">
-          <StatePanel
-            action="Ask Pluto"
-            copy="Your original query is preserved. Try removing filters, checking spelling, browsing related categories or asking Pluto for close matches."
-            secondary="Browse categories"
-            title="No search results"
-          />
         </div>
-      )}
-
-      <section className="mt-12 grid gap-5 lg:grid-cols-3">
-        <SuggestionGroup title="Categories" items={categories.map((item) => [item.name, `/categories/${item.slug}`])} />
-        <SuggestionGroup title="Use cases" items={useCases.map((item) => [item.title, `/use-cases/${item.slug}`])} />
-        <SuggestionGroup title="Collections" items={collections.map((item) => [item.name, `/collections/${item.slug}`])} />
       </section>
-    </PageShell>
-  );
-}
 
-function SuggestionGroup({ title, items }: { title: string; items: string[][] }) {
-  return (
-    <section className="rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-5 shadow-[var(--shadow-xs)]">
-      <h2 className="type-h2 text-[var(--text-primary)]">{title}</h2>
-      <div className="mt-4 grid gap-2">
-        {items.slice(0, 4).map(([label, href]) => (
-          <Button asChild key={href} variant="ghost">
-            <Link className="justify-between" href={href}>
-              {label} <ArrowRight aria-hidden="true" className="h-4 w-4" />
-            </Link>
-          </Button>
-        ))}
-      </div>
-    </section>
+      <section aria-label="Search filters and results" className={styles.resultsSection}>
+        <div className={styles.resultsInner}>
+          <CategoryDiscoverFilters
+            basePath="/search"
+            categories={plutosLibrary.categories}
+            initial={{
+              q: params.q,
+              category: params.category,
+              pricing: params.pricing,
+              verification: params.verification,
+              platform: params.platform,
+              api: params.api,
+              sort: params.sort
+            }}
+            placement="catalogue"
+            platforms={getPlatformOptions().slice(0, 18)}
+          />
+          <SearchResults basePath="/search" compact embedded result={result} />
+        </div>
+      </section>
+    </main>
   );
 }

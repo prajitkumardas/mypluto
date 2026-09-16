@@ -148,7 +148,7 @@ await waitFor("(document.documentElement?.scrollHeight ?? 0) > innerHeight + 200
 await delay(1200);
 await evaluate("window.scrollTo(0, 0); true");
 await waitFor("document.querySelector('.site-header-shell')?.dataset.navbarState === 'expanded'");
-const expandedNav = await evaluate("(() => { const frame=document.querySelector('.site-header-frame'); const rect=frame.getBoundingClientRect(); return {left:rect.left, right:rect.right, top:rect.top, width:rect.width, state:frame.dataset.state}; })()");
+const expandedNav = await evaluate("(() => { const frame=document.querySelector('.site-header-frame'); const nav=document.querySelector('.site-header-nav'); const rect=frame.getBoundingClientRect(); const navStyle=getComputedStyle(nav); return {left:rect.left, right:rect.right, top:rect.top, width:rect.width, state:frame.dataset.state, pillStyle:{background:navStyle.backgroundColor, border:navStyle.borderColor, shadow:navStyle.boxShadow, backdrop:navStyle.backdropFilter}}; })()");
 
 await evaluate("window.scrollTo(0, 80); true");
 await waitFor("document.querySelector('.site-header-shell')?.dataset.navbarState === 'floating'");
@@ -161,12 +161,12 @@ if (morphTransforms.reduced) {
   assert.equal(hasSpatialTransform, true, `Existing navigation regions move through a spatial layout animation: ${JSON.stringify(morphTransforms)}`);
 }
 await delay(550);
-const floatingNav = await evaluate("(() => { const frame=document.querySelector('.site-header-frame'); const rect=frame.getBoundingClientRect(); const style=getComputedStyle(frame); return {left:rect.left, right:rect.right, top:rect.top, width:rect.width, state:frame.dataset.state, shellState:document.querySelector('.site-header-shell').dataset.navbarState, scrollY:window.scrollY, radius:style.borderRadius, backdrop:style.backdropFilter, logoCount:frame.querySelectorAll('.site-header-logo').length, actionsCount:frame.querySelectorAll('.site-header-actions').length}; })()");
+const floatingNav = await evaluate("(() => { const frame=document.querySelector('.site-header-frame'); const rect=frame.getBoundingClientRect(); const style=getComputedStyle(frame); return {left:rect.left, right:rect.right, top:rect.top, width:rect.width, state:frame.dataset.state, shellState:document.querySelector('.site-header-shell').dataset.navbarState, scrollY:window.scrollY, radius:style.borderRadius, backdrop:style.backdropFilter, pillStyle:{background:style.backgroundColor, border:style.borderColor, shadow:style.boxShadow, backdrop:style.backdropFilter}, logoCount:frame.querySelectorAll('.site-header-logo').length, actionsCount:frame.querySelectorAll('.site-header-actions').length}; })()");
 assert.ok(floatingNav.width < expandedNav.width * 0.9, `Floating navigation becomes materially narrower: ${JSON.stringify({ expandedNav, floatingNav })}`);
 assert.ok(floatingNav.left >= 24 && floatingNav.right <= 1416, "Floating navigation keeps desktop side space");
 assert.equal(floatingNav.logoCount, 1, "The morph keeps one logo instance");
 assert.equal(floatingNav.actionsCount, 1, "The morph keeps one desktop actions region");
-assert.match(floatingNav.backdrop, /blur\(18px\)/, "Floating navigation uses the intended glass blur");
+assert.deepEqual(floatingNav.pillStyle, expandedNav.pillStyle, "Floating navigation preserves the expanded pill styling");
 
 await evaluate("window.scrollTo(0, 50); true");
 await delay(150);
