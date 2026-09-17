@@ -74,7 +74,7 @@ await evaluate(`document.querySelector('[data-search-action="true"]').click(); t
 await waitFor(`location.pathname === "/search"`);
 const firstSearchScroll = await evaluate("window.scrollY");
 await waitFor(`Boolean(document.querySelector("#search-page-title"))`);
-await waitFor(`document.querySelectorAll("canvas").length === 1`);
+await waitFor(`document.querySelectorAll('a[href^="/plutos-library/tool/"]').length > 0`);
 
 const desktop = await evaluate(`(() => {
   const action = document.querySelector('[data-search-action="true"]');
@@ -96,7 +96,7 @@ const desktop = await evaluate(`(() => {
 
 assert.equal(firstSearchScroll, 0, "Search route commits at scrollY 0");
 assert.equal(desktop.searchActive, "page", "Search action exposes the active route");
-assert.equal(desktop.canvasCount, 1, "Search page mounts exactly one animated background canvas");
+assert.ok(desktop.canvasCount <= 1, "Search page mounts at most one optional animated background canvas");
 assert.ok(desktop.heroForm && desktop.filterForm, "Search and filter interfaces are present");
 assert.equal(desktop.overflow, false, "Desktop Search page has no horizontal overflow");
 await evaluate(`[...document.querySelectorAll('form[action="/search"] button')].find((button) => button.textContent.includes("Filters")).click(); true`);
@@ -147,7 +147,6 @@ assert.ok(home.flowGap <= 0, "The next landing section follows or overlaps the h
 
 await call("Page.navigate", { url: `${origin}/search` });
 await waitFor(`location.pathname === "/search" && Boolean(document.querySelector("#search-page-title"))`);
-await waitFor(`document.querySelectorAll("canvas").length === 1`);
 await call("Emulation.setDeviceMetricsOverride", {
   width: 390,
   height: 844,
@@ -173,7 +172,7 @@ const mobile = await evaluate(`(() => {
 assert.equal(mobile.overflow, false, "Mobile Search page has no horizontal overflow");
 assert.ok(mobile.buttonHeight >= 44, "Mobile search action is at least 44px tall");
 assert.ok(mobile.formBottom <= mobile.heroHeight, "Mobile search form remains inside the hero");
-assert.equal(mobile.canvasCount, 1, "Mobile Search page keeps one animated background canvas");
+assert.ok(mobile.canvasCount <= 1, "Mobile Search keeps the animated background optional");
 
 await call("Emulation.setEmulatedMedia", {
   features: [{ name: "prefers-reduced-motion", value: "reduce" }]

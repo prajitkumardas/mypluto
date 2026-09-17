@@ -139,7 +139,7 @@ export function PwaShell() {
     <>
       {connectionNotice ? (
         <div aria-live="polite" className={`pwa-network-banner ${connectionNotice === "online" ? "is-online" : ""}`} role="status">
-          {connectionNotice === "offline" ? <><WifiOff aria-hidden="true" /> You&apos;re offline. Some saved pages still work.</> : <>Back online. Fresh content is available.</>}
+          {connectionNotice === "offline" ? <><WifiOff aria-hidden="true" /> You&apos;re offline. Previously visited public pages may still work.</> : <>Back online. Fresh content is available.</>}
         </div>
       ) : null}
 
@@ -153,7 +153,7 @@ export function PwaShell() {
 
       {showInstall || showIosHelp ? (
         <aside aria-label="Install Pluto Finds" className="pwa-prompt">
-          <div><strong>Keep Pluto close</strong><span>{showIosHelp ? "In Safari, tap Share, then Add to Home Screen." : "Install the app for quicker access and offline support."}</span></div>
+          <div><strong>Keep Pluto close</strong><span>{showIosHelp ? "In Safari, tap Share, then Add to Home Screen." : "Install for quicker access. Previously visited public pages may remain available offline."}</span></div>
           {showIosHelp ? <Share aria-hidden="true" className="pwa-prompt-symbol" /> : <button className="pwa-shell-button pwa-shell-button-primary" onClick={() => void install()} type="button"><Download aria-hidden="true" /> Install</button>}
           <button aria-label="Dismiss install suggestion" className="pwa-icon-button" onClick={dismissInstall} type="button"><X aria-hidden="true" /></button>
         </aside>

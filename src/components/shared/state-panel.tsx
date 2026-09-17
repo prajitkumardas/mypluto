@@ -7,6 +7,7 @@ type StatePanelProps = {
   action: string;
   secondary: string;
   actionHref?: string;
+  actionOnClick?: () => void;
   secondaryHref?: string;
   tone?: "empty" | "error";
 };
@@ -17,6 +18,7 @@ export function StatePanel({
   action,
   secondary,
   actionHref,
+  actionOnClick,
   secondaryHref,
   tone = "empty"
 }: StatePanelProps) {
@@ -35,7 +37,7 @@ export function StatePanel({
             {action}
           </PlutoButton>
         ) : (
-          <PlutoButton showArrow variant="primary">
+          <PlutoButton onClick={actionOnClick} showArrow variant="primary">
             {action}
           </PlutoButton>
         )}

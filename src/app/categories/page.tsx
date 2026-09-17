@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowRight, Search } from "lucide-react";
 import { CardGrid } from "@/components/layout/card-grid";
 import { PageHeader } from "@/components/layout/page-header";
@@ -6,10 +7,32 @@ import { PageShell } from "@/components/layout/page-shell";
 import { Badge } from "@/components/ui/badge";
 import { categories, tools } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { createPageMetadata } from "@/lib/seo";
+import { StructuredData } from "@/components/seo/structured-data";
+import { SITE_URL } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "AI Tool Categories | Pluto Finds",
+  description: "Browse AI tools by creative, development, productivity, writing, business, research and other work categories.",
+  path: "/categories"
+});
 
 export default function CategoriesPage() {
   return (
     <PageShell>
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "AI tool categories",
+          itemListElement: categories.map((category, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: category.name,
+            url: `${SITE_URL}/categories/${category.slug}`
+          }))
+        }}
+      />
       <PageHeader
         eyebrow="Categories"
         title="Browse the AI ecosystem by work type."

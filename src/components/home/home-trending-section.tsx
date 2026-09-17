@@ -49,9 +49,9 @@ export function HomeTrendingSection({ initialResponse }: { initialResponse: Tren
         <div className={styles.header}>
           <div className={styles.intro}>
             <p className={styles.eyebrow}>Trending tools</p>
-            <h1 className={styles.title} id="home-trending-title">
+            <h2 className={styles.title} id="home-trending-title">
               What builders are <span>checking now.</span>
-            </h1>
+            </h2>
             <p className={styles.copy}>See which AI tools are gaining attention right now.</p>
           </div>
 

@@ -7,6 +7,9 @@ import { StatePanel } from "@/components/shared/state-panel";
 import { ToolCard } from "@/components/tools/tool-card";
 import { RecentlyViewed } from "@/components/tools/recently-viewed";
 import { categories, tools } from "@/lib/data";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({ title: "All AI Tools | Pluto Finds", description: "Browse structured AI tool listings by category, feature, use case and profession.", path: "/tools" });
 
 export default function ToolsPage() {
   const activeFilters = ["Verified", "Free plan", "Beginner-friendly"];
@@ -108,3 +111,4 @@ function FilterGroup({ title, values }: { title: string; values: string[] }) {
     </fieldset>
   );
 }
+import type { Metadata } from "next";

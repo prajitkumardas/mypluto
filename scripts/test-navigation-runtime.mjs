@@ -68,6 +68,7 @@ await evaluate("window.scrollTo(0, Math.min(1800, document.documentElement.scrol
 await delay(250);
 await evaluate("document.querySelector('a[href=\"/plutos-library\"]')?.click(); true");
 await waitFor("location.pathname === '/plutos-library'");
+await waitFor("Boolean(document.querySelector('.pwa-bottom-nav'))");
 await delay(350);
 assert.equal(await evaluate("window.scrollY"), 0, "Fresh Landing to Discover navigation starts at top");
 
@@ -102,6 +103,7 @@ await evaluate("window.scrollTo(0, Math.min(900, document.documentElement.scroll
 await delay(800);
 assert.equal(await evaluate("window.scrollY"), 0, "Tapping the active tab scrolls smoothly to top");
 
+await waitFor("Boolean(document.documentElement && document.querySelector('.pwa-bottom-nav a[href=\"/trending\"]'))");
 await evaluate("window.scrollTo(0, Math.min(700, document.documentElement.scrollHeight-innerHeight)); document.querySelector('.pwa-bottom-nav a[href=\"/trending\"]')?.click(); true");
 await waitFor("location.pathname === '/trending'");
 await delay(350);
@@ -113,11 +115,12 @@ await waitFor("location.pathname === '/'");
 await delay(350);
 assert.equal(await evaluate("window.scrollY"), 0, "Logo navigation opens Home at top");
 assert.equal(await evaluate("Boolean(document.querySelector('.pwa-bottom-nav'))"), false, "Landing keeps the bottom navigation hidden");
+await delay(1200);
 await evaluate("window.scrollTo(0, Math.min(1200, document.documentElement.scrollHeight-innerHeight)); const buttons=Array.from(document.querySelectorAll('button[aria-label=\"Open menu\"]')); buttons.at(-1)?.click(); true");
 await waitFor("Boolean(document.querySelector('[role=dialog]'))");
 await evaluate("document.querySelector('[role=dialog] a[href=\"/play\"]')?.click(); true");
 await waitFor("location.pathname === '/play'");
-await delay(350);
+await waitFor("!document.querySelector('[role=dialog]')");
 assert.equal(await evaluate("window.scrollY"), 0, "Landing hamburger navigation opens Play at top");
 assert.equal(await evaluate("Boolean(document.querySelector('[role=dialog]'))"), false, "Hamburger closes during navigation");
 

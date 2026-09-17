@@ -1,0 +1,46 @@
+.root {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  min-height: 100svh;
+  width: 100%;
+  place-content: center;
+  justify-items: center;
+  gap: 1rem;
+  background: #0a0810;
+  color: rgba(255, 255, 255, 0.74);
+}
+
+.orbit {
+  position: relative;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 2px solid rgba(168, 137, 255, 0.22);
+  border-top-color: #c8ff5a;
+  border-radius: 50%;
+  animation: route-loader-spin 0.8s linear infinite;
+}
+
+.orbit i {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.2rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #c8ff5a;
+  box-shadow: 0 0 1rem rgba(200, 255, 90, 0.55);
+}
+
+.label {
+  font-size: var(--text-label-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+@keyframes route-loader-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit { animation: none; }
+}

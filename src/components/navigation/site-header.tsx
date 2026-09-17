@@ -4,10 +4,11 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { ArrowRight, Menu, Search, X } from "lucide-react";
 import { getActivePrimaryRoute, primaryRoutes } from "@/components/navigation/primary-routes";
+import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { SubmitToolButton, SubmitToolLink } from "@/components/submissions/submit-tool-trigger";
 import { useCompareStore } from "@/lib/compare-store";
 
@@ -31,7 +32,7 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [navbarState, setNavbarState] = useState<NavbarState>("expanded");
   const pathname = usePathname();
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReducedMotionPreference();
   const compareCount = useCompareStore((state) => state.selected.length);
   const activePrimaryRoute = getActivePrimaryRoute(pathname);
   const internalProductRoute = Boolean(activePrimaryRoute);

@@ -2,6 +2,9 @@ import { ShieldCheck } from "lucide-react";
 import { CardGrid } from "@/components/layout/card-grid";
 import { PageHeader } from "@/components/layout/page-header";
 import { PageShell } from "@/components/layout/page-shell";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({ title: "Verification Methodology | Pluto Finds", description: "Learn how Pluto Finds checks tool websites, pricing and key product information.", path: "/verification" });
 
 export default function VerificationPage() {
   return (
@@ -25,3 +28,4 @@ export default function VerificationPage() {
     </PageShell>
   );
 }
+import type { Metadata } from "next";

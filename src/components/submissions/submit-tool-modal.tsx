@@ -3,10 +3,11 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { AlertTriangle, Check, CheckCircle2, FileCheck2, Fingerprint, LockKeyhole, Mail, PawPrint, RotateCcw, Search, ShieldCheck, Sparkles, Users, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useGlobalLoading } from "@/components/loading/loading-provider";
+import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { getFaviconLogoUrl } from "@/lib/tool-logo";
@@ -38,7 +39,7 @@ export function SubmitToolModal({ categories }: { categories: SubmissionCategory
   const requestRef = useRef<AbortController | null>(null);
   const submittingRef = useRef(false);
   const directOpenHandledRef = useRef(false);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReducedMotionPreference();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -162,7 +163,7 @@ export function SubmitToolModal({ categories }: { categories: SubmissionCategory
     if (stage === "resume") return <Resume onContinue={() => { if (savedDraft) { setDraft(savedDraft.draft); go(persistableStage(savedDraft.stage)); } }} onStartOver={startOver} />;
     if (stage === "identity") return <StepFrame icon={<Fingerprint />} title="Tool identity" copy="Let's start with the basics." back={() => go("intro", -1)} next={checkDuplicate}><div className={styles.fieldStack}><SubmissionField autoFocus error={errors.toolName} label="Tool name *" name="toolName" onChange={(value) => updateDraft("toolName", value)} placeholder="Example: Pluto Studio" value={draft.toolName} /><SubmissionField error={errors.officialUrl} inputMode="url" label="Official website URL *" name="officialUrl" onChange={(value) => updateDraft("officialUrl", value)} placeholder="https://example.com" type="url" value={draft.officialUrl} /></div></StepFrame>;
     if (stage === "checking") return <Checking />;
-    if (stage === "duplicate") return <DuplicateResult duplicate={duplicate} error={requestError} onBack={() => go("identity", -1)} onContinue={() => { updateDraft("duplicateOverride", Boolean(duplicate)); go("product"); }} onRetry={checkDuplicate} onView={(slug) => closeAndNavigate(`/plutos-library/tool/${slug}`)} />;
+    if (stage === "duplicate") return <DuplicateResult duplicate={duplicate} error={requestError} onBack={() => go("identity", -1)} onContinue={() => { updateDraft("duplicateOverride", Boolean(duplicate)); go("product"); }} onRetry={checkDuplicate} onView={(slug) => closeAndNavigate(`/tools/${slug}`)} />;
     if (stage === "product") return <ProductStep categories={categories} draft={draft} errors={errors} update={updateDraft} onBack={() => go("duplicate", -1)} onContinue={() => { const nextErrors = validateProduct(draft); if (Object.keys(nextErrors).length) setErrors(nextErrors); else go("submitter"); }} />;
     if (stage === "submitter") return <SubmitterStep draft={draft} errors={errors} update={updateDraft} onBack={() => go("product", -1)} onContinue={() => { const nextErrors = validateSubmitter(draft); if (Object.keys(nextErrors).length) setErrors(nextErrors); else go("review"); }} />;
     if (stage === "review" || stage === "submitting") return <ReviewStep draft={draft} error={requestError} submitting={stage === "submitting"} edit={(next) => go(next, -1)} onBack={() => go("submitter", -1)} onSubmit={submit} update={updateDraft} />;

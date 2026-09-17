@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import styles from "./global-loader.module.css";
 
 const WALKING_CAT_SRC = "/images/loading/pluto-walking.webp";
@@ -23,7 +24,7 @@ export function GlobalLoader({
   progress,
   visible = true
 }: GlobalLoaderProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReducedMotionPreference();
   const [assetFailed, setAssetFailed] = useState(false);
   const [automaticProgress, setAutomaticProgress] = useState(14);
 

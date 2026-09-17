@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlutoButton } from "@/components/ui/pluto-button";
-import LightPillar from "@/components/ui/light-pillar";
+import { SafeLightPillar } from "@/components/shared/safe-light-pillar";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { HeroVeil } from "@/components/shared/hero-veil";
 import { getFaviconLogoUrl } from "@/lib/tool-logo";
@@ -459,7 +459,7 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
       {flowState === "landing" || modalOpen ? (
         <section className={styles.landingContent} aria-labelledby="play-title">
           <p className={styles.eyebrow}>Pluto&apos;s Playroom</p>
-          <h1 id="play-title">Pluto&apos;s been waiting for you to play with.</h1>
+          <h1 id="play-title">Pluto&apos;s been waiting to play with you.</h1>
           <p>He&apos;s been sitting here all alone. Stay for a little while and challenge him to a game.</p>
           <PlutoButton className={styles.primaryCta} onClick={openInvitation} showArrow size="lg" type="button" variant="primary">
             Play with Pluto
@@ -470,7 +470,7 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
       {flowState === "versus" ? (
         <section className={styles.versusScreen} aria-label={`Pluto versus ${playerName}`} aria-live="polite">
           <div className={styles.versusLight} aria-hidden="true">
-            <LightPillar
+            <SafeLightPillar
               topColor="#AD6CFF"
               bottomColor="#7825E8"
               intensity={0.58}
@@ -758,7 +758,7 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
                       A small find for a sharp win.
                     </Dialog.Description>
                     <div className={styles.resultActions}>
-                      <PlutoButton className={styles.rewardAction} href={`/plutos-library/tool/${selectedReward.slug}`} showArrow variant="primary">
+                      <PlutoButton className={styles.rewardAction} href={`/tools/${selectedReward.slug}`} showArrow variant="primary">
                         View tool
                       </PlutoButton>
                       <PlutoButton className={styles.rewardAction} onClick={restartRound} type="button" variant="secondary">

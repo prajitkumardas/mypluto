@@ -299,7 +299,7 @@ export function getLibrarySuggestions(query: string, limit = 8): LibrarySuggesti
     .map(({ item }) => ({
       type: "tool" as const,
       label: item.name,
-      href: `/plutos-library/tool/${item.slug}`,
+      href: `/tools/${item.slug}`,
       meta: item.categories[0] ?? "AI tool"
     }));
 

@@ -1,12 +1,13 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
+import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { submissionSteps } from "./types";
 import styles from "./submit-tool-modal.module.css";
 
 export function SubmissionStepper({ current }: { current: number }) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReducedMotionPreference();
   return (
     <div className={styles.stepper} aria-label={`Step ${current + 1} of ${submissionSteps.length}: ${submissionSteps[current].label}`}>
       <div className={styles.stepTrack} aria-hidden="true">

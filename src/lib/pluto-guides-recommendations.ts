@@ -104,7 +104,7 @@ function toRecommendation(
     slug: tool.slug,
     name: tool.name,
     officialUrl: tool.officialUrl,
-    href: `/plutos-library/tool/${tool.slug}`,
+    href: `/tools/${tool.slug}`,
     shortDescription: tool.shortDescription,
     categories: tool.categories.slice(0, 2),
     features: tool.features.slice(0, 4),

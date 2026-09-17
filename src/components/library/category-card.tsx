@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useMemo, useState, type CSSProperties, type MouseEvent } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import Link from "next/link";
+import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import {
   Atom,
   Bot,
@@ -107,7 +108,7 @@ function pickAccent(slug: string) {
 }
 
 export function CategoryCard({ category }: { category: LibraryCategory }) {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useReducedMotionPreference();
   const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
   const [spotlight, setSpotlight] = useState({ x: 50, y: 50 });
   const [hovered, setHovered] = useState(false);

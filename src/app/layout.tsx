@@ -11,15 +11,32 @@ import { ComparisonTray } from "@/components/compare/comparison-tray";
 import { PwaShell } from "@/components/pwa/pwa-shell";
 import { SubmitToolModal } from "@/components/submissions/submit-tool-modal";
 import { plutosLibrary } from "@/lib/plutos-library";
+import { StructuredData } from "@/components/seo/structured-data";
+import { SITE_URL } from "@/lib/seo";
+import { HydrationMarker } from "@/components/shared/hydration-marker";
 import "./globals.css";
 import "@/styles/typography.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://mypluto.vercel.app"),
   applicationName: "Pluto Finds",
   title: "Pluto | Find the right AI tool for anything",
   description:
     "A premium AI-tool discovery platform for finding, comparing and understanding trustworthy AI products.",
   manifest: "/manifest.webmanifest",
+  openGraph: {
+    type: "website",
+    siteName: "Pluto Finds",
+    title: "Pluto | Find the right AI tool for anything",
+    description: "Discover, compare and understand trustworthy AI tools.",
+    images: [{ url: "/images/plutofinds-logo.png", alt: "Pluto Finds" }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pluto | Find the right AI tool for anything",
+    description: "Discover, compare and understand trustworthy AI tools.",
+    images: ["/images/plutofinds-logo.png"]
+  },
   appleWebApp: { capable: true, statusBarStyle: "black-translucent", title: "Pluto Finds" },
   formatDetection: { telephone: false },
   icons: {
@@ -73,10 +90,36 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
+        <StructuredData
+          data={[
+            {
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "@id": `${SITE_URL}/#organization`,
+              name: "Pluto Finds",
+              url: SITE_URL,
+              logo: `${SITE_URL}/icons/icon-512.png`
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "@id": `${SITE_URL}/#website`,
+              name: "Pluto Finds",
+              url: SITE_URL,
+              publisher: { "@id": `${SITE_URL}/#organization` },
+              potentialAction: {
+                "@type": "SearchAction",
+                target: `${SITE_URL}/search?q={search_term_string}`,
+                "query-input": "required name=search_term_string"
+              }
+            }
+          ]}
+        />
         <Script id="pluto-intro-session" strategy="beforeInteractive">
           {introSessionBootstrap}
         </Script>
         <LoadingProvider>
+          <a className="skip-link" href="#main-content">Skip to main content</a>
           <Suspense fallback={null}>
             <ScrollReset />
           </Suspense>
@@ -88,6 +131,7 @@ export default function RootLayout({
             <SubmitToolModal categories={plutosLibrary.categories.map(({ name, slug }) => ({ name, slug }))} />
           </Suspense>
           <SiteFooter />
+          <HydrationMarker />
         </LoadingProvider>
       </body>
     </html>

@@ -10,11 +10,9 @@ import {
   plutosLibrary
 } from "@/lib/plutos-library";
 import styles from "./page.module.css";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Search AI Tools | Pluto Finds",
-  description: "Search and filter Pluto Finds' directory of AI tools."
-};
+export const metadata: Metadata = createPageMetadata({ title: "Search AI Tools | Pluto Finds", description: "Search and filter Pluto Finds' directory of AI tools.", path: "/search" });
 
 type SearchPageProps = {
   searchParams: Promise<{

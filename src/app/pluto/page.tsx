@@ -1,8 +1,12 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowRight, Bot, Library } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { collections, librarySteps, tools } from "@/lib/data";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({ title: "About Pluto Finds", description: "Learn how Pluto Guides, curated collections and comparison workflows help you choose AI tools.", path: "/pluto" });
 
 export default function PlutoPage() {
   return (

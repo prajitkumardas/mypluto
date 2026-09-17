@@ -1,17 +1,21 @@
 "use client";
 
 import type { MotionValue } from "motion/react";
+import dynamic from "next/dynamic";
 import {
   motion,
   useMotionValue,
-  useReducedMotion,
   useSpring,
   useTransform
 } from "motion/react";
 import { useEffect } from "react";
-import MoltenMetal from "@/components/MoltenMetal";
+import { VisualEffectBoundary } from "@/components/shared/visual-effect-boundary";
+import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { cn } from "@/lib/utils";
+import { useWebGLSupport } from "@/lib/webgl-support";
 import styles from "./animated-hero-background.module.css";
+
+const MoltenMetal = dynamic(() => import("@/components/MoltenMetal"), { ssr: false });
 
 type AnimatedHeroBackgroundProps = {
   className?: string;
@@ -20,7 +24,8 @@ type AnimatedHeroBackgroundProps = {
 };
 
 export function AnimatedHeroBackground({ className, renderMolten = true, scale = 1 }: AnimatedHeroBackgroundProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useReducedMotionPreference();
+  const webgl = useWebGLSupport();
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const smoothX = useSpring(pointerX, { stiffness: 65, damping: 26, mass: 1 });
@@ -61,28 +66,30 @@ export function AnimatedHeroBackground({ className, renderMolten = true, scale =
 
   return (
     <div aria-hidden="true" className={cn(styles.root, className)}>
-      {!reduceMotion && renderMolten ? (
+      {!reduceMotion && renderMolten && webgl.available ? (
         <div className={styles.moltenLayer}>
-          <MoltenMetal
-            blackPoint={0.09}
-            brightness={1.3}
-            color1="#5227FF"
-            color2="#FF9FFC"
-            color3="#FFFFFF"
-            colorMode="molten"
-            coreSize={0.14}
-            detail={3}
-            fold={-0.1}
-            glow={2.2}
-            grain
-            grainIntensity={0.09}
-            mouseInteraction
-            mouseStrength={0.3}
-            opacity={1}
-            scale={4}
-            speed={0.15}
-            swirl={0.4}
-          />
+          <VisualEffectBoundary>
+            <MoltenMetal
+              blackPoint={0.09}
+              brightness={1.3}
+              color1="#5227FF"
+              color2="#FF9FFC"
+              color3="#FFFFFF"
+              colorMode="molten"
+              coreSize={0.14}
+              detail={3}
+              fold={-0.1}
+              glow={2.2}
+              grain
+              grainIntensity={0.09}
+              mouseInteraction
+              mouseStrength={0.3}
+              opacity={1}
+              scale={4}
+              speed={0.15}
+              swirl={0.4}
+            />
+          </VisualEffectBoundary>
         </div>
       ) : null}
 

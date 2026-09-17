@@ -4,10 +4,18 @@ import { PageHeader } from "@/components/layout/page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { ToolCard } from "@/components/tools/tool-card";
 import { tools, useCases } from "@/lib/data";
+import { createPageMetadata } from "@/lib/seo";
 
 type UseCasePageProps = {
   params: Promise<{ useCaseSlug: string }>;
 };
+
+export async function generateMetadata({ params }: UseCasePageProps): Promise<Metadata> {
+  const { useCaseSlug } = await params;
+  const useCase = useCases.find((item) => item.slug === useCaseSlug);
+  if (!useCase) return createPageMetadata({ title: "Use case not found | Pluto Finds", description: "This use-case guide could not be found.", path: `/use-cases/${useCaseSlug}`, noIndex: true });
+  return createPageMetadata({ title: `${useCase.title} | Pluto Finds`, description: useCase.query, path: `/use-cases/${useCase.slug}` });
+}
 
 export default async function UseCasePage({ params }: UseCasePageProps) {
   const { useCaseSlug } = await params;
@@ -44,3 +52,4 @@ export default async function UseCasePage({ params }: UseCasePageProps) {
     </PageShell>
   );
 }
+import type { Metadata } from "next";

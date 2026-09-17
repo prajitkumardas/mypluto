@@ -42,7 +42,10 @@ const footerGroups: FooterGroup[] = [
       { label: "About Pluto", href: "/pluto" },
       { label: "Submit a Tool", href: "/submit-tool" },
       { label: "Verification", href: "/verification" },
-      { label: "Privacy", href: "/privacy" }
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "Disclosures", href: "/disclosures" },
+      { label: "Corrections", href: "/corrections" }
     ]
   }
 ];

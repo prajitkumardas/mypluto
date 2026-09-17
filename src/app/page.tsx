@@ -12,13 +12,31 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { SubmitToolButton } from "@/components/submissions/submit-tool-trigger";
 import { getTrendingResponse } from "@/lib/trending";
-import Silk from "@/components/ui/silk";
+import { SafeSilk } from "@/components/shared/safe-silk";
+import { StructuredData } from "@/components/seo/structured-data";
+import { faqStructuredItems } from "@/lib/faq";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" }
+};
 
 export default async function Home() {
   const initialTrending = await getTrendingResponse({ period: "week", limit: 4 });
 
   return (
     <main>
+      <StructuredData
+        data={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqStructuredItems.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: { "@type": "Answer", text: item.answer }
+          }))
+        }}
+      />
       <PlutoHero />
       <PlutoStorySection />
       <PopularCategoriesShowcase />
@@ -36,7 +54,7 @@ function SubmitCta() {
       <div className="site-container">
         <div className="relative isolate grid gap-8 overflow-hidden rounded-[2rem] border border-neutral-200 bg-ink-950 p-6 text-white shadow-elevated md:grid-cols-[1fr_auto] md:items-center md:p-10">
           <div aria-hidden="true" className="absolute inset-0 z-0 opacity-80">
-            <Silk
+            <SafeSilk
               color="#5227FF"
               noiseIntensity={1.5}
               rotation={0}
@@ -55,7 +73,7 @@ function SubmitCta() {
               </Badge>
             </SectionEyebrowReveal>
             <WordReveal
-              as="h1"
+              as="h2"
               className="mt-4 type-h1"
               text="Built something useful? Add it to the universe."
             />
@@ -72,3 +90,4 @@ function SubmitCta() {
     </section>
   );
 }
+import type { Metadata } from "next";

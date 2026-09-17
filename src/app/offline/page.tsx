@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CloudOff, Gamepad2, GitCompareArrows } from "lucide-react";
 
-export const metadata = { title: "You are offline | Pluto Finds" };
+export const metadata = { title: "You are offline | Pluto Finds", robots: { index: false, follow: false } };
 
 export default function OfflinePage() {
   return (

@@ -2,11 +2,12 @@
 
 import Image from 'next/image';
 import { ChevronDown } from 'lucide-react';
-import { AnimatePresence, motion, type Variants, useReducedMotion } from 'motion/react';
+import { AnimatePresence, motion, type Variants } from 'motion/react';
 import { type CSSProperties, useState } from 'react';
+import { useReducedMotionPreference } from '@/components/motion/use-reduced-motion-preference';
 import styles from './home-faq-section.module.css';
 
-const faqItems = [
+export const faqItems = [
   {
     id: 'what-is-pluto-finds',
     question: 'What is Pluto Finds?',
@@ -100,7 +101,7 @@ function valueBetween(index: number, salt: number, minimum: number, maximum: num
 
 export function HomeFaqSection() {
   const [openItem, setOpenItem] = useState<string | null>(null);
-  const reducedMotion = Boolean(useReducedMotion());
+  const reducedMotion = useReducedMotionPreference();
 
   return (
     <section aria-labelledby='home-faq-title' className={styles.section} id='faq'>
@@ -134,9 +135,9 @@ export function HomeFaqSection() {
       <div className={styles.inner}>
         <div className={styles.intro}>
           <p className={styles.eyebrow}>FAQs</p>
-          <h1 className={styles.title} id='home-faq-title'>
+          <h2 className={styles.title} id='home-faq-title'>
             Questions, <span>answered.</span>
-          </h1>
+          </h2>
           <p className={styles.copy}>
             The essentials for finding, comparing and choosing AI tools with confidence.
           </p>

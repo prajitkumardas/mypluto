@@ -4,13 +4,13 @@ import Image from "next/image";
 import {
   motion,
   useMotionValueEvent,
-  useReducedMotion,
   useScroll,
   useTransform
 } from "motion/react";
 import { Mouse } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatedHeroBackground } from "@/components/shared/animated-hero-background";
+import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { HeroParticleIntro } from "./hero-particle-intro";
 import styles from "./pluto-hero.module.css";
@@ -27,7 +27,7 @@ function mapScrollRange(value: number, start: number, end: number, from: number,
 
 export function PlutoHero() {
   const heroRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useReducedMotionPreference();
   const [introComplete, setIntroComplete] = useState(false);
 
   const { scrollYProgress } = useScroll({

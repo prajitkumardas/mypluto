@@ -1,9 +1,17 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowRight } from "lucide-react";
 import { CardGrid } from "@/components/layout/card-grid";
 import { PageHeader } from "@/components/layout/page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { useCases } from "@/lib/data";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({
+  title: "AI Tool Use Cases | Pluto Finds",
+  description: "Start with the job you need to complete and review focused AI tool recommendations.",
+  path: "/use-cases"
+});
 
 export default function UseCasesPage() {
   return (

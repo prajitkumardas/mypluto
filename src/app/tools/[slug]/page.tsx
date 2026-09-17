@@ -5,6 +5,8 @@ import { ToolDetailView } from "@/components/tools/tool-detail-view";
 import { mapCuratedToolToDetail } from "@/components/tools/tool-detail-mappers";
 import { getTool } from "@/lib/data";
 import { getLibraryTool } from "@/lib/plutos-library";
+import { StructuredData } from "@/components/seo/structured-data";
+import { createPageMetadata, SITE_URL } from "@/lib/seo";
 
 type ToolDetailProps = {
   params: Promise<{ slug: string }>;
@@ -23,13 +25,11 @@ export async function generateMetadata({ params }: ToolDetailProps): Promise<Met
     };
   }
 
-  return {
+  return createPageMetadata({
     title: `${name} - AI Tool Details | Pluto Finds`,
-    description: description || `Review ${name} details, verification, pricing and similar AI tools on PlutoFinds.`,
-    alternates: {
-      canonical: `/tools/${slug}`
-    }
-  };
+    description: description || `Review ${name} details, verification, pricing and similar AI tools on Pluto Finds.`,
+    path: `/tools/${slug}`
+  });
 }
 
 export default async function ToolDetailPage({ params }: ToolDetailProps) {
@@ -45,6 +45,29 @@ export default async function ToolDetailPage({ params }: ToolDetailProps) {
 
   return (
     <>
+      <StructuredData
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "Discover", item: `${SITE_URL}/plutos-library` },
+              { "@type": "ListItem", position: 3, name: model.name, item: `${SITE_URL}/tools/${model.slug}` }
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: model.name,
+            description: model.description,
+            applicationCategory: model.category,
+            operatingSystem: model.platforms.length > 0 ? model.platforms.join(", ") : "Web",
+            url: `${SITE_URL}/tools/${model.slug}`,
+            sameAs: model.officialUrl || undefined
+          }
+        ]}
+      />
       <ViewedMarker logoUrl={model.logoUrl} name={model.name} slug={model.slug} />
       <ToolDetailView tool={model} />
     </>

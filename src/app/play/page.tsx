@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { PlutoPlayground, type PlayRewardTool } from "@/components/play/pluto-playground";
 import { plutosLibrary, type LibraryTool } from "@/lib/plutos-library";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Play Pluto | Pluto Finds",
-  description: "Play a quick game with Pluto and unlock a surprise underrated AI tool if you win."
-};
+export const metadata: Metadata = createPageMetadata({ title: "Play with Pluto | Pluto Finds", description: "Play Tic-Tac-Toe with Pluto and discover a surprise underrated AI tool if you win.", path: "/play" });
 
 export default function PlayPage() {
   const rewardTools = getRewardTools();

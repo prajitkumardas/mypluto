@@ -157,9 +157,9 @@ export function ToolDetailView({ tool }: { tool: ToolDetailViewModel }) {
 
             <section className={styles.card}>
               <SectionHeading title="Key details" />
-              <div className={styles.factGrid}>
+              <dl className={styles.factGrid}>
                 {details.map((item) => <DetailFact key={item.label} {...item} />)}
-              </div>
+              </dl>
               <p className={styles.freshness}>Pricing last checked: {tool.lastChecked}. Verify current plan terms on the official site.</p>
             </section>
 
@@ -284,8 +284,8 @@ function SectionHeading({ title }: { title: string }) {
 function DetailFact({ icon: Icon, label, value }: { icon: typeof CircleDollarSign; label: string; value: string }) {
   return (
     <div className={styles.detailFact}>
-      <span><Icon aria-hidden="true" /></span>
-      <div><dt>{label}</dt><dd>{value}</dd></div>
+      <dt><span aria-hidden="true"><Icon /></span>{label}</dt>
+      <dd>{value}</dd>
     </div>
   );
 }

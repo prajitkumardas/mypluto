@@ -50,7 +50,7 @@ export default function ImportAdminPreviewPage() {
           {verificationQueue.map((tool) => (
             <div className="grid gap-3 border-b border-[var(--border-default)] p-4 last:border-b-0 md:grid-cols-[1fr_180px_180px]" key={tool.slug}>
               <div>
-                <Link className="type-h5 text-[var(--text-primary)] hover:text-[var(--color-pluto-purple-300)]" href={`/plutos-library/tool/${tool.slug}`}>
+                <Link className="type-h5 text-[var(--text-primary)] hover:text-[var(--color-pluto-purple-300)]" href={`/tools/${tool.slug}`}>
                   {tool.name}
                 </Link>
                 <p className="mt-1 type-body-sm text-[var(--text-secondary)]">{tool.categories.join(", ")}</p>

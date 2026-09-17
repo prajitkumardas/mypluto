@@ -40,7 +40,7 @@ export function mapLibraryToolToDetail(tool: LibraryTool): ToolDetailViewModel {
     description: clean(tool.shortDescription) || "This tool is listed in the PlutoFinds AI tools directory. Verify important details on the official website before using it.",
     domain: domain || NOT_AVAILABLE,
     freePlan: clean(tool.pricing.freePlanRaw || tool.pricing.freePlan) || NOT_AVAILABLE,
-    href: `/plutos-library/tool/${tool.slug}`,
+    href: `/tools/${tool.slug}`,
     integrations: inferIntegrations(tool.features),
     lastChecked: clean(tool.verification.lastVerifiedRaw) || NOT_VERIFIED,
     limitations: splitPoints(tool.limitations),
@@ -129,7 +129,7 @@ function libraryAlternative(tool: LibraryTool): ToolDetailAlternative {
   const officialUrl = safeUrl(tool.officialUrl || tool.originalOfficialUrl);
   return {
     category: clean(tool.categories[0]) || "AI tool",
-    href: `/plutos-library/tool/${tool.slug}`,
+    href: `/tools/${tool.slug}`,
     logoUrl: getFaviconLogoUrl(officialUrl || tool.domain),
     name: tool.name,
     slug: tool.slug

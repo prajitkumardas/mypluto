@@ -132,7 +132,7 @@ function mapLibraryTool(tool: LibraryTool): CompareTool {
     primaryUseCases: tool.useCases,
     similarUseCases: tool.similarTools.map((item) => item.reason).filter(Boolean),
     logoUrl: getFaviconLogoUrl(tool.domain || tool.officialUrl || tool.originalOfficialUrl),
-    href: `/plutos-library/tool/${tool.slug}`,
+    href: `/tools/${tool.slug}`,
     officialUrl: tool.officialUrl || tool.originalOfficialUrl,
     chips: getChips({
       freePlan: tool.pricing.freePlanRaw || tool.pricing.freePlan,

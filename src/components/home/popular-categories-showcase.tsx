@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
-import { motion, type MotionValue, useReducedMotion, useScroll, useSpring, useTransform } from "motion/react";
+import { motion, type MotionValue, useScroll, useSpring, useTransform } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { PlutoButton } from "@/components/ui/pluto-button";
+import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { categories, type Category } from "@/lib/data";
 import styles from "./popular-categories-showcase.module.css";
 
@@ -52,7 +53,7 @@ const fallbackCardTheme = { accent: "#8b5cf6", accentRgb: "139, 92, 246" };
 export function PopularCategoriesShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
   const [stageRef, stageWidth] = useElementWidth<HTMLDivElement>();
-  const reducedMotion = Boolean(useReducedMotion());
+  const reducedMotion = useReducedMotionPreference();
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"]
@@ -80,7 +81,7 @@ export function PopularCategoriesShowcase() {
               style={reducedMotion ? undefined : { opacity: introOpacity, pointerEvents: introPointerEvents, y: introY, scale: introScale }}
             >
               <p className={styles.eyebrow}>Popular categories</p>
-              <h1 className={styles.title} id="popular-categories-title">Find AI for whatever<br />you&apos;re building.</h1>
+              <h2 className={styles.title} id="popular-categories-title">Find AI for whatever<br />you&apos;re building.</h2>
               <p className={styles.copy}>Explore tools by what you want to create, solve or automate.</p>
               <PlutoButton className={styles.introCta} href="/plutos-library" showArrow variant="secondary">
                 View all categories

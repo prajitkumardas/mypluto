@@ -43,9 +43,9 @@ export function DiscoverGuideSection() {
         <div aria-hidden="true" className={styles.textVeil} />
         <div className={styles.content}>
           <p className={styles.eyebrow}>Pluto Guides</p>
-          <h1 className={styles.title} id="discover-guide-title">
+          <h2 className={styles.title} id="discover-guide-title">
             Not sure where <span>to start?</span>
-          </h1>
+          </h2>
           <p className={styles.copy}>
             Tell Pluto what you need, and get AI tools matched to your workflow.
           </p>

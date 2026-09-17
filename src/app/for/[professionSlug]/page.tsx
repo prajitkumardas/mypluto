@@ -4,10 +4,18 @@ import { PageHeader } from "@/components/layout/page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { ToolCard } from "@/components/tools/tool-card";
 import { professions, tools } from "@/lib/data";
+import { createPageMetadata } from "@/lib/seo";
 
 type ProfessionPageProps = {
   params: Promise<{ professionSlug: string }>;
 };
+
+export async function generateMetadata({ params }: ProfessionPageProps): Promise<Metadata> {
+  const { professionSlug } = await params;
+  const profession = professions.find((item) => item.slug === professionSlug);
+  if (!profession) return createPageMetadata({ title: "Profession not found | Pluto Finds", description: "This profession guide could not be found.", path: `/for/${professionSlug}`, noIndex: true });
+  return createPageMetadata({ title: `AI Tools for ${profession.title} | Pluto Finds`, description: profession.copy, path: `/for/${profession.slug}` });
+}
 
 export default async function ProfessionPage({ params }: ProfessionPageProps) {
   const { professionSlug } = await params;
@@ -39,3 +47,4 @@ export default async function ProfessionPage({ params }: ProfessionPageProps) {
     </PageShell>
   );
 }
+import type { Metadata } from "next";

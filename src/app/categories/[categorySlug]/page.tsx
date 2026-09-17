@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CardGrid } from "@/components/layout/card-grid";
 import { PageHeader } from "@/components/layout/page-header";
@@ -6,10 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { ToolCard } from "@/components/tools/tool-card";
 import { getCategory, tools } from "@/lib/data";
+import { createPageMetadata } from "@/lib/seo";
 
 type CategoryPageProps = {
   params: Promise<{ categorySlug: string }>;
 };
+
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { categorySlug } = await params;
+  const category = getCategory(categorySlug);
+  if (!category) return createPageMetadata({ title: "Category not found | Pluto Finds", description: "This AI tool category could not be found.", path: `/categories/${categorySlug}`, noIndex: true });
+  return createPageMetadata({ title: `${category.name} AI Tools | Pluto Finds`, description: category.description, path: `/categories/${category.slug}` });
+}
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { categorySlug } = await params;

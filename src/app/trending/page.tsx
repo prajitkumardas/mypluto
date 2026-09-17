@@ -3,14 +3,9 @@ import { HeroVeil } from "@/components/shared/hero-veil";
 import { TrendingLeaderboard } from "@/components/trending/trending-leaderboard";
 import { getTrendingResponse } from "@/lib/trending";
 import styles from "@/components/trending/trending.module.css";
+import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Trending AI Tools - Pluto Finds",
-  description: "Explore AI tools gaining momentum across research, development, design, productivity and creative workflows.",
-  alternates: {
-    canonical: "/trending"
-  }
-};
+export const metadata: Metadata = createPageMetadata({ title: "Trending AI Tools | Pluto Finds", description: "Explore AI tools gaining momentum across research, development, design, productivity and creative workflows.", path: "/trending" });
 
 type TrendingPageProps = {
   searchParams: Promise<{

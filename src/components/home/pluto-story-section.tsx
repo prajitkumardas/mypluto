@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
+import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { BackgroundVideo } from "./background-video";
 import { SplitText } from "./split-text";
 import styles from "./pluto-story-section.module.css";
@@ -10,8 +11,7 @@ const PLUTO_STORY_TEXT = "\u201cMy name is Pluto. It\u2019s been a while since I
 
 export function PlutoStorySection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const prefersReducedMotion = useReducedMotion();
-  const reducedMotion = Boolean(prefersReducedMotion);
+  const reducedMotion = useReducedMotionPreference();
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,

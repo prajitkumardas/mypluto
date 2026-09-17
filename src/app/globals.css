@@ -100,6 +100,26 @@
   background: var(--background-page);
 }
 
+.skip-link {
+  position: fixed;
+  z-index: 1000;
+  top: max(0.75rem, var(--safe-area-top));
+  left: max(0.75rem, var(--safe-area-left));
+  transform: translateY(-160%);
+  border: 2px solid var(--border-focus);
+  border-radius: var(--radius-pill);
+  background: var(--background-elevated);
+  color: var(--text-primary);
+  padding: 0.75rem 1rem;
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  transition: transform var(--duration-fast) ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 .pwa-network-banner {
   position: fixed;
   z-index: 120;

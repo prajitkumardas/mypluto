@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { HeroVeil } from "@/components/shared/hero-veil";
 import { CategoryDiscoverFilters } from "@/components/library/category-discover-filters";
 import { CategoryNavigation } from "@/components/library/category-navigation";
@@ -10,6 +11,9 @@ import {
   plutosLibrary
 } from "@/lib/plutos-library";
 import styles from "./page.module.css";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({ title: "Discover AI Tools | Pluto Finds", description: "Browse and filter Pluto Finds' structured directory of AI tools.", path: "/plutos-library" });
 
 type PlutosLibraryPageProps = {
   searchParams: Promise<{

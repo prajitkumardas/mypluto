@@ -1,0 +1,7 @@
+export const faqStructuredItems = [
+  { question: "What is Pluto Finds?", answer: "Pluto Finds is a curated AI tools discovery platform. It organizes tools by category, use case, pricing, platform support and other practical details so you can evaluate useful options without opening dozens of tabs." },
+  { question: "How do I find the right AI tool?", answer: "Start in Pluto’s Library to search and filter the catalog, browse Pluto Guides for goal-based recommendations, check Trending to see what is gaining attention, or use Compare to review shortlisted tools side by side." },
+  { question: "What does it mean when a tool is verified?", answer: "Verification means the tool’s website availability, pricing and key features have been checked. AI can flag possible changes, but critical listing information is reviewed by an admin before it is published." },
+  { question: "How are Trending tools ranked?", answer: "Trending results reflect the selected time window and use Pluto trend snapshots when they are available. If those signals are unavailable, the experience falls back to popularity indicators from the curated library data." },
+  { question: "Can I submit an AI tool to Pluto Finds?", answer: "Yes. Use the Submit a Tool flow to share the product details, pricing, platform support and verification information. The submission can then be reviewed before it appears in the library." }
+] as const;

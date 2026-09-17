@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { PageShell } from "@/components/layout/page-shell";
 import { CompareExperience } from "@/components/compare/compare-experience";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata: Metadata = createPageMetadata({ title: "Compare AI Tools | Pluto Finds", description: "Compare up to four AI tools across pricing, capabilities, platforms and trust signals.", path: "/compare" });
 
 export default function ComparePage() {
   return (

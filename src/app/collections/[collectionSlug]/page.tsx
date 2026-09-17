@@ -4,10 +4,18 @@ import { PageHeader } from "@/components/layout/page-header";
 import { PageShell } from "@/components/layout/page-shell";
 import { ToolCard } from "@/components/tools/tool-card";
 import { collections, tools } from "@/lib/data";
+import { createPageMetadata } from "@/lib/seo";
 
 type CollectionPageProps = {
   params: Promise<{ collectionSlug: string }>;
 };
+
+export async function generateMetadata({ params }: CollectionPageProps): Promise<Metadata> {
+  const { collectionSlug } = await params;
+  const collection = collections.find((item) => item.slug === collectionSlug);
+  if (!collection) return createPageMetadata({ title: "Collection not found | Pluto Finds", description: "This curated collection could not be found.", path: `/collections/${collectionSlug}`, noIndex: true });
+  return createPageMetadata({ title: `${collection.name} | Pluto Finds`, description: collection.description, path: `/collections/${collection.slug}` });
+}
 
 export default async function CollectionPage({ params }: CollectionPageProps) {
   const { collectionSlug } = await params;
@@ -33,3 +41,4 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
     </PageShell>
   );
 }
+import type { Metadata } from "next";

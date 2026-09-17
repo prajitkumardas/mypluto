@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import styles from "./library-tool-card.module.css";
 
 export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
-  const detailHref = `/plutos-library/tool/${tool.slug}`;
+  const detailHref = `/tools/${tool.slug}`;
   const logoSrc = getFaviconLogoUrl(tool.domain || tool.officialUrl || tool.originalOfficialUrl);
   const verified = tool.verification.status.toLowerCase() === "verified";
 
