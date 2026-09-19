@@ -3,8 +3,9 @@
   z-index: 32;
   overflow: clip;
   background:
-    radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.2), transparent 36rem),
-    #05030a;
+    radial-gradient(circle at 18% 14%, rgba(124, 99, 255, 0.14), transparent 30rem),
+    radial-gradient(circle at 84% 56%, rgba(85, 230, 212, 0.07), transparent 28rem),
+    linear-gradient(180deg, #080817 0%, #0b0920 48%, #080817 100%);
   color: #ffffff;
 }
 

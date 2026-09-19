@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   motion,
   useMotionValueEvent,
@@ -12,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatedHeroBackground } from "@/components/shared/animated-hero-background";
 import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { PlutoButton } from "@/components/ui/pluto-button";
+import { CatExperience } from "./cat-experience";
 import { HeroParticleIntro } from "./hero-particle-intro";
 import styles from "./pluto-hero.module.css";
 
@@ -39,11 +39,6 @@ export function PlutoHero() {
   const catScale = useTransform(scrollYProgress, [0, 0.28, 0.55, 0.8, 1], [1, 1.03, 1.16, 1.22, 1.26]);
   const catOpacity = useTransform(scrollYProgress, [0, 0.42, 0.68, 1], [1, 1, 0.72, 0.48]);
   const catY = useTransform(scrollYProgress, [0, 0.48, 1], [0, 20, 46]);
-  const catFilter = useTransform(
-    scrollYProgress,
-    [0, 0.32, 0.56, 0.78, 1],
-    ["blur(0px) brightness(1)", "blur(3px) brightness(0.94)", "blur(12px) brightness(0.82)", "blur(20px) brightness(0.74)", "blur(26px) brightness(0.7)"]
-  );
   const greetingOpacity = useTransform(scrollYProgress, (value) => {
     if (value <= 0.1) return 1;
     if (value <= 0.3) return mapScrollRange(value, 0.1, 0.3, 1, 0.5);
@@ -124,46 +119,55 @@ export function PlutoHero() {
         <motion.div
           aria-hidden="true"
           className={styles.catLayer}
-          style={{ scale: prefersReducedMotion ? 1 : catScale, opacity: prefersReducedMotion ? 1 : catOpacity, y: prefersReducedMotion ? 0 : catY, filter: prefersReducedMotion ? "none" : catFilter }}
+          style={{ scale: prefersReducedMotion ? 1 : catScale, opacity: prefersReducedMotion ? 1 : catOpacity, y: prefersReducedMotion ? 0 : catY }}
         >
-          <motion.div
-            animate={{ opacity: introComplete ? 1 : 0, y: introComplete ? 0 : 52, scale: introComplete ? 1 : 0.92 }}
-            className={styles.catReveal}
-            initial={false}
-            transition={{ duration: 1.08, ease: heroMotion.ease }}
-          >
-            <Image
-              alt=""
-              className={styles.catImage}
-              height={1400}
-              priority
-              sizes="(max-width: 767px) 88vw, (max-width: 1180px) 58vw, 38vw"
-              src="/images/home/hero/pluto-cat-mascot.png"
-              width={1400}
-            />
-          </motion.div>
+          <CatExperience reduceMotion={prefersReducedMotion} visible={introComplete} />
         </motion.div>
 
         <motion.div
           className={styles.greetingState}
           style={{ opacity: prefersReducedMotion ? 1 : greetingOpacity, y: prefersReducedMotion ? 0 : greetingY }}
         >
-          <motion.div
-            animate={{ opacity: introComplete ? 1 : 0, y: introComplete ? 0 : 18 }}
-            initial={false}
-            transition={{ duration: 0.82, delay: introComplete ? 0.22 : 0, ease: heroMotion.ease }}
-          >
-            <p className={styles.greetingEyebrow}>Hey buddy,<span aria-hidden="true">{"\uD83D\uDC4B"}</span></p>
-            <h1 className={styles.greetingTitle} id="home-hero-title">Great to have you here!</h1>
-            <div className={styles.greetingActions}>
+          <div>
+            <motion.p
+              animate={{ opacity: introComplete ? 1 : 0, y: introComplete ? 0 : 14 }}
+              className={styles.greetingEyebrow}
+              initial={false}
+              transition={{ duration: 0.64, delay: introComplete ? 0.1 : 0, ease: heroMotion.ease }}
+            >
+              Hey buddy,<span aria-hidden="true">{"\uD83D\uDC4B"}</span>
+            </motion.p>
+            <motion.h1
+              animate={{ opacity: introComplete ? 1 : 0, y: introComplete ? 0 : 16 }}
+              className={styles.greetingTitle}
+              id="home-hero-title"
+              initial={false}
+              transition={{ duration: 0.68, delay: introComplete ? 0.18 : 0, ease: heroMotion.ease }}
+            >
+              Great to have you here!
+            </motion.h1>
+            <motion.p
+              animate={{ opacity: introComplete ? 1 : 0, y: introComplete ? 0 : 16 }}
+              className={styles.greetingCopy}
+              initial={false}
+              transition={{ duration: 0.68, delay: introComplete ? 0.28 : 0, ease: heroMotion.ease }}
+            >
+              Discover the best AI tools, handpicked and compared to help you explore, create, and do more.
+            </motion.p>
+            <motion.div
+              animate={{ opacity: introComplete ? 1 : 0, y: introComplete ? 0 : 16 }}
+              className={styles.greetingActions}
+              initial={false}
+              transition={{ duration: 0.68, delay: introComplete ? 0.38 : 0, ease: heroMotion.ease }}
+            >
               <PlutoButton href="/plutos-library" showArrow size="lg" variant="primary">
                 Discover AI Tools
               </PlutoButton>
               <PlutoButton href="/play" showArrow size="lg" variant="secondary">
                 Play with Me
               </PlutoButton>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </motion.div>
 
         <motion.div

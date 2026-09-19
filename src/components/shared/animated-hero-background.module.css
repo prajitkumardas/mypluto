@@ -13,6 +13,7 @@
   overflow: hidden;
   opacity: 0.6;
   filter: saturate(0.82) contrast(1.06);
+  mix-blend-mode: screen;
 }
 
 .moltenLayer canvas {

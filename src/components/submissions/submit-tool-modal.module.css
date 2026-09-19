@@ -74,7 +74,6 @@
 .stepItem[data-state="complete"] .stepCircle { border-color: rgba(139, 92, 246, 0.68); background: rgba(124, 58, 237, 0.2); color: #d8c7ff; }
 .mobileStepCopy { display: none; }
 
-.intro,
 .centerState,
 .successState {
   display: grid;
@@ -85,7 +84,6 @@
   text-align: center;
 }
 
-.intro h2,
 .centerState h2,
 .successState h2 {
   margin: 0;
@@ -97,7 +95,6 @@
   text-wrap: balance;
 }
 
-.intro > p,
 .centerState > p,
 .successState > p { max-width: 35rem; margin: 0; color: var(--text-secondary); line-height: 1.55; }
 
@@ -125,10 +122,6 @@
   transform: translateX(-50%);
   filter: drop-shadow(0 15px 14px rgba(0, 0, 0, 0.34));
 }
-
-.reassurance { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem 1.25rem; margin: 0.65rem 0 0.85rem; color: var(--text-tertiary); font-size: var(--text-label-sm); }
-.reassurance span { display: inline-flex; align-items: center; gap: 0.38rem; }
-.reassurance svg { width: 0.9rem; height: 0.9rem; color: #a78bfa; }
 
 .step { display: grid; min-height: 310px; grid-template-rows: auto 1fr auto; gap: 1.35rem; }
 .stepHeading { display: flex; max-width: calc(100% - 3.5rem); align-items: flex-start; gap: 0.8rem; }
@@ -242,13 +235,10 @@
   .mobileStepCopy span { color: var(--text-tertiary); font-size: .68rem; }
   .mobileStepCopy strong { color: #b99cff; font-size: var(--text-label-sm); }
   .twoColumns { grid-template-columns: 1fr; }
-  .intro,
   .centerState,
   .successState { min-height: 430px; }
-  .intro h2,
   .centerState h2,
   .successState h2 { font-size: clamp(1.65rem, 8vw, 2rem); }
-  .reassurance { display: grid; justify-items: center; gap: .5rem; }
   .stepActions > * { flex: 1 1 0; min-width: 0; }
   .centerActions { width: 100%; }
   .centerActions > * { width: 100%; }

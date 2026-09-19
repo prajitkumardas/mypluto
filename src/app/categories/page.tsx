@@ -37,10 +37,10 @@ export default function CategoriesPage() {
         eyebrow="Categories"
         title="Browse the AI ecosystem by work type."
       />
-      <label className="mt-8 flex min-h-14 max-w-[var(--text-width-md)] items-center gap-3 rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] px-4 shadow-[var(--shadow-xs)]">
+      <label className="pf-search-control mt-8 max-w-[var(--text-width-md)]" data-size="large">
         <Search aria-hidden="true" className="h-5 w-5 text-[var(--color-pluto-purple-300)]" />
         <span className="sr-only">Search categories</span>
-        <input className="w-full bg-transparent outline-none placeholder:text-[var(--text-tertiary)]" placeholder="Search categories" />
+        <input className="pf-input-reset" placeholder="Search categories" />
       </label>
       <CardGrid>
         {categories.map((category) => {

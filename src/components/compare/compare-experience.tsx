@@ -1,15 +1,16 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import Link from "next/link";
+import * as Select from "@radix-ui/react-select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Check, Copy, Loader2, Plus, Search, X } from "lucide-react";
+import { Check, ChevronDown, Copy, Loader2, Plus, Search, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { HeroVeil } from "@/components/shared/hero-veil";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { MAX_COMPARE_TOOLS, type RecentToolRecord, useCompareStore } from "@/lib/compare-store";
 import { compareTools, getCompareTool, getValidCompareSlugs, searchCompareTools, type CompareTool } from "@/lib/compare-tools";
+import { cn } from "@/lib/utils";
 import styles from "./compare-experience.module.css";
 
 type SelectorState =
@@ -127,11 +128,20 @@ export function CompareExperience() {
 
         <section className={styles.builder} aria-labelledby="comparison-builder-title">
           <div className={styles.builderHeader}>
-            <div>
+            <div className={styles.builderTitle}>
               <h2 id="comparison-builder-title">Your comparison</h2>
-              <p>{selectedTools.length} of {MAX_COMPARE_TOOLS} selected</p>
+              <p>Select 2 to 4 tools to start comparing.</p>
             </div>
-            <p className={styles.guidance}>{selectedTools.length === 0 ? "Choose at least two tools to begin." : compareReady ? "Ready to compare. You can still add or replace tools." : "Add at least one more tool."}</p>
+            <div className={styles.builderControls}>
+              <span className={styles.selectionCount} aria-live="polite">
+                <span aria-hidden="true" className={styles.selectionDot} />
+                {selectedTools.length} of {MAX_COMPARE_TOOLS} selected
+              </span>
+              <button className={styles.clearButton} disabled={selectedTools.length === 0} onClick={handleClear} type="button">
+                <Trash2 aria-hidden="true" />
+                Clear all
+              </button>
+            </div>
           </div>
 
           {!hydrated ? <BuilderSkeleton /> : null}
@@ -155,18 +165,17 @@ export function CompareExperience() {
           ) : null}
 
           <div className={styles.actions}>
-            <PlutoButton disabled={!compareReady} onClick={() => setHasCompared(true)} showArrow size="lg" type="button" variant="primary">
-              Compare tools
-            </PlutoButton>
-            <PlutoButton disabled={selectedTools.length === 0} onClick={handleClear} size="lg" type="button" variant="secondary">
-              Clear all
-            </PlutoButton>
-            {compareReady ? (
-              <PlutoButton onClick={shareComparison} size="lg" type="button" variant="secondary">
-                <Copy aria-hidden="true" className="h-4 w-4" />
-                {copied ? "Copied" : "Share comparison"}
+            <div className={styles.actionButtons}>
+              <PlutoButton className={styles.compareButton} disabled={!compareReady} onClick={() => setHasCompared(true)} showArrow size="lg" type="button" variant="primary">
+                Compare tools
               </PlutoButton>
-            ) : null}
+              {compareReady ? (
+                <PlutoButton onClick={shareComparison} size="lg" type="button" variant="secondary">
+                  <Copy aria-hidden="true" className="h-4 w-4" />
+                  {copied ? "Copied" : "Share comparison"}
+                </PlutoButton>
+              ) : null}
+            </div>
           </div>
           <div className="sr-only" aria-live="polite">{feedback}</div>
         </section>
@@ -176,9 +185,7 @@ export function CompareExperience() {
             <PlutoInsight tools={selectedTools} />
             <ComparisonMatrix tools={selectedTools} />
           </>
-        ) : (
-          <RecommendedTools selectedSlugs={validSlugs} onOpenSelector={() => setSelector({ mode: "add", slotIndex: selectedTools.length })} />
-        )}
+        ) : null}
       </section>
 
       <ToolSelector
@@ -217,8 +224,8 @@ function BuilderSkeleton() {
 function EmptySlot({ onSelect }: { onSelect: () => void }) {
   return (
     <button className={styles.emptySlot} onClick={onSelect} type="button">
-      <Plus aria-hidden="true" />
-      <span>Add a tool</span>
+      <span aria-hidden="true" className={styles.addIcon}><Plus /></span>
+      <span className={styles.emptySlotTitle}>Add a tool</span>
       <small>Search the Pluto library</small>
     </button>
   );
@@ -307,33 +314,6 @@ function formatMatrixValue(tool: CompareTool, field: (typeof rows)[number][1]) {
   return value || "Not available";
 }
 
-function RecommendedTools({ onOpenSelector, selectedSlugs }: { onOpenSelector: () => void; selectedSlugs: string[] }) {
-  const recommendations = compareTools.filter((tool) => !selectedSlugs.includes(tool.slug)).slice(0, 4);
-
-  return (
-    <section className={styles.recommended}>
-      <div className={styles.recommendedHeader}>
-        <div>
-          <h2>Recommended tools</h2>
-          <p>Start with popular, well-described records from the Pluto library.</p>
-        </div>
-        <PlutoButton onClick={onOpenSelector} type="button" variant="secondary">
-          <Plus aria-hidden="true" className="h-4 w-4" /> Add a tool
-        </PlutoButton>
-      </div>
-      <div className={styles.recommendedGrid}>
-        {recommendations.map((tool) => (
-          <Link className={styles.recommendedCard} href={`${tool.href}`} key={tool.slug}>
-            <ToolLogo className={styles.recommendedLogo} name={tool.name} src={tool.logoUrl} />
-            <span>{tool.name}</span>
-            <small>{tool.bestFor}</small>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function ToolSelector({
   onClose,
   onSelect,
@@ -351,10 +331,11 @@ function ToolSelector({
   const [category, setCategory] = useState("All categories");
 
   const results = useMemo(() => {
-    const base = searchCompareTools(query, selectedSlugs, 36).filter((tool) => category === "All categories" || tool.category === category);
-    return base.slice(0, 18);
+    return searchCompareTools(query, selectedSlugs, compareTools.length)
+      .filter((tool) => category === "All categories" || tool.category === category);
   }, [category, query, selectedSlugs]);
   const recentTools = recentlyViewed.map((item) => getCompareTool(item.slug)).filter(Boolean).slice(0, 4) as CompareTool[];
+  const isFiltered = Boolean(query.trim()) || category !== "All categories";
 
   return (
     <Dialog.Root open={Boolean(selector)} onOpenChange={(open) => !open && onClose()}>
@@ -377,31 +358,60 @@ function ToolSelector({
               <span className="sr-only">Search tools</span>
               <input autoFocus value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search tools, use cases, platforms..." />
             </label>
-            <label className="sr-only" htmlFor="compare-category">Category</label>
-            <select className="pf-select-trigger" id="compare-category" value={category} onChange={(event) => setCategory(event.target.value)}>
-              {categories.map((item) => <option key={item} value={item}>{item}</option>)}
-            </select>
+            <CategorySelect onChange={setCategory} value={category} />
           </div>
 
-          {recentTools.length > 0 && !query ? (
+          <div className={styles.selectorResults}>
+            {recentTools.length > 0 && !isFiltered ? (
+              <section className={styles.selectorSection}>
+                <h3>Recently viewed</h3>
+                <div className={styles.selectorGrid}>
+                  {recentTools.map((tool) => <SelectorTool key={tool.slug} selected={selectedSlugs.includes(tool.slug)} tool={tool} onSelect={onSelect} />)}
+                </div>
+              </section>
+            ) : null}
+
             <section className={styles.selectorSection}>
-              <h3>Recently viewed</h3>
+              <div className={styles.selectorSectionHeading}>
+                <h3>{isFiltered ? "Matching tools" : "All tools"}</h3>
+                <span>{results.length.toLocaleString()} {results.length === 1 ? "tool" : "tools"}</span>
+              </div>
+              {results.length === 0 ? <p className={styles.selectorStatus}>No tools match your search and category.</p> : null}
               <div className={styles.selectorGrid}>
-                {recentTools.map((tool) => <SelectorTool key={tool.slug} selected={selectedSlugs.includes(tool.slug)} tool={tool} onSelect={onSelect} />)}
+                {results.map((tool) => <SelectorTool key={tool.slug} selected={tool.alreadySelected} tool={tool} onSelect={onSelect} />)}
               </div>
             </section>
-          ) : null}
-
-          <section className={styles.selectorSection}>
-            <h3>{query ? "Search results" : "Recommended tools"}</h3>
-            {results.length === 0 ? <p className={styles.selectorStatus}>No tools match that search.</p> : null}
-            <div className={styles.selectorGrid}>
-              {results.map((tool) => <SelectorTool key={tool.slug} selected={tool.alreadySelected} tool={tool} onSelect={onSelect} />)}
-            </div>
-          </section>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  );
+}
+
+function CategorySelect({ onChange, value }: { onChange: (value: string) => void; value: string }) {
+  return (
+    <Select.Root value={value} onValueChange={onChange}>
+      <Select.Trigger className={cn("pf-select-trigger", styles.selectorCategoryTrigger)} aria-label="Filter comparison tools by category">
+        <Select.Value />
+        <Select.Icon asChild>
+          <ChevronDown aria-hidden="true" />
+        </Select.Icon>
+      </Select.Trigger>
+      <Select.Portal>
+        <Select.Content className={cn("pf-select-content", styles.selectorCategoryContent)} collisionPadding={16} position="popper" sideOffset={8}>
+          <Select.Viewport className={styles.selectorCategoryViewport}>
+            {categories.map((item) => (
+              <Select.Item className="pf-select-item" key={item} value={item}>
+                <Select.ItemText>{item}</Select.ItemText>
+                <Select.ItemIndicator>
+                  <Check aria-hidden="true" />
+                </Select.ItemIndicator>
+              </Select.Item>
+            ))}
+          </Select.Viewport>
+        </Select.Content>
+      </Select.Portal>
+    </Select.Root>
   );
 }
 

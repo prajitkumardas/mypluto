@@ -3,7 +3,7 @@ import Script from "next/script";
 import { Suspense, type ReactNode } from "react";
 import { LoadingProvider } from "@/components/loading/loading-provider";
 import { ScrollReset } from "@/components/shared/scroll-reset";
-import { SiteFooter } from "@/components/shared/site-footer";
+import { RouteSiteFooter } from "@/components/shared/route-site-footer";
 import { accentFont, bodyFont, displayFont } from "./fonts";
 import { SiteHeader } from "@/components/navigation/site-header";
 import { RouteTransition } from "@/components/navigation/route-transition";
@@ -109,7 +109,7 @@ export default function RootLayout({
               publisher: { "@id": `${SITE_URL}/#organization` },
               potentialAction: {
                 "@type": "SearchAction",
-                target: `${SITE_URL}/search?q={search_term_string}`,
+                target: `${SITE_URL}/plutos-library?q={search_term_string}`,
                 "query-input": "required name=search_term_string"
               }
             }
@@ -130,7 +130,9 @@ export default function RootLayout({
           <Suspense fallback={null}>
             <SubmitToolModal categories={plutosLibrary.categories.map(({ name, slug }) => ({ name, slug }))} />
           </Suspense>
-          <SiteFooter />
+          <Suspense fallback={null}>
+            <RouteSiteFooter />
+          </Suspense>
           <HydrationMarker />
         </LoadingProvider>
       </body>

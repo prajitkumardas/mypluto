@@ -145,7 +145,7 @@ export function CategoryDiscoverFilters({
     <form
       action={basePath}
       className={cn(
-        "relative z-50 rounded-[1.35rem] border border-[rgba(255,255,255,0.13)] bg-[rgba(29,29,42,0.86)] p-3 shadow-[0_16px_42px_rgba(0,0,0,0.24),inset_0_1px_0_rgba(255,255,255,0.045)] backdrop-blur-[18px] lg:p-4",
+        "pf-control-panel relative z-50 p-3 lg:p-4",
         isCataloguePlacement ? "m-0 w-full max-w-none" : "mx-auto mb-12 mt-8 max-w-[58rem]"
       )}
       onSubmit={(event) => {
@@ -155,11 +155,11 @@ export function CategoryDiscoverFilters({
       ref={rootRef}
     >
       <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_9.5rem_10.5rem]">
-        <label className="group flex min-h-14 items-center gap-4 rounded-full border border-[rgba(255,255,255,0.16)] bg-[rgba(21,21,31,0.7)] px-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.045)] backdrop-blur-xl transition focus-within:border-[rgba(156,122,255,0.48)] focus-within:ring-4 focus-within:ring-violet-500/12 sm:px-6">
+        <label className="pf-search-control group" data-size="large">
           <Search aria-hidden="true" className="h-5 w-5 shrink-0 text-violet-300" />
           <span className="sr-only">Search all AI tools</span>
           <input
-            className="h-full min-h-14 w-full rounded-full bg-transparent py-0 type-body-md text-white outline-none placeholder:text-white/44"
+            className="pf-input-reset h-full type-body-md"
             name="q"
             onChange={(event) => setQuery(event.target.value)}
             onKeyDown={(event) => {
@@ -185,10 +185,8 @@ export function CategoryDiscoverFilters({
 
         <button
           aria-expanded={filtersOpen}
-          className={cn(
-            "inline-flex min-h-14 items-center justify-center gap-2 rounded-full border px-5 type-label-md text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-xl transition hover:border-violet-300/30 hover:bg-violet-500/12 focus:outline-none focus:ring-4 focus:ring-violet-500/14",
-            filtersOpen || activeFilterCount > 0 ? "border-[rgba(168,137,255,0.34)] bg-[rgba(111,82,255,0.16)]" : "border-[rgba(255,255,255,0.16)] bg-[rgba(21,21,31,0.66)]"
-          )}
+          className="pf-filter-trigger"
+          data-active={filtersOpen || activeFilterCount > 0 ? "true" : undefined}
           onClick={() => {
             setOpenDropdown(null);
             setFiltersOpen((open) => !open);
@@ -214,7 +212,7 @@ export function CategoryDiscoverFilters({
       </div>
 
       {filtersOpen ? (
-        <div className="absolute left-3 right-3 top-[calc(100%+0.75rem)] z-[90] rounded-[1.35rem] border border-[rgba(255,255,255,0.13)] bg-[rgba(29,29,42,0.94)] p-4 shadow-[0_24px_72px_rgba(0,0,0,0.46),inset_0_1px_0_rgba(255,255,255,0.045)] backdrop-blur-[18px] lg:left-auto lg:right-4 lg:w-[42rem]">
+        <div className="pf-popover absolute left-3 right-3 top-[calc(100%+0.75rem)] z-[90] p-4 lg:left-auto lg:right-4 lg:w-[42rem]">
           <div className="grid gap-3 md:grid-cols-2">
             <FilterDropdown
               isOpen={openDropdown === "category"}
@@ -308,10 +306,8 @@ function FilterDropdown({
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-label={label}
-        className={cn(
-          "flex min-h-14 w-full items-center justify-between gap-4 rounded-full border px-5 py-0 text-left type-label-md text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-xl transition hover:border-violet-300 focus:border-violet-300 focus:outline-none focus:ring-4 focus:ring-violet-500/18",
-          value ? "border-[rgba(168,137,255,0.34)] bg-[rgba(111,82,255,0.16)]" : "border-[rgba(255,255,255,0.16)] bg-[rgba(21,21,31,0.66)]"
-        )}
+        className="pf-select-trigger"
+        data-active={value ? "true" : undefined}
         onClick={onToggle}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
@@ -327,7 +323,7 @@ function FilterDropdown({
 
       {isOpen ? (
         <div
-          className="absolute left-0 right-0 z-50 mt-2 max-h-72 overflow-auto rounded-[1.35rem] border border-[rgba(255,255,255,0.13)] bg-[rgba(29,29,42,0.96)] p-1.5 shadow-[0_22px_60px_rgba(0,0,0,0.42)] backdrop-blur-xl"
+          className="pf-select-content absolute left-0 right-0 z-50 mt-2 max-h-72 overflow-auto p-1.5"
           role="listbox"
         >
           {options.map((option) => {
@@ -336,10 +332,7 @@ function FilterDropdown({
             return (
               <button
                 aria-selected={isSelected}
-                className={cn(
-                  "flex min-h-11 w-full items-center justify-between gap-3 rounded-full px-4 py-2 text-left type-label-md text-white/78 transition hover:bg-white/8 hover:text-white",
-                  isSelected && "bg-violet-500/18 text-white"
-                )}
+                className="pf-select-item"
                 key={`${name}-${option.value || "all"}`}
                 onClick={() => onChange(option.value)}
                 role="option"

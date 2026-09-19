@@ -6,7 +6,7 @@ export const submissionSteps = [
   { id: "review", label: "Review" }
 ] as const;
 
-export type SubmissionStage = "intro" | "resume" | "identity" | "checking" | "duplicate" | "product" | "submitter" | "review" | "submitting" | "success";
+export type SubmissionStage = "identity" | "checking" | "duplicate" | "product" | "submitter" | "review" | "submitting" | "success";
 
 export type ToolSubmissionDraft = {
   toolName: string;

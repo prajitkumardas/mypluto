@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { VisualEffectBoundary } from "@/components/shared/visual-effect-boundary";
 import { cn } from "@/lib/utils";
 import { useWebGLSupport } from "@/lib/webgl-support";
+import styles from "./hero-veil.module.css";
 
 const DarkVeil = dynamic(
   () => import("@/components/shared/dark-veil").then((module) => module.DarkVeil),
@@ -18,7 +19,7 @@ export function HeroVeil({ className }: HeroVeilProps) {
   const webgl = useWebGLSupport();
 
   return (
-    <div aria-hidden="true" className={cn("pointer-events-none absolute left-0 right-0 top-0 z-0 overflow-hidden", className)}>
+    <div aria-hidden="true" className={cn(styles.root, "pointer-events-none absolute left-0 right-0 top-0 z-0 overflow-hidden", className)}>
       {webgl.available ? (
         <VisualEffectBoundary>
           <DarkVeil
@@ -31,7 +32,7 @@ export function HeroVeil({ className }: HeroVeilProps) {
           />
         </VisualEffectBoundary>
       ) : null}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(124,99,255,0.24),transparent_28rem),linear-gradient(180deg,rgba(8,8,23,0.18),#080817_92%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_10%,rgba(124,99,255,0.24),transparent_28rem),linear-gradient(180deg,rgba(8,8,23,0.18),var(--background-page)_92%)]" />
     </div>
   );
 }

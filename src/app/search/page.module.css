@@ -3,8 +3,8 @@
   --hero-search-width: 42.5rem;
   --hero-radius: 999px;
 
-  min-height: 100svh;
-  overflow: clip;
+  height: 100svh;
+  overflow: hidden;
   background: var(--search-navy);
 }
 
@@ -12,7 +12,8 @@
   position: relative;
   isolation: isolate;
   display: grid;
-  min-height: min(100svh, 58rem);
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
   place-items: center;
   background:
@@ -57,41 +58,26 @@
   text-align: center;
 }
 
-.resultsSection {
-  position: relative;
-  z-index: 4;
-  background: #f7f7fa;
-  padding: clamp(3rem, 6vw, 5rem) var(--page-gutter) 0;
-}
-
-.resultsInner {
-  width: min(100%, var(--page-max));
-  margin-inline: auto;
-}
-
 @media (max-width: 767px) {
   .page {
     --hero-search-width: 100%;
   }
 
   .hero {
-    min-height: 100svh;
+    height: 100%;
+    min-height: 0;
     padding-top: calc(6.5rem + env(safe-area-inset-top));
-    padding-bottom: 3rem;
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
   }
 
   .heroContent {
     width: min(100%, 34rem);
   }
-
-  .resultsSection {
-    padding-top: 2.5rem;
-  }
 }
 
 @media (max-height: 680px) and (min-width: 768px) {
   .hero {
-    min-height: 42rem;
+    min-height: 0;
     padding-top: 7rem;
     padding-bottom: 3.5rem;
   }

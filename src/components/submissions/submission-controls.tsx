@@ -1,5 +1,7 @@
 "use client";
 
+import * as Select from "@radix-ui/react-select";
+import { Check, ChevronDown } from "lucide-react";
 import type { ChangeEvent, ReactNode } from "react";
 import styles from "./submit-tool-modal.module.css";
 
@@ -18,7 +20,7 @@ export function SubmissionField({ error, label, name, onChange, placeholder, typ
   return (
     <label className={styles.field}>
       <span>{label}</span>
-      <input aria-describedby={error ? errorId : undefined} aria-invalid={Boolean(error)} autoFocus={autoFocus} inputMode={inputMode} name={name} onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(event.target.value)} placeholder={placeholder} type={type} value={value} />
+      <input className="pf-field-control" aria-describedby={error ? errorId : undefined} aria-invalid={Boolean(error)} autoFocus={autoFocus} inputMode={inputMode} name={name} onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(event.target.value)} placeholder={placeholder} type={type} value={value} />
       {error ? <small className={styles.fieldError} id={errorId} role="alert">{error}</small> : null}
     </label>
   );
@@ -35,15 +37,34 @@ export function SubmissionSelect({ error, label, name, onChange, options, placeh
 }) {
   const normalized = options.map((option) => typeof option === "string" ? { label: option, value: option } : option);
   const errorId = `${name}-error`;
+  const labelId = `${name}-label`;
   return (
-    <label className={styles.field}>
-      <span>{label}</span>
-      <select aria-describedby={error ? errorId : undefined} aria-invalid={Boolean(error)} name={name} onChange={(event) => onChange(event.target.value)} value={value}>
-        <option value="">{placeholder}</option>
-        {normalized.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-      </select>
+    <div className={styles.field}>
+      <span id={labelId}>{label}</span>
+      <Select.Root name={name} onValueChange={onChange} value={value}>
+        <Select.Trigger className="pf-select-trigger" aria-describedby={error ? errorId : undefined} aria-invalid={Boolean(error)} aria-labelledby={labelId}>
+          <Select.Value placeholder={placeholder} />
+          <Select.Icon asChild>
+            <ChevronDown aria-hidden="true" className="h-4 w-4" />
+          </Select.Icon>
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Content className="pf-select-content z-[230] max-h-72" collisionPadding={16} position="popper" sideOffset={8}>
+            <Select.Viewport className="p-1.5">
+              {normalized.map((option) => (
+                <Select.Item className="pf-select-item" key={option.value} value={option.value}>
+                  <Select.ItemText>{option.label}</Select.ItemText>
+                  <Select.ItemIndicator>
+                    <Check aria-hidden="true" className="h-4 w-4 text-lime-300" />
+                  </Select.ItemIndicator>
+                </Select.Item>
+              ))}
+            </Select.Viewport>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
       {error ? <small className={styles.fieldError} id={errorId} role="alert">{error}</small> : null}
-    </label>
+    </div>
   );
 }
 

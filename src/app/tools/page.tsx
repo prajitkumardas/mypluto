@@ -47,11 +47,11 @@ export default function ToolsPage() {
             />
 
             <div className="mt-8 rounded-[var(--radius-2xl)] border border-[var(--border-default)] bg-[var(--surface-raised)] p-3 shadow-[var(--shadow-xs)]">
-              <label className="flex min-h-14 items-center gap-3 rounded-[var(--radius-xl)] bg-[var(--background-interactive)] px-4">
+              <label className="pf-search-control" data-size="large">
                 <Search aria-hidden="true" className="h-5 w-5 text-[var(--color-pluto-purple-300)]" />
                 <span className="sr-only">Search within tools</span>
                 <input
-                  className="w-full bg-transparent type-body-md outline-none placeholder:text-[var(--text-tertiary)]"
+                  className="pf-input-reset type-body-md"
                   placeholder="Search by tool, feature, use case or profession"
                 />
               </label>
@@ -103,7 +103,7 @@ function FilterGroup({ title, values }: { title: string; values: string[] }) {
             className="flex min-h-11 items-center gap-3 rounded-[var(--radius-md)] border border-[var(--border-default)] px-3 type-label-md text-[var(--text-secondary)] transition hover:border-[var(--border-brand)] hover:text-[var(--text-primary)]"
             key={value}
           >
-            <input className="h-4 w-4 accent-[var(--action-primary)]" defaultChecked={index === 0} type="checkbox" />
+            <input className="pf-choice-input" defaultChecked={index === 0} type="checkbox" />
             {value}
           </label>
         ))}

@@ -7,7 +7,7 @@
     radial-gradient(circle at 50% 4%, rgba(124, 99, 255, 0.24), transparent 30rem),
     radial-gradient(circle at 22% 16%, rgba(103, 70, 219, 0.18), transparent 24rem),
     radial-gradient(circle at 78% 22%, rgba(168, 117, 255, 0.13), transparent 28rem),
-    #060610;
+    var(--background-page);
   color: #ffffff;
 }
 

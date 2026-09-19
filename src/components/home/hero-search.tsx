@@ -1,21 +1,28 @@
 "use client";
 
 import { ArrowRight, Loader2, Search } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { useGlobalLoading } from "@/components/loading/loading-provider";
+import { ToolLogo } from "@/components/shared/tool-logo";
 import type { HeroSearchResponse, HeroSearchResult } from "./hero.types";
 import styles from "./pluto-hero.module.css";
 
 type SearchStatus = "idle" | "loading" | "success" | "empty" | "error";
 
 type HeroSearchProps = {
+  autoFocus?: boolean;
   initialQuery?: string;
   resultsPath?: string;
+  submitToResultsPage?: boolean;
 };
 
-export function HeroSearch({ initialQuery = "", resultsPath = "/search" }: HeroSearchProps) {
+export function HeroSearch({
+  autoFocus = false,
+  initialQuery = "",
+  resultsPath = "/search",
+  submitToResultsPage = false
+}: HeroSearchProps) {
   const router = useRouter();
   const { startLoading } = useGlobalLoading();
   const listboxId = useId();
@@ -80,7 +87,9 @@ export function HeroSearch({ initialQuery = "", resultsPath = "/search" }: HeroS
   const submitSearch = () => {
     const trimmed = query.trim();
     if (!trimmed) return;
-    const exact = results.find((result) => result.name.toLowerCase() === trimmed.toLowerCase());
+    const exact = submitToResultsPage
+      ? undefined
+      : results.find((result) => result.name.toLowerCase() === trimmed.toLowerCase());
     startLoading();
     router.push(exact?.href ?? `${resultsPath}?q=${encodeURIComponent(trimmed)}`);
     setOpen(false);
@@ -121,6 +130,7 @@ export function HeroSearch({ initialQuery = "", resultsPath = "/search" }: HeroS
           aria-autocomplete="list"
           aria-controls={listboxId}
           aria-expanded={open}
+          autoFocus={autoFocus}
           autoComplete="off"
           className={styles.searchInput}
           name="q"
@@ -185,13 +195,7 @@ export function HeroSearch({ initialQuery = "", resultsPath = "/search" }: HeroS
                   role="option"
                   type="button"
                 >
-                  <span className={styles.resultLogo}>
-                    {result.logoUrl ? (
-                      <Image alt="" fill sizes="40px" src={result.logoUrl} />
-                    ) : (
-                      <Search aria-hidden="true" />
-                    )}
-                  </span>
+                  <ToolLogo className={styles.resultLogo} name={result.name} src={result.logoUrl} />
                   <span className={styles.resultText}>
                     <span className={styles.resultName}>{result.name}</span>
                     <span className={styles.resultDescription}>{result.shortDescription}</span>

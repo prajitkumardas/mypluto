@@ -4,7 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import { AlertTriangle, Check, CheckCircle2, FileCheck2, Fingerprint, LockKeyhole, Mail, PawPrint, RotateCcw, Search, ShieldCheck, Sparkles, Users, X } from "lucide-react";
+import { AlertTriangle, Check, CheckCircle2, FileCheck2, Fingerprint, LockKeyhole, Mail, PawPrint, Search, ShieldCheck, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useGlobalLoading } from "@/components/loading/loading-provider";
 import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
@@ -27,9 +27,8 @@ type StoredDraft = { draft: ToolSubmissionDraft; stage: SubmissionStage; timesta
 export function SubmitToolModal({ categories }: { categories: SubmissionCategory[] }) {
   const { startLoading } = useGlobalLoading();
   const [open, setOpen] = useState(false);
-  const [stage, setStage] = useState<SubmissionStage>("intro");
+  const [stage, setStage] = useState<SubmissionStage>("identity");
   const [draft, setDraft] = useState<ToolSubmissionDraft>(emptySubmissionDraft);
-  const [savedDraft, setSavedDraft] = useState<StoredDraft | null>(null);
   const [duplicate, setDuplicate] = useState<DuplicateTool | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [requestError, setRequestError] = useState("");
@@ -49,8 +48,10 @@ export function SubmitToolModal({ categories }: { categories: SubmissionCategory
   const openModal = useCallback(() => {
     triggerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const saved = readLocalRecord<StoredDraft>(DRAFT_KEY, DRAFT_VERSION);
-    setSavedDraft(saved && hasMeaningfulDraft(saved.draft) ? saved : null);
-    setStage(saved && hasMeaningfulDraft(saved.draft) ? "resume" : "intro");
+    setDraft(saved && hasMeaningfulDraft(saved.draft) ? saved.draft : emptySubmissionDraft);
+    setStage("identity");
+    setDuplicate(null);
+    setErrors({});
     setRequestError("");
     setOpen(true);
   }, []);
@@ -73,7 +74,7 @@ export function SubmitToolModal({ categories }: { categories: SubmissionCategory
   useEffect(() => () => requestRef.current?.abort(), []);
 
   useEffect(() => {
-    if (!open || !hasMeaningfulDraft(draft) || stage === "intro" || stage === "resume" || stage === "success") return;
+    if (!open || !hasMeaningfulDraft(draft) || stage === "success") return;
     writeLocalRecord<StoredDraft>(DRAFT_KEY, DRAFT_VERSION, { draft, stage: persistableStage(stage), timestamp: new Date().toISOString() });
   }, [draft, open, stage]);
 
@@ -140,15 +141,6 @@ export function SubmitToolModal({ categories }: { categories: SubmissionCategory
     if (!nextOpen) window.setTimeout(() => triggerRef.current?.focus(), 0);
   };
 
-  const startOver = () => {
-    removeLocalRecord(DRAFT_KEY);
-    setDraft(emptySubmissionDraft);
-    setDuplicate(null);
-    setSavedDraft(null);
-    setErrors({});
-    go("identity");
-  };
-
   const closeAndNavigate = (href: string) => {
     startLoading();
     setOpen(false);
@@ -159,9 +151,7 @@ export function SubmitToolModal({ categories }: { categories: SubmissionCategory
   const content = renderStage();
 
   function renderStage() {
-    if (stage === "intro") return <Intro onStart={() => go("identity")} />;
-    if (stage === "resume") return <Resume onContinue={() => { if (savedDraft) { setDraft(savedDraft.draft); go(persistableStage(savedDraft.stage)); } }} onStartOver={startOver} />;
-    if (stage === "identity") return <StepFrame icon={<Fingerprint />} title="Tool identity" copy="Let's start with the basics." back={() => go("intro", -1)} next={checkDuplicate}><div className={styles.fieldStack}><SubmissionField autoFocus error={errors.toolName} label="Tool name *" name="toolName" onChange={(value) => updateDraft("toolName", value)} placeholder="Example: Pluto Studio" value={draft.toolName} /><SubmissionField error={errors.officialUrl} inputMode="url" label="Official website URL *" name="officialUrl" onChange={(value) => updateDraft("officialUrl", value)} placeholder="https://example.com" type="url" value={draft.officialUrl} /></div></StepFrame>;
+    if (stage === "identity") return <StepFrame icon={<Fingerprint />} title="Tool identity" copy="Let's start with the basics." back={() => handleOpenChange(false)} next={checkDuplicate}><div className={styles.fieldStack}><SubmissionField autoFocus error={errors.toolName} label="Tool name *" name="toolName" onChange={(value) => updateDraft("toolName", value)} placeholder="Example: Pluto Studio" value={draft.toolName} /><SubmissionField error={errors.officialUrl} inputMode="url" label="Official website URL *" name="officialUrl" onChange={(value) => updateDraft("officialUrl", value)} placeholder="https://example.com" type="url" value={draft.officialUrl} /></div></StepFrame>;
     if (stage === "checking") return <Checking />;
     if (stage === "duplicate") return <DuplicateResult duplicate={duplicate} error={requestError} onBack={() => go("identity", -1)} onContinue={() => { updateDraft("duplicateOverride", Boolean(duplicate)); go("product"); }} onRetry={checkDuplicate} onView={(slug) => closeAndNavigate(`/tools/${slug}`)} />;
     if (stage === "product") return <ProductStep categories={categories} draft={draft} errors={errors} update={updateDraft} onBack={() => go("duplicate", -1)} onContinue={() => { const nextErrors = validateProduct(draft); if (Object.keys(nextErrors).length) setErrors(nextErrors); else go("submitter"); }} />;
@@ -174,7 +164,7 @@ export function SubmitToolModal({ categories }: { categories: SubmissionCategory
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={cn(styles.modal, (stage === "intro" || stage === "success") && styles.mascotModal)} onEscapeKeyDown={(event) => busy && event.preventDefault()} onInteractOutside={(event) => busy && event.preventDefault()}>
+        <Dialog.Content className={cn(styles.modal, stage === "success" && styles.mascotModal)} onEscapeKeyDown={(event) => busy && event.preventDefault()} onInteractOutside={(event) => busy && event.preventDefault()}>
           {!busy && stage !== "success" ? <Dialog.Close asChild><button aria-label="Close submission" className={styles.closeButton} type="button"><X /></button></Dialog.Close> : null}
           {stepIndex >= 0 ? <SubmissionStepper current={stepIndex} /> : null}
           <div className={styles.contentViewport}>
@@ -188,14 +178,6 @@ export function SubmitToolModal({ categories }: { categories: SubmissionCategory
       </Dialog.Portal>
     </Dialog.Root>
   );
-}
-
-function Intro({ onStart }: { onStart: () => void }) {
-  return <div className={styles.intro}><Mascot /><Dialog.Title>Submit an AI tool<br />for verification.</Dialog.Title><Dialog.Description>Know a great AI tool?<br />Help Pluto add it to the galaxy.</Dialog.Description><div className={styles.reassurance}><span><LockKeyhole />No account required</span><span><Sparkles />Quick submission</span><span><Users />Helps the community</span></div><PlutoButton onClick={onStart} showArrow size="lg" type="button" variant="primary">Let&apos;s submit</PlutoButton></div>;
-}
-
-function Resume({ onContinue, onStartOver }: { onContinue: () => void; onStartOver: () => void }) {
-  return <div className={styles.centerState}><span className={styles.largeIcon}><RotateCcw /></span><Dialog.Title>Continue your submission?</Dialog.Title><Dialog.Description>Pluto saved your progress on this device.</Dialog.Description><div className={styles.centerActions}><PlutoButton onClick={onContinue} showArrow type="button">Continue draft</PlutoButton><PlutoButton onClick={onStartOver} type="button" variant="secondary">Start over</PlutoButton></div></div>;
 }
 
 function Mascot() {

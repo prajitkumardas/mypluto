@@ -65,6 +65,7 @@ await call("Emulation.setDeviceMetricsOverride", {
 await call("Page.navigate", { url: `${origin}/plutos-library` });
 await waitFor(`location.pathname === "/plutos-library"`);
 await waitFor(`document.readyState !== "loading" && Boolean(document.querySelector('[data-search-action="true"]'))`);
+await waitFor(`document.querySelectorAll('a[href^="/tools/"]').length > 0`);
 await evaluate(`sessionStorage.setItem("pluto_intro_seen", "true"); document.documentElement.dataset.plutoIntroSeen = "true"; window.scrollTo(0, 1200); true`);
 await delay(150);
 
@@ -72,15 +73,15 @@ const sourceScroll = await evaluate("window.scrollY");
 assert.ok(sourceScroll > 500, "Source page did not scroll before Search navigation");
 await evaluate(`document.querySelector('[data-search-action="true"]').click(); true`);
 await waitFor(`location.pathname === "/search"`);
-const firstSearchScroll = await evaluate("window.scrollY");
 await waitFor(`Boolean(document.querySelector("#search-page-title"))`);
-await waitFor(`document.querySelectorAll('a[href^="/plutos-library/tool/"]').length > 0`);
+await waitFor(`window.scrollY === 0`);
+await waitFor(`!document.querySelector("footer")`);
+const firstSearchScroll = await evaluate("window.scrollY");
 
 const desktop = await evaluate(`(() => {
   const action = document.querySelector('[data-search-action="true"]');
   const title = document.querySelector("#search-page-title");
-  const heroForm = title.closest("section").querySelector('form[action="/search"]');
-  const filterForm = [...document.querySelectorAll('form[action="/search"]')].find((form) => form !== heroForm);
+  const heroForm = title.closest("section").querySelector('form[action="/plutos-library"]');
   return {
     pathname: location.pathname,
     scrollY,
@@ -88,28 +89,21 @@ const desktop = await evaluate(`(() => {
     searchActive: action.getAttribute("aria-current"),
     canvasCount: document.querySelectorAll("canvas").length,
     heroForm: Boolean(heroForm),
-    filterForm: Boolean(filterForm),
-    resultCards: document.querySelectorAll('a[href^="/plutos-library/tool/"]').length,
-    overflow: document.documentElement.scrollWidth > innerWidth
+    footerCount: document.querySelectorAll("footer").length,
+    resultCards: document.querySelectorAll('a[href^="/tools/"]').length,
+    horizontalOverflow: document.documentElement.scrollWidth > innerWidth,
+    verticalOverflow: document.documentElement.scrollHeight > innerHeight
   };
 })()`);
 
 assert.equal(firstSearchScroll, 0, "Search route commits at scrollY 0");
 assert.equal(desktop.searchActive, "page", "Search action exposes the active route");
 assert.ok(desktop.canvasCount <= 1, "Search page mounts at most one optional animated background canvas");
-assert.ok(desktop.heroForm && desktop.filterForm, "Search and filter interfaces are present");
-assert.equal(desktop.overflow, false, "Desktop Search page has no horizontal overflow");
-await evaluate(`[...document.querySelectorAll('form[action="/search"] button')].find((button) => button.textContent.includes("Filters")).click(); true`);
-await waitFor(`Boolean(document.querySelector('button[aria-label="Category"]'))`);
-await evaluate(`document.querySelector('button[aria-label="Category"]').click(); true`);
-await waitFor(`document.querySelectorAll('[role="listbox"] [role="option"]').length > 10`);
-const filterInteraction = await evaluate(`({
-  categoryOptions: document.querySelectorAll('[role="listbox"] [role="option"]').length,
-  categoryControlHeight: document.querySelector('button[aria-label="Category"]').getBoundingClientRect().height
-})`);
-assert.ok(filterInteraction.categoryOptions > 10, "Category filter exposes the existing category choices");
-assert.ok(filterInteraction.categoryControlHeight >= 44, "Filter controls keep accessible touch sizing");
-await evaluate(`document.querySelector('button[aria-label="Category"]').click(); true`);
+assert.equal(desktop.heroForm, true, "Focused Search interface is present");
+assert.equal(desktop.footerCount, 0, "Focused Search page does not render below-page footer content");
+assert.equal(desktop.resultCards, 0, "Focused Search page does not render Discover result cards");
+assert.equal(desktop.horizontalOverflow, false, "Desktop Search page has no horizontal overflow");
+assert.equal(desktop.verticalOverflow, false, "Desktop Search page has no page scroll");
 
 await evaluate(`(() => {
   const input = document.querySelector("#search-page-title").closest("section").querySelector('input[name="q"]');
@@ -119,7 +113,7 @@ await evaluate(`(() => {
   input.closest("form").requestSubmit();
   return true;
 })()`);
-await waitFor(`location.pathname === "/search" && new URLSearchParams(location.search).get("q") === "video"`);
+await waitFor(`location.pathname === "/plutos-library" && new URLSearchParams(location.search).get("q") === "video"`);
 await waitFor(`document.body.textContent.includes("Search: video")`);
 const queryState = await evaluate(`({
   query: new URLSearchParams(location.search).get("q"),
@@ -157,11 +151,14 @@ await delay(650);
 const mobile = await evaluate(`(() => {
   const title = document.querySelector("#search-page-title");
   const hero = title.closest("section");
-  const form = hero.querySelector('form[action="/search"]');
+  const form = hero.querySelector('form[action="/plutos-library"]');
   const button = form.querySelector('button[type="submit"]');
   return {
     width: innerWidth,
-    overflow: document.documentElement.scrollWidth > innerWidth,
+    horizontalOverflow: document.documentElement.scrollWidth > innerWidth,
+    verticalOverflow: document.documentElement.scrollHeight > innerHeight,
+    footerCount: document.querySelectorAll("footer").length,
+    resultCards: document.querySelectorAll('a[href^="/tools/"]').length,
     titleSize: getComputedStyle(title).fontSize,
     formBottom: form.getBoundingClientRect().bottom,
     buttonHeight: button.getBoundingClientRect().height,
@@ -169,7 +166,10 @@ const mobile = await evaluate(`(() => {
     canvasCount: document.querySelectorAll("canvas").length
   };
 })()`);
-assert.equal(mobile.overflow, false, "Mobile Search page has no horizontal overflow");
+assert.equal(mobile.horizontalOverflow, false, "Mobile Search page has no horizontal overflow");
+assert.equal(mobile.verticalOverflow, false, "Mobile Search page has no page scroll");
+assert.equal(mobile.footerCount, 0, "Mobile Search page has no footer below the search experience");
+assert.equal(mobile.resultCards, 0, "Mobile Search page has no Discover content below it");
 assert.ok(mobile.buttonHeight >= 44, "Mobile search action is at least 44px tall");
 assert.ok(mobile.formBottom <= mobile.heroHeight, "Mobile search form remains inside the hero");
 assert.ok(mobile.canvasCount <= 1, "Mobile Search keeps the animated background optional");
@@ -190,4 +190,4 @@ assert.equal(reducedMotion.canvasCount, 0, "Reduced motion uses the static backg
 assert.equal(reducedMotion.titleVisible, true, "Reduced-motion Search content remains visible");
 
 socket.close();
-console.log(JSON.stringify({ sourceScroll, firstSearchScroll, desktop, filterInteraction, queryState, home, mobile, reducedMotion, status: "passed" }, null, 2));
+console.log(JSON.stringify({ sourceScroll, firstSearchScroll, desktop, queryState, home, mobile, reducedMotion, status: "passed" }, null, 2));

@@ -5,7 +5,7 @@
   overflow: hidden;
   background:
     radial-gradient(circle at 50% 4%, rgba(124, 99, 255, 0.18), transparent 30rem),
-    #060610;
+    var(--background-page);
   color: #ffffff;
   text-align: center;
 }
@@ -250,7 +250,7 @@
   height: 100dvh;
   min-height: 0;
   overflow: hidden;
-  background: #060610;
+  background: var(--background-page);
 }
 
 .gameStage::before,

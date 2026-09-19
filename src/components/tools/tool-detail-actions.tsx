@@ -75,13 +75,13 @@ export function ToolDetailActions({ officialUrl, toolName, toolSlug }: ToolDetai
               <input name="toolSlug" type="hidden" value={toolSlug} />
               <label>
                 <span>Issue type</span>
-                <select name="reason" defaultValue={reportReasons[0]}>
+                <select className="pf-field-control" name="reason" defaultValue={reportReasons[0]}>
                   {reportReasons.map((reason) => <option key={reason} value={reason}>{reason}</option>)}
                 </select>
               </label>
               <label>
                 <span>What should we verify?</span>
-                <textarea name="details" rows={4} placeholder="Add a short note for the PlutoFinds verification queue." />
+                <textarea className="pf-field-control" name="details" rows={4} placeholder="Add a short note for the PlutoFinds verification queue." />
               </label>
               <div className={styles.dialogActions}>
                 <Dialog.Close asChild>

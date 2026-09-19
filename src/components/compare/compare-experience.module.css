@@ -67,8 +67,7 @@
 
 .builder,
 .insight,
-.matrixShell,
-.recommended {
+.matrixShell {
   border: 1px solid var(--border-default);
   background: var(--surface-raised);
   box-shadow: var(--shadow-md);
@@ -76,21 +75,44 @@
 }
 
 .builder {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   margin-top: clamp(1.6rem, 3vw, 2.1rem);
-  border-radius: 1.35rem;
-  padding: clamp(1rem, 2.2vw, 1.45rem);
+  border-color: rgba(164, 115, 255, 0.42);
+  border-radius: clamp(1.4rem, 2.5vw, 2rem);
+  background:
+    radial-gradient(circle at 84% 8%, rgba(118, 52, 220, 0.18), transparent 26rem),
+    radial-gradient(circle at 50% 112%, rgba(99, 41, 196, 0.16), transparent 32rem),
+    linear-gradient(145deg, rgba(22, 18, 47, 0.94), rgba(10, 10, 24, 0.94));
+  box-shadow:
+    0 30px 90px rgba(4, 2, 14, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  padding: clamp(1.25rem, 3vw, 2.4rem);
 }
 
-.builderHeader,
-.recommendedHeader {
+.builder::before {
+  position: absolute;
+  top: -5rem;
+  right: 8%;
+  z-index: -1;
+  width: min(44rem, 65vw);
+  height: 9rem;
+  border-radius: 50%;
+  background: rgba(126, 58, 242, 0.18);
+  content: "";
+  filter: blur(44px);
+  pointer-events: none;
+}
+
+.builderHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
-.builderHeader h2,
-.recommended h2,
+.builderTitle h2,
 .insight h2 {
   margin: 0;
   color: #ffffff;
@@ -101,58 +123,164 @@
   letter-spacing: var(--tracking-h2);
 }
 
-.builderHeader p,
-.recommendedHeader p,
-.insight p {
-  margin: 0.25rem 0 0;
-  color: rgba(255, 255, 255, 0.66);
-  font-size: var(--text-body-sm);
-  line-height: var(--leading-body-sm);
+.builderTitle h2 {
+  font-size: clamp(2rem, 3vw, 3.1rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
 }
 
-.guidance {
-  max-width: 18rem;
-  text-align: right;
+.builderTitle p,
+.insight p {
+  margin: 0.55rem 0 0;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-body-md);
+}
+
+.builderControls {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.selectionCount,
+.clearButton {
+  display: inline-flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  border: 1px solid rgba(153, 112, 255, 0.17);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(243, 239, 255, 0.78);
+  padding: 0 1.1rem;
+  font-size: var(--text-label-md);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.selectionDot {
+  width: 0.52rem;
+  height: 0.52rem;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #7c3aed;
+  box-shadow: 0 0 14px rgba(139, 92, 246, 0.85);
+}
+
+.clearButton {
+  min-width: 8.5rem;
+  border-color: transparent;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.86);
+  cursor: pointer;
+  transition:
+    border-color 180ms var(--ease-standard),
+    background-color 180ms var(--ease-standard),
+    opacity 180ms var(--ease-standard);
+}
+
+.clearButton svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.clearButton:hover:not(:disabled) {
+  border-color: rgba(192, 132, 252, 0.34);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.clearButton:focus-visible,
+.emptySlot:focus-visible,
+.removeSlot:focus-visible,
+.changeButton:focus-visible {
+  outline: 2px solid rgba(192, 132, 252, 0.9);
+  outline-offset: 3px;
+}
+
+.clearButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.44;
 }
 
 .slots {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.8rem;
-  margin-top: 1rem;
+  gap: clamp(0.75rem, 1.35vw, 1.15rem);
+  margin-top: clamp(1.25rem, 2.5vw, 1.8rem);
 }
 
 .emptySlot,
 .selectedSlot,
 .skeletonSlot {
-  min-height: 8.8rem;
-  border-radius: 0.9rem;
+  min-height: clamp(10.5rem, 14vw, 13rem);
+  border-radius: 1.3rem;
+}
+
+.emptySlot {
+  /* The global button reset intentionally pills controls; comparison slots are cards. */
+  border-radius: 1.3rem !important;
 }
 
 .emptySlot,
 .skeletonSlot {
   display: grid;
   place-items: center;
-  border: 1px dashed rgba(124, 99, 255, 0.72);
-  background: rgba(255, 255, 255, 0.035);
+  border: 1px dashed rgba(157, 110, 255, 0.78);
+  background:
+    radial-gradient(circle at 50% 30%, rgba(109, 40, 217, 0.1), transparent 58%),
+    rgba(255, 255, 255, 0.018);
   color: #ffffff;
-  padding: 1rem;
+  padding: 1.1rem;
   text-align: center;
 }
 
-.emptySlot svg {
-  width: 2rem;
-  height: 2rem;
-  color: #8b5cf6;
+.emptySlot {
+  align-content: center;
+  cursor: pointer;
+  transition:
+    border-color 180ms var(--ease-standard),
+    background-color 180ms var(--ease-standard),
+    transform 180ms var(--ease-standard);
 }
 
-.emptySlot span {
-  margin-top: 0.65rem;
-  font-size: var(--text-label-lg);
+.emptySlot:hover {
+  border-color: rgba(192, 132, 252, 0.96);
+  background-color: rgba(124, 58, 237, 0.07);
+  transform: translateY(-2px);
+}
+
+.addIcon {
+  display: grid;
+  width: 4.4rem;
+  height: 4.4rem;
+  place-items: center;
+  border: 1px solid rgba(139, 92, 246, 0.94);
+  border-radius: 999px;
+  background: rgba(91, 33, 182, 0.15);
+  box-shadow:
+    0 0 24px rgba(109, 40, 217, 0.18),
+    inset 0 0 16px rgba(124, 58, 237, 0.12);
+}
+
+.addIcon svg {
+  width: 2.15rem;
+  height: 2.15rem;
+  color: #8b5cf6;
+  stroke-width: 2.5;
+}
+
+.emptySlotTitle {
+  margin-top: 0.75rem;
+  font-size: var(--text-h4);
   font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-h4);
 }
 
 .emptySlot small {
+  margin-top: 0.3rem;
   color: rgba(255, 255, 255, 0.62);
   font-size: var(--text-body-sm);
 }
@@ -162,10 +290,12 @@
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.055);
-  padding: 1rem;
+  gap: 0.9rem;
+  border: 1px solid rgba(157, 110, 255, 0.36);
+  background:
+    radial-gradient(circle at 18% 5%, rgba(124, 58, 237, 0.14), transparent 12rem),
+    rgba(255, 255, 255, 0.04);
+  padding: 1.15rem;
 }
 
 .removeSlot {
@@ -189,8 +319,8 @@
 }
 
 .slotLogo {
-  width: 2.8rem;
-  height: 2.8rem;
+  width: 3.2rem;
+  height: 3.2rem;
 }
 
 .slotCopy {
@@ -235,9 +365,21 @@
 .actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
-  gap: 0.8rem;
-  margin-top: 1.1rem;
+  gap: 1rem 1.5rem;
+  margin-top: clamp(1.25rem, 2.5vw, 1.8rem);
+}
+
+.actionButtons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.compareButton {
+  min-width: clamp(12rem, 18vw, 17rem);
 }
 
 .insight {
@@ -263,8 +405,7 @@
   font-weight: var(--font-weight-bold);
 }
 
-.matrixShell,
-.recommended {
+.matrixShell {
   margin-top: 1rem;
   overflow: hidden;
   border-radius: 1.15rem;
@@ -364,70 +505,41 @@
   font-weight: var(--font-weight-semibold);
 }
 
-.recommended {
-  padding: 1.1rem;
-}
-
-.recommendedGrid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.8rem;
-  margin-top: 1rem;
-}
-
-.recommendedCard {
-  display: grid;
-  gap: 0.55rem;
-  min-height: 9rem;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.9rem;
-  background: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
-  padding: 1rem;
-  text-decoration: none;
-}
-
-.recommendedLogo {
-  width: 2.4rem;
-  height: 2.4rem;
-}
-
-.recommendedCard span {
-  font-size: var(--text-label-lg);
-  font-weight: var(--font-weight-semibold);
-}
-
-.recommendedCard small {
-  color: rgba(255, 255, 255, 0.62);
-  font-size: var(--text-body-sm);
-  line-height: var(--leading-body-sm);
-}
-
 .selectorOverlay {
   position: fixed;
   inset: 0;
-  z-index: 90;
-  background: rgba(5, 5, 13, 0.72);
+  z-index: 210;
+  background: rgba(3, 2, 12, 0.72);
   backdrop-filter: blur(10px);
+  animation: selectorOverlayIn 180ms ease both;
 }
 
 .selectorContent {
   position: fixed;
   top: 50%;
   left: 50%;
-  z-index: 100;
+  z-index: 220;
   display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: 1rem;
-  width: min(calc(100vw - 2rem), 56rem);
-  max-height: min(44rem, calc(100svh - 2rem));
-  overflow: auto;
+  width: min(800px, calc(100vw - 48px));
+  height: min(46rem, calc(100dvh - 48px));
+  max-height: calc(100dvh - 48px);
+  overflow: hidden;
   transform: translate(-50%, -50%);
-  border: 1px solid rgba(184, 164, 255, 0.28);
-  border-radius: 1.25rem;
-  background: rgba(17, 16, 35, 0.98);
-  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.48);
-  color: #ffffff;
+  border: 1px solid rgba(139, 92, 246, 0.42);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.14), transparent 22rem),
+    linear-gradient(145deg, rgba(21, 19, 48, 0.99), rgba(8, 9, 26, 0.99));
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.58),
+    0 0 42px rgba(124, 58, 237, 0.12),
+    inset 0 1px rgba(255, 255, 255, 0.07);
+  color: var(--text-primary);
   padding: var(--popup-padding);
+  animation: selectorModalIn 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  outline: none;
 }
 
 .selectorHeader,
@@ -442,7 +554,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-h2);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--leading-h2);
   letter-spacing: var(--tracking-h2);
 }
@@ -454,15 +566,31 @@
 }
 
 .selectorClose {
+  position: absolute;
+  top: var(--popup-padding);
+  right: var(--popup-padding);
+  z-index: 5;
   display: grid;
   width: 2.75rem;
   height: 2.75rem;
   flex: 0 0 auto;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--border-default);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
+}
+
+.selectorClose:hover {
+  border-color: var(--border-brand);
+  background: rgba(255, 255, 255, 0.07);
   color: #ffffff;
+}
+
+.selectorClose:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 3px;
 }
 
 .searchBox {
@@ -471,10 +599,20 @@
   flex: 1 1 auto;
   align-items: center;
   gap: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--background-interactive);
   padding: 0 1rem;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.searchBox:hover {
+  border-color: rgba(184, 164, 255, 0.36);
+}
+
+.searchBox:focus-within {
+  border-color: var(--border-brand);
+  box-shadow: 0 0 0 4px rgba(145, 61, 255, 0.14);
 }
 
 .searchBox svg {
@@ -492,9 +630,52 @@
   outline: 0;
 }
 
-.selectorControls select {
+.selectorCategoryTrigger {
   width: min(100%, 15rem);
   flex: 0 0 15rem;
+}
+
+.selectorCategoryTrigger svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.selectorCategoryContent {
+  z-index: 230;
+  width: var(--radix-select-trigger-width);
+  max-height: min(22rem, var(--radix-select-content-available-height));
+}
+
+.selectorCategoryViewport {
+  padding: 0.45rem;
+}
+
+.selectorCategoryViewport :global(.pf-select-item) svg {
+  width: 1rem;
+  height: 1rem;
+  color: #c8ff5a;
+}
+
+.selectorResults {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.3rem;
+  scrollbar-color: rgba(167, 139, 250, 0.45) transparent;
+  scrollbar-width: thin;
+}
+
+.selectorResults::-webkit-scrollbar {
+  width: 0.45rem;
+}
+
+.selectorResults::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(167, 139, 250, 0.4);
+}
+
+.selectorSection + .selectorSection {
+  margin-top: 1.35rem;
 }
 
 .selectorSection h3 {
@@ -505,6 +686,19 @@
   font-weight: var(--font-weight-medium);
   line-height: var(--leading-h3);
   letter-spacing: var(--tracking-h3);
+}
+
+.selectorSectionHeading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.selectorSectionHeading span {
+  color: var(--text-tertiary);
+  font-size: var(--text-label-sm);
+  font-weight: var(--font-weight-semibold);
 }
 
 .selectorStatus {
@@ -528,6 +722,8 @@
   border-radius: 0.9rem;
   background: rgba(255, 255, 255, 0.055);
   padding: 0.8rem;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 4.65rem;
 }
 
 .selectorLogo {
@@ -577,15 +773,36 @@
   opacity: 1;
 }
 
+@keyframes selectorOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes selectorModalIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 12px)) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 .skeletonSlot {
   color: rgba(255, 255, 255, 0.64);
   font-size: var(--text-body-sm);
 }
 
-@media (max-width: 1024px) {
-  .slots,
-  .recommendedGrid {
+@media (max-width: 1120px) {
+  .slots {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .emptySlot,
+  .selectedSlot,
+  .skeletonSlot {
+    min-height: 11rem;
   }
 }
 
@@ -596,35 +813,68 @@
   }
 
   .builderHeader,
-  .recommendedHeader,
-  .selectorHeader,
   .selectorControls {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .guidance {
-    max-width: none;
-    text-align: left;
+  .builder {
+    border-radius: 1.25rem;
+    padding: 1.1rem;
+  }
+
+  .builderTitle h2 {
+    font-size: clamp(1.75rem, 9vw, 2.3rem);
+  }
+
+  .builderControls {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .selectionCount,
+  .clearButton {
+    min-height: 2.75rem;
+    flex: 1 1 auto;
+    padding-inline: 0.85rem;
+    font-size: var(--text-label-sm);
   }
 
   .slots,
-  .recommendedGrid,
   .selectorGrid {
     grid-template-columns: 1fr;
   }
 
-  .actions > *,
-  .selectorControls select {
+  .actionButtons,
+  .actionButtons > *,
+  .selectorCategoryTrigger {
     width: 100%;
   }
 
+  .selectorCategoryTrigger {
+    flex-basis: auto;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .selectorContent {
-    inset: auto 0 0;
-    width: 100%;
-    max-height: 88svh;
-    transform: none;
-    border-radius: 1.25rem 1.25rem 0 0;
+    width: min(440px, calc(100vw - 24px));
+    height: min(46rem, calc(100dvh - 24px));
+    max-height: calc(100dvh - 24px);
+    border-radius: 22px;
+    padding: 1.1rem;
+  }
+
+  .selectorHeader {
+    padding-right: 3.25rem;
+  }
+
+  .selectorClose {
+    top: 1.1rem;
+    right: 1.1rem;
   }
 
   .selectorTool {
@@ -641,6 +891,34 @@
   .emptySlot,
   .selectedSlot,
   .skeletonSlot {
-    min-height: 8rem;
+    min-height: 9.75rem;
+  }
+
+  .builderControls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .selectionCount,
+  .clearButton {
+    width: 100%;
+  }
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .emptySlot,
+  .clearButton {
+    transition: none;
+  }
+
+  .emptySlot:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selectorOverlay,
+  .selectorContent {
+    animation: none;
   }
 }

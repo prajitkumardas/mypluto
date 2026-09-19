@@ -83,7 +83,7 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
   return (
     <form
       action="/plutos-library/search"
-      className="relative z-30 mx-auto mt-7 -mb-12 max-w-[44rem] rounded-lg border border-white/28 bg-violet-400/28 p-2.5 shadow-[0_18px_42px_rgba(25,16,78,0.34)] backdrop-blur-xl sm:-mb-14 sm:p-3"
+      className="pf-control-panel relative z-30 mx-auto mt-7 -mb-12 max-w-[44rem] p-2.5 sm:-mb-14 sm:p-3"
       onSubmit={(event) => {
         event.preventDefault();
         submitSearch();
@@ -92,14 +92,14 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
     >
       <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
         <div className="relative min-w-0">
-          <label className="flex min-h-10 items-center gap-2 rounded-md border border-white/10 bg-white/16 px-3 transition focus-within:border-lime-400/70 focus-within:ring-2 focus-within:ring-lime-400/15">
+          <label className="pf-search-control">
             <Search aria-hidden="true" className="h-4 w-4 shrink-0 text-white/74" />
             <span className="sr-only">Search Discover</span>
             <input
               aria-autocomplete="list"
               aria-controls={listboxId}
               aria-expanded={open}
-              className="h-full min-h-10 w-full bg-transparent py-0 type-label-sm text-white outline-none placeholder:text-white/48"
+              className="pf-input-reset h-full type-label-sm"
               name="q"
               onChange={(event) => {
                 const value = event.target.value;
@@ -153,7 +153,7 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
           {open ? (
             <div
               aria-label="Search suggestions"
-              className="absolute z-50 mt-2 w-full overflow-hidden rounded-lg border border-white/18 bg-[#111025] p-1.5 shadow-overlay"
+              className="pf-select-content absolute z-50 mt-2 w-full p-1.5"
               id={listboxId}
               role="listbox"
             >
@@ -167,7 +167,7 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
                   <button
                     aria-selected={activeIndex === index}
                     className={cn(
-                      "flex min-h-10 w-full items-center justify-between gap-3 rounded-md px-3 text-left type-label-sm text-white/78 transition hover:bg-white/8 hover:text-white",
+                      "pf-select-item min-h-10 rounded-md px-3 type-label-sm",
                       activeIndex === index && "bg-violet-500/18 text-white"
                     )}
                     key={`${suggestion.type}-${suggestion.href}`}
@@ -212,7 +212,8 @@ export function LibrarySearch({ initial }: LibrarySearchProps) {
 
           return (
             <button
-              className="focus-ring min-h-6 shrink-0 rounded-full border border-white/10 bg-white/10 px-2.5 type-label-sm text-white/66 transition hover:border-lime-400/40 hover:text-white"
+              className="pf-filter-chip focus-ring shrink-0 transition hover:border-lime-400/40 hover:text-white"
+              data-compact="true"
               key={chip.id}
               onClick={() => {
                 setQuery(chip.params.query);

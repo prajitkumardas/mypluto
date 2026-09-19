@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { getLibrarySearchResults, type LibraryTool } from "@/lib/plutos-library";
+import { getFaviconLogoUrl } from "@/lib/tool-logo";
 import type { HeroSearchResponse, HeroSearchResult } from "@/components/home/hero.types";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +14,7 @@ type SupabaseToolRow = {
   short_description?: unknown;
   full_description?: unknown;
   logo_url?: unknown;
+  official_url?: unknown;
   pricing_type?: unknown;
   has_free_plan?: unknown;
   api_status?: unknown;
@@ -59,7 +61,7 @@ async function searchSupabase(query: string): Promise<HeroSearchResult[]> {
   const { data, error } = await supabase
     .from("tools")
     .select(
-      "id, slug, name, short_description, full_description, logo_url, pricing_type, has_free_plan, api_status, platforms, key_features, best_for, categories(name, slug), subcategories(name, slug)"
+      "id, slug, name, short_description, full_description, logo_url, official_url, pricing_type, has_free_plan, api_status, platforms, key_features, best_for, categories(name, slug), subcategories(name, slug)"
     )
     .eq("is_active", true)
     .or(
@@ -119,7 +121,7 @@ function mapSupabaseRow(row: SupabaseToolRow, query: string): HeroSearchResult |
     category,
     subcategory,
     pricingLabel,
-    logoUrl: readString(row.logo_url) || null,
+    logoUrl: getFaviconLogoUrl(readString(row.official_url)) || readString(row.logo_url) || null,
     score: scoreResult(query, searchableFields)
   };
 }
@@ -135,7 +137,7 @@ function mapLibraryTool(tool: LibraryTool, query: string): HeroSearchResult {
     category: tool.categories[0] ?? "AI tool",
     subcategory: tool.subcategories[0] ?? "",
     pricingLabel,
-    logoUrl: null,
+    logoUrl: getFaviconLogoUrl(tool.domain || tool.officialUrl || tool.originalOfficialUrl) || null,
     score: scoreResult(query, [
       tool.name,
       tool.shortDescription,

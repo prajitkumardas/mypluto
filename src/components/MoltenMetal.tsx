@@ -141,7 +141,7 @@ void main() {
     }
     fragColor = vec4(mix(uBackgroundColor, lightCol, clamp(coverage, 0.0, 0.92)), 1.0);
   } else {
-    fragColor = vec4(col * a, a);
+    fragColor = vec4(col, a);
   }
 }
 `;
@@ -185,7 +185,7 @@ const MoltenMetal: FC<MoltenMetalProps> = ({
     const renderer = new Renderer({
       webgl: 2,
       alpha: true,
-      premultipliedAlpha: true,
+      premultipliedAlpha: false,
       antialias: false,
       dpr: Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 1.5 : 2)
     });

@@ -1,48 +1,23 @@
 import type { Metadata } from "next";
 import { HeroSearch } from "@/components/home/hero-search";
 import heroStyles from "@/components/home/pluto-hero.module.css";
-import { CategoryDiscoverFilters } from "@/components/library/category-discover-filters";
-import { SearchResults } from "@/components/library/search-results";
 import { AnimatedHeroBackground } from "@/components/shared/animated-hero-background";
-import {
-  getLibrarySearchResults,
-  getPlatformOptions,
-  plutosLibrary
-} from "@/lib/plutos-library";
 import styles from "./page.module.css";
 import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = createPageMetadata({ title: "Search AI Tools | Pluto Finds", description: "Search and filter Pluto Finds' directory of AI tools.", path: "/search" });
+export const metadata: Metadata = createPageMetadata({ title: "Search AI Tools | Pluto Finds", description: "Search Pluto Finds' directory and continue to matching AI tools in Discover.", path: "/search" });
 
 type SearchPageProps = {
   searchParams: Promise<{
     q?: string;
-    category?: string;
-    pricing?: string;
-    platform?: string;
-    api?: string;
-    verification?: string;
-    sort?: string;
-    page?: string;
   }>;
 };
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const params = await searchParams;
-  const result = getLibrarySearchResults({
-    query: params.q,
-    category: params.category,
-    pricing: params.pricing,
-    platform: params.platform,
-    api: params.api,
-    verification: params.verification,
-    sort: params.sort,
-    page: params.page,
-    limit: 24
-  });
 
   return (
-    <main className={styles.page}>
+    <main className={styles.page} id="main-content">
       <section aria-labelledby="search-page-title" className={styles.hero}>
         <AnimatedHeroBackground />
         <div aria-hidden="true" className={styles.heroVeil} />
@@ -52,29 +27,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
             Let&apos;s Find your perfect AI tool.
           </h1>
           <div className={heroStyles.searchShell}>
-            <HeroSearch initialQuery={params.q} key={params.q ?? "empty"} resultsPath="/search" />
+            <HeroSearch
+              autoFocus
+              initialQuery={params.q}
+              key={params.q ?? "empty"}
+              resultsPath="/plutos-library"
+              submitToResultsPage
+            />
           </div>
-        </div>
-      </section>
-
-      <section aria-label="Search filters and results" className={styles.resultsSection}>
-        <div className={styles.resultsInner}>
-          <CategoryDiscoverFilters
-            basePath="/search"
-            categories={plutosLibrary.categories}
-            initial={{
-              q: params.q,
-              category: params.category,
-              pricing: params.pricing,
-              verification: params.verification,
-              platform: params.platform,
-              api: params.api,
-              sort: params.sort
-            }}
-            placement="catalogue"
-            platforms={getPlatformOptions().slice(0, 18)}
-          />
-          <SearchResults basePath="/search" compact embedded result={result} />
         </div>
       </section>
     </main>

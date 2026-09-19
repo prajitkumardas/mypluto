@@ -79,7 +79,7 @@ export function SearchResults({ result, basePath = "/plutos-library/search", com
         <div className="mt-5 flex flex-wrap items-center gap-3">
           {activeFilters.map((filter) => (
             <span
-              className="inline-flex min-h-11 items-center gap-3 rounded-full border border-violet-400/22 bg-violet-500/18 px-4 type-label-sm text-violet-100"
+              className="pf-filter-chip"
               key={`${filter.key}-${filter.value}`}
             >
               {filter.label}
@@ -147,16 +147,16 @@ function Pagination({ result, basePath }: { result: LibrarySearchResult; basePat
   };
 
   return (
-    <nav className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between" aria-label="Results pagination">
+    <nav className="pf-pagination mt-8" aria-label="Results pagination">
       <p className="number type-label-md text-neutral-500">
         Page {result.page} of {result.pageCount}
       </p>
-      <div className="flex gap-2">
+      <div className="pf-pagination-actions">
         <PlutoButton disabled={result.page <= 1} href={buildLibraryHref(basePath, { ...common, page: Math.max(1, result.page - 1) })} variant="secondary">
           Previous
         </PlutoButton>
         <PlutoButton disabled={result.page >= result.pageCount} href={buildLibraryHref(basePath, { ...common, page: Math.min(result.pageCount, result.page + 1) })} showArrow variant="primary">
-          Load more
+          Next
         </PlutoButton>
       </div>
     </nav>

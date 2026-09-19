@@ -50,10 +50,10 @@ export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
       </div>
 
       <div className={styles.actions}>
-        <PlutoButton fullWidth href={detailHref} onClick={() => track("tool_view")} showArrow variant="primary">
+        <PlutoButton className={styles.action} fullWidth href={detailHref} onClick={() => track("tool_view")} showArrow variant="primary">
           View details
         </PlutoButton>
-        <CompareButton afterSelection={() => track("compare")} toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
+        <CompareButton className={styles.action} fullWidth afterSelection={() => track("compare")} toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
       </div>
     </article>
   );

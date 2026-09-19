@@ -12,7 +12,6 @@ import {
   PenLine,
   RotateCcw,
   Search,
-  Share2,
   Settings,
   ShieldCheck,
   SlidersHorizontal,
@@ -696,7 +695,7 @@ function ResultsScreen({
       {selectedAnswers.length > 0 ? (
         <div className="mx-auto mt-7 flex max-w-4xl flex-wrap justify-center gap-2.5">
           {selectedAnswers.map((item) => (
-            <span className="inline-flex min-h-9 items-center rounded-full border border-white/12 bg-white/8 px-3.5 type-label-sm text-white/70" key={item}>
+            <span className="pf-filter-chip" key={item}>
               {item}
             </span>
           ))}
@@ -709,7 +708,7 @@ function ResultsScreen({
           <p className="mt-3 type-body-md text-white/66">Try loosening budget, platform, or API requirements.</p>
         </div>
       ) : (
-        <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {recommendations.map((recommendation, index) => (
             <ResultCard
               key={recommendation.slug}
@@ -732,18 +731,6 @@ function ResultCard({
 }) {
   const verified = recommendation.verification.toLowerCase() === "verified";
   const logoSrc = getFaviconLogoUrl(recommendation.officialUrl);
-  const shareRecommendation = async () => {
-    const url = new URL(recommendation.href, window.location.origin).toString();
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: `${recommendation.name} on Pluto Finds`, text: "Check out this AI tool I found with Pluto.", url });
-        return;
-      } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") return;
-      }
-    }
-    await navigator.clipboard?.writeText(url).catch(() => undefined);
-  };
 
   return (
     <article className={cardStyles.card}>
@@ -771,20 +758,11 @@ function ResultCard({
         <span>Score {recommendation.score}</span>
       </div>
 
-      <div className={cardStyles.metaLine}>
-        <span className={cardStyles.priceModel}>{recommendation.pricing || "See pricing"}</span>
-        <span aria-hidden="true" className={cardStyles.metaDot}>/</span>
-        <span>{recommendation.platforms.slice(0, 2).join(", ") || "Platform varies"}</span>
-      </div>
-
       <div className={cardStyles.actions}>
-        <PlutoButton fullWidth href={recommendation.href} showArrow variant="primary">
+        <PlutoButton className={cardStyles.action} fullWidth href={recommendation.href} showArrow variant="primary">
           View details
         </PlutoButton>
-        <CompareButton compact toolName={recommendation.name} toolSlug={recommendation.slug} variant="secondary" />
-        <PlutoButton aria-label={`Share ${recommendation.name}`} onClick={() => void shareRecommendation()} type="button" variant="secondary">
-          <Share2 aria-hidden="true" className="h-4 w-4" /> Share
-        </PlutoButton>
+        <CompareButton className={cardStyles.action} fullWidth toolName={recommendation.name} toolSlug={recommendation.slug} variant="secondary" />
       </div>
     </article>
   );
