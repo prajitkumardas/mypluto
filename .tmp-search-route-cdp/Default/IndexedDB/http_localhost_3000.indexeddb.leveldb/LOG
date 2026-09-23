@@ -1,7 +1,0 @@
-2026/09/18-19:29:53.906 16d0 Reusing MANIFEST E:\mypluto\.tmp-search-route-cdp\Default\IndexedDB\http_localhost_3000.indexeddb.leveldb/MANIFEST-000001
-2026/09/18-19:29:53.907 16d0 Recovering log #3
-2026/09/18-19:29:53.909 16d0 Reusing old log E:\mypluto\.tmp-search-route-cdp\Default\IndexedDB\http_localhost_3000.indexeddb.leveldb/000003.log 
-2026/09/18-19:29:56.040 29e8 Level-0 table #5: started
-2026/09/18-19:29:56.056 29e8 Level-0 table #5: 89318 bytes OK
-2026/09/18-19:29:56.063 29e8 Delete type=0 #3
-2026/09/18-19:29:56.108 29e8 Manual compaction at level-0 from (begin) .. (end); will stop at (end)

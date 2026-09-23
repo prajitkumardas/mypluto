@@ -1,6 +1,0 @@
-*** Begin Patch
-*** Update File: scripts/test-submit-tool-runtime.mjs
-@@
--await waitFor("document.querySelector('[role=dialog] h2')?.textContent === 'No duplicate detected!'", 15_000);
-+await waitFor("document.querySelector('[role=dialog] h2')?.textContent === 'No duplicate detected!'", 45_000);
-*** End Patch

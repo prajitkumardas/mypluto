@@ -21,6 +21,7 @@ import {
 import { CompareButton } from "@/components/compare/compare-button";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { PlutoButton } from "@/components/ui/pluto-button";
+import { ProgressStepper } from "@/components/ui/progress-stepper";
 import { HeroVeil } from "@/components/shared/hero-veil";
 import { getFaviconLogoUrl } from "@/lib/tool-logo";
 import {
@@ -42,6 +43,7 @@ import { readLocalRecord, removeLocalRecord, writeLocalRecord } from "@/lib/loca
 const STORAGE_KEY = "pluto-guides-draft";
 const STORAGE_VERSION = 1;
 const steps = ["Your goal", "Task", "Preferences", "Requirements"];
+const progressSteps = steps.map((label, index) => ({ id: `guide-step-${index + 1}`, label }));
 
 export function PlutoGuidesFlow() {
   const [screen, setScreen] = useState<"intro" | "questions" | "loading" | "results">("intro");
@@ -206,46 +208,7 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
   );
 }
 function Progress({ step }: { step: number }) {
-  const percentComplete = (step + 1) * 25;
-
-  return (
-    <div className="mx-auto mt-7 max-w-4xl">
-      <div className="flex items-center justify-between type-label-sm text-white/72">
-        <span>{`Step ${step + 1} of 4`}</span>
-        <span>{`${percentComplete}% complete`}</span>
-      </div>
-      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-        <span
-          className="block h-full rounded-full bg-gradient-to-r from-violet-500 to-violet-400 transition-[width]"
-          style={{ width: `${percentComplete}%` }}
-        />
-      </div>
-      <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {steps.map((item, index) => (
-          <li
-            className={cn(
-              "flex min-h-10 items-center justify-center gap-2 type-label-sm text-white/58",
-              index === step && "text-white",
-              index < step && "text-white/76"
-            )}
-            key={item}
-          >
-            <span
-              className={cn(
-                "grid h-7 w-7 place-items-center rounded-full bg-white/10 text-white/70",
-                index === step && "bg-violet-500 text-white",
-                index < step && "bg-violet-500/55 text-white"
-              )}
-            >
-              {index + 1}
-            </span>
-            {index === step ? <span className="text-lime-300">|</span> : null}
-            <span>{item}</span>
-          </li>
-        ))}
-      </ol>
-    </div>
-  );
+  return <ProgressStepper className="mx-auto mt-7 max-w-4xl" current={step} steps={progressSteps} />;
 }
 
 function GuideQuestionScreen({

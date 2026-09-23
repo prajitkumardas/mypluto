@@ -10,6 +10,7 @@ node_modules/
 out/
 dist/
 build/
+.tmp-*
 
 npm-debug.log*
 yarn-debug.log*

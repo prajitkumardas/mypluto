@@ -9,6 +9,7 @@ import { CompareButton } from "@/components/compare/compare-button";
 import { useGlobalLoading } from "@/components/loading/loading-provider";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { TrendIndicator } from "@/components/trending/trend-indicator";
+import { Badge } from "@/components/ui/badge";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { cn } from "@/lib/utils";
 import type { TrendingResponse, TrendingTool, TrendPeriod } from "@/lib/trending";
@@ -103,6 +104,14 @@ export function TrendingLeaderboard({ initialResponse }: { initialResponse: Tren
         {response.tools.length > 0 || isLoading ? (
           <>
             <table className={styles.table}>
+              <colgroup>
+                <col className={styles.rankColumn} />
+                <col className={styles.toolColumn} />
+                <col className={styles.bestForColumn} />
+                <col className={styles.pricingColumn} />
+                <col className={styles.trendColumn} />
+                <col className={styles.actionColumn} />
+              </colgroup>
               <thead>
                 <tr>
                   <th scope="col">Rank</th>
@@ -110,7 +119,7 @@ export function TrendingLeaderboard({ initialResponse }: { initialResponse: Tren
                   <th scope="col">Best for</th>
                   <th scope="col">Pricing</th>
                   <th scope="col">Trend</th>
-                  <th scope="col">Action</th>
+                  <th className={styles.actionHeading} scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>{isLoading ? <SkeletonRows /> : response.tools.map((tool) => <TrendingRow key={tool.slug} period={response.period} tool={tool} />)}</tbody>
@@ -182,14 +191,14 @@ function TrendingRow({ period, tool }: { period: TrendPeriod; tool: TrendingTool
         <ToolIdentity tool={tool} />
       </td>
       <td><p className={styles.bestFor}>{tool.bestFor}</p></td>
-      <td className={styles.price}>{tool.pricingType}</td>
+      <td><Badge className={styles.priceBadge} tone="neutral">{tool.pricingType}</Badge></td>
       <td><TrendIndicator period={period} tool={tool} /></td>
       <td>
         <div className={styles.actionGroup}>
-          <PlutoButton href={href} onClick={(event) => event.stopPropagation()} showArrow size="sm" variant="secondary">
+          <CompareButton className={styles.actionButton} compact onClick={(event) => event.stopPropagation()} size="sm" toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
+          <PlutoButton className={styles.actionButton} href={href} onClick={(event) => event.stopPropagation()} showArrow size="sm" variant="secondary">
             View details
           </PlutoButton>
-          <CompareButton compact onClick={(event) => event.stopPropagation()} toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
         </div>
       </td>
     </tr>
@@ -205,9 +214,12 @@ function MobileTrendingItem({ period, tool }: { period: TrendPeriod; tool: Trend
           <ToolIdentity tool={tool} />
           <TrendIndicator period={period} tool={tool} />
         </span>
-        <span className={styles.mobileCopy}>{tool.bestFor}</span>
+        <span className={styles.mobileDetails}>
+          <span className={styles.mobileCopy}>{tool.bestFor}</span>
+          <Badge className={styles.priceBadge} tone="neutral">{tool.pricingType}</Badge>
+        </span>
       </Link>
-      <CompareButton compact toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
+      <CompareButton className={styles.mobileAction} compact size="sm" toolName={tool.name} toolSlug={tool.slug} variant="secondary" />
     </article>
   );
 }
@@ -218,7 +230,7 @@ function ToolIdentity({ tool }: { tool: TrendingTool }) {
       <ToolLogo className={styles.logoTile} imageClassName={styles.logoImage} name={tool.name} src={tool.logoUrl} />
       <span className="min-w-0">
         <span className={styles.toolName}>{tool.name}</span>
-        <span className={styles.toolMeta}>{tool.category} - {tool.pricingType}</span>
+        <span className={styles.toolMeta}>{tool.category}</span>
       </span>
     </span>
   );

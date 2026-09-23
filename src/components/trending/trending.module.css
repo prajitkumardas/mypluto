@@ -216,7 +216,32 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
   color: #ffffff;
+}
+
+.rankColumn {
+  width: 5.5rem;
+}
+
+.toolColumn {
+  width: 28%;
+}
+
+.bestForColumn {
+  width: 29%;
+}
+
+.pricingColumn {
+  width: 9rem;
+}
+
+.trendColumn {
+  width: 6.5rem;
+}
+
+.actionColumn {
+  width: 20.75rem;
 }
 
 .table th {
@@ -233,6 +258,10 @@
 .table th,
 .table td {
   padding: 0 1.15rem;
+}
+
+.table .actionHeading {
+  text-align: center;
 }
 
 .row {
@@ -315,17 +344,34 @@
 }
 
 .bestFor {
-  max-width: 20rem;
+  max-width: 22rem;
   margin: 0;
   color: rgba(244, 241, 255, 0.8);
-  font-size: var(--text-body-sm);
-  line-height: var(--leading-body-sm);
+  font-size: var(--text-label-sm);
+  line-height: 1.5;
 }
 
-.price {
-  color: rgba(244, 241, 255, 0.78);
-  font-size: var(--text-body-sm);
-  line-height: var(--leading-body-sm);
+.priceBadge {
+  min-height: 1.85rem;
+  max-width: 100%;
+  padding-inline: 0.7rem;
+  overflow: hidden;
+  color: #d6c5ff;
+  font-weight: var(--font-weight-medium);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actionGroup {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.actionButton {
+  width: 100%;
+  min-width: 0;
 }
 
 .mobileList {
@@ -360,11 +406,24 @@
   line-height: var(--leading-h5);
 }
 
+.mobileDetails {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0.75rem 0 0 3.1rem;
+}
+
 .mobileCopy {
-  margin: 0.7rem 0 0 3.1rem;
+  min-width: 0;
   color: rgba(244, 241, 255, 0.72);
-  font-size: var(--text-body-sm);
-  line-height: var(--leading-body-sm);
+  font-size: var(--text-label-sm);
+  line-height: 1.5;
+}
+
+.mobileAction {
+  width: 100%;
+  margin-top: 0.9rem;
 }
 
 .emptyState {
@@ -422,12 +481,42 @@
   100% { background-position: -100% 0; }
 }
 
-@media (max-width: 960px) {
-  .table th:nth-child(4),
-  .table td:nth-child(4) {
-    display: none;
+@media (max-width: 1120px) {
+  .rankColumn {
+    width: 4.75rem;
   }
 
+  .toolColumn {
+    width: 27%;
+  }
+
+  .bestForColumn {
+    width: 25%;
+  }
+
+  .pricingColumn {
+    width: 7.5rem;
+  }
+
+  .trendColumn {
+    width: 5.5rem;
+  }
+
+  .actionColumn {
+    width: 10rem;
+  }
+
+  .actionGroup {
+    grid-template-columns: 1fr;
+    padding-block: 0.65rem;
+  }
+
+  .row td {
+    height: 6.5rem;
+  }
+}
+
+@media (max-width: 960px) {
   .toolbar {
     align-items: stretch;
     flex-direction: column;
@@ -436,6 +525,14 @@
   .selectTrigger {
     width: 100%;
     flex-basis: auto;
+  }
+
+  .table {
+    display: none;
+  }
+
+  .mobileList {
+    display: block;
   }
 }
 
@@ -458,13 +555,6 @@
     padding: 0 1rem;
   }
 
-  .table {
-    display: none;
-  }
-
-  .mobileList {
-    display: block;
-  }
 }
 
 @media (max-width: 420px) {
@@ -477,6 +567,11 @@
     justify-self: start;
     min-width: 0;
     margin-top: 0.35rem;
+  }
+
+  .mobileDetails {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 

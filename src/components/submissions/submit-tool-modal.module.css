@@ -61,18 +61,6 @@
 .animatedContent { width: 100%; }
 
 .stepper { margin: 0.2rem 3.4rem 1.5rem; }
-.stepTrack { display: grid; grid-template-columns: repeat(5, 1fr); }
-.stepItem { position: relative; display: grid; justify-items: center; gap: 0.42rem; color: var(--text-tertiary); }
-.stepCircle { z-index: 1; display: grid; width: 1.85rem; height: 1.85rem; place-items: center; border: 1px solid var(--border-default); border-radius: 50%; background: #111024; font-size: var(--text-label-sm); font-weight: 700; transition: 220ms ease; }
-.stepCircle svg { width: 0.85rem; height: 0.85rem; }
-.stepLabel { max-width: 6.5rem; font-size: 0.68rem; font-weight: 650; line-height: 1.15; text-align: center; }
-.stepConnector { position: absolute; top: 0.88rem; left: calc(50% + 0.9rem); width: calc(100% - 1.8rem); height: 1px; overflow: hidden; background: var(--border-default); }
-.stepConnector span { display: block; width: 100%; height: 100%; transform-origin: left; background: var(--color-pluto-purple-400); }
-.stepItem[data-state="active"] { color: #b99cff; }
-.stepItem[data-state="active"] .stepCircle { border-color: #8b5cf6; background: rgba(124, 58, 237, 0.35); color: #fff; box-shadow: 0 0 14px rgba(124, 58, 237, 0.28); }
-.stepItem[data-state="complete"] { color: rgba(185, 156, 255, 0.82); }
-.stepItem[data-state="complete"] .stepCircle { border-color: rgba(139, 92, 246, 0.68); background: rgba(124, 58, 237, 0.2); color: #d8c7ff; }
-.mobileStepCopy { display: none; }
 
 .centerState,
 .successState {
@@ -217,7 +205,6 @@
   .modal { width: min(720px, calc(100vw - 40px)); }
   .mascot { width: clamp(112px, 13vw, 124px); height: clamp(124px, 14vw, 138px); }
   .stepper { margin-inline: 2.5rem; }
-  .stepLabel { font-size: .62rem; }
 }
 
 @media (max-width: 600px) {
@@ -227,13 +214,6 @@
   .contentViewport { min-height: 0; }
   .step { min-height: 0; }
   .stepper { margin: 0 3.2rem 1.2rem 0; }
-  .stepTrack { gap: 0; }
-  .stepLabel { display: none; }
-  .stepCircle { width: 1.45rem; height: 1.45rem; font-size: .64rem; }
-  .stepConnector { top: .7rem; left: calc(50% + .72rem); width: calc(100% - 1.44rem); }
-  .mobileStepCopy { display: grid; gap: .1rem; margin-top: .55rem; }
-  .mobileStepCopy span { color: var(--text-tertiary); font-size: .68rem; }
-  .mobileStepCopy strong { color: #b99cff; font-size: var(--text-label-sm); }
   .twoColumns { grid-template-columns: 1fr; }
   .centerState,
   .successState { min-height: 430px; }
