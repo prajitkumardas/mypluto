@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Download, RefreshCw, Share, WifiOff, X } from "lucide-react";
+import { LayoutGroup, motion } from "motion/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { getActivePrimaryRoute, primaryRoutes, type PrimaryRoute } from "@/components/navigation/primary-routes";
 
 type InstallPromptEvent = Event & {
@@ -23,6 +25,8 @@ function isStandalone() {
 export function PwaShell() {
   const pathname = usePathname();
   const activePrimaryRoute = getActivePrimaryRoute(pathname);
+  const reduceMotion = useReducedMotionPreference();
+  const [pendingSelection, setPendingSelection] = useState<{ href: string; pathname: string } | null>(null);
   const [online, setOnline] = useState(true);
   const [connectionNotice, setConnectionNotice] = useState<"offline" | "online" | null>(null);
   const [installPrompt, setInstallPrompt] = useState<InstallPromptEvent | null>(null);
@@ -115,8 +119,7 @@ export function PwaShell() {
     else window.addEventListener("load", start, { once: true });
 
     const onControllerChange = () => {
-      if (reloadForUpdateRef.current) return;
-      reloadForUpdateRef.current = true;
+      if (!reloadForUpdateRef.current) return;
       window.location.reload();
     };
     navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
@@ -146,7 +149,16 @@ export function PwaShell() {
       {updateRegistration ? (
         <aside aria-label="App update available" className="pwa-prompt">
           <div><strong>Pluto has an update</strong><span>Refresh when you&apos;re ready.</span></div>
-          <button className="pwa-shell-button pwa-shell-button-primary" onClick={() => updateRegistration.waiting?.postMessage({ type: "SKIP_WAITING" })} type="button"><RefreshCw aria-hidden="true" /> Update</button>
+          <button
+            className="pwa-shell-button pwa-shell-button-primary"
+            onClick={() => {
+              reloadForUpdateRef.current = true;
+              updateRegistration.waiting?.postMessage({ type: "SKIP_WAITING" });
+            }}
+            type="button"
+          >
+            <RefreshCw aria-hidden="true" /> Update
+          </button>
           <button aria-label="Dismiss update" className="pwa-icon-button" onClick={() => setUpdateRegistration(null)} type="button"><X aria-hidden="true" /></button>
         </aside>
       ) : null}
@@ -160,28 +172,60 @@ export function PwaShell() {
       ) : null}
 
       {activePrimaryRoute ? (
-        <nav aria-label="Primary" className="pwa-bottom-nav">
-          {primaryRoutes.map((route) => (
-            <PwaNavItem active={route.href === activePrimaryRoute.href} key={route.href} route={route} />
-          ))}
-        </nav>
+        <LayoutGroup id="pwa-bottom-navigation">
+          <nav aria-label="Primary mobile navigation" className="pwa-bottom-nav">
+            {primaryRoutes.map((route) => (
+              <PwaNavItem
+                active={route.href === activePrimaryRoute.href}
+                key={route.href}
+                onSelect={() => setPendingSelection({ href: route.href, pathname })}
+                reduceMotion={reduceMotion}
+                route={route}
+                selected={route.href === (pendingSelection?.pathname === pathname ? pendingSelection.href : activePrimaryRoute.href)}
+              />
+            ))}
+          </nav>
+        </LayoutGroup>
       ) : null}
       <span aria-live="polite" className="sr-only">{online ? "Online" : "Offline"}</span>
     </>
   );
 }
 
-function PwaNavItem({ active, route }: { active: boolean; route: PrimaryRoute }) {
+function PwaNavItem({
+  active,
+  onSelect,
+  reduceMotion,
+  route,
+  selected
+}: {
+  active: boolean;
+  onSelect: () => void;
+  reduceMotion: boolean;
+  route: PrimaryRoute;
+  selected: boolean;
+}) {
   const Icon = route.icon;
   return (
     <Link
       aria-current={active ? "page" : undefined}
-      className={active ? "is-active" : undefined}
+      className={selected ? "is-active" : undefined}
       data-primary-nav="true"
       href={route.href}
+      onClick={(event) => {
+        if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) onSelect();
+      }}
     >
-      <Icon aria-hidden="true" />
-      <span>{route.label}</span>
+      {selected ? (
+        <motion.span
+          aria-hidden="true"
+          className="pwa-bottom-nav-active-glow"
+          layoutId="pwa-mobile-nav-active-glow"
+          transition={reduceMotion ? { duration: 0 } : { type: "spring", stiffness: 400, damping: 32, mass: 0.8 }}
+        />
+      ) : null}
+      <span className="pwa-bottom-nav-icon"><Icon aria-hidden="true" /></span>
+      <span className="pwa-bottom-nav-label">{route.label}</span>
     </Link>
   );
 }

@@ -918,24 +918,24 @@
   z-index: 2;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 22px;
+  gap: 10px;
+  margin-top: 18px;
 }
 
 .gameChoice {
   position: relative;
   display: grid;
-  min-height: 196px;
-  grid-template-rows: 54px minmax(52px, 1fr) 42px;
-  row-gap: 10px;
+  min-height: 168px;
+  grid-template-rows: 46px minmax(42px, 1fr) 38px;
+  row-gap: 7px;
   justify-items: center;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.105);
-  border-radius: 18px;
+  border-radius: 16px;
   background:
     radial-gradient(circle at 50% 4%, rgba(139, 92, 246, 0.08), transparent 6.5rem),
     linear-gradient(180deg, rgba(26, 25, 48, 0.94), rgba(16, 15, 34, 0.96));
-  padding: 36px 16px 14px;
+  padding: 26px 12px 12px;
   text-align: center;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
@@ -1071,24 +1071,28 @@
   margin: 4px 0 0;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: var(--text-h3);
+  font-size: clamp(1rem, 1.45vw, 1.2rem);
   font-weight: var(--font-weight-medium);
-  line-height: var(--leading-h3);
+  line-height: 1.15;
   letter-spacing: var(--tracking-h3);
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.26);
 }
 
 .gameChoice p {
+  display: -webkit-box;
+  overflow: hidden;
   max-width: 9.8rem;
   margin: 5px auto 0;
   color: rgba(226, 221, 244, 0.68);
   font-size: var(--text-body-sm);
   line-height: var(--leading-body-sm);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .gameChoice button {
   width: calc(100% - 4px);
-  min-height: 42px;
+  min-height: 38px;
   margin-top: 0;
   border-radius: 13px;
   background: linear-gradient(180deg, #9b5cff, #7c2fff);
@@ -1866,7 +1870,9 @@
   }
 
   .primaryCta {
-    bottom: clamp(1rem, 3vh, 1.75rem);
+    position: static;
+    margin-top: clamp(1rem, 2.5vh, 1.35rem);
+    --pluto-cta-base-transform: none;
   }
 
   .versusName {
@@ -1938,6 +1944,12 @@
     align-items: stretch;
     flex-direction: column;
     width: 100%;
+  }
+}
+
+@media (max-width: 767px) {
+  .landingStage {
+    height: calc(100svh - 5.25rem - max(0.375rem, var(--safe-area-bottom)));
   }
 }
 
@@ -2089,17 +2101,17 @@
   }
 
   .selectionModalContent .gameChoice {
-    min-height: 184px;
+    min-height: 158px;
     grid-template-columns: 1fr;
-    grid-template-rows: 50px minmax(48px, 1fr) 40px;
-    row-gap: 9px;
-    padding: 32px 14px 12px;
+    grid-template-rows: 44px minmax(38px, 1fr) 36px;
+    row-gap: 7px;
+    padding: 24px 12px 10px;
   }
 
   .selectionModalContent .gameChoice button,
   .selectionModalContent .soonBadge {
     grid-column: auto;
-    min-height: 40px;
+    min-height: 36px;
   }
 }
 
@@ -2147,13 +2159,13 @@
   }
 
   .selectionModalContent .gameChoice {
-    min-height: 72px;
+    min-height: 62px;
     grid-template-columns: 50px minmax(0, 1fr);
     grid-template-rows: 1fr;
     column-gap: 10px;
     align-items: center;
     justify-items: start;
-    padding: 10px 10px;
+    padding: 8px 10px;
     text-align: left;
   }
 
@@ -2170,12 +2182,12 @@
   }
 
   .selectionModalContent .gameChoiceAvailable {
-    min-height: 146px;
+    min-height: 122px;
     grid-template-columns: 1fr;
-    grid-template-rows: 46px minmax(42px, 1fr) 38px;
-    row-gap: 7px;
+    grid-template-rows: 38px minmax(32px, 1fr) 34px;
+    row-gap: 5px;
     justify-items: center;
-    padding: 30px 12px 10px;
+    padding: 18px 10px 8px;
     text-align: center;
   }
 
@@ -2191,9 +2203,9 @@
   }
 
   .selectionModalContent .gameChoiceAvailable .gamePreview {
-    width: 88px;
-    height: 50px;
-    margin-top: 8px;
+    width: 78px;
+    height: 42px;
+    margin-top: 4px;
   }
 
   .selectionModalContent .gamePreview svg {
@@ -2223,6 +2235,8 @@
 
   .selectionModalContent .gameChoice h3 {
     margin-top: 3px;
+    font-size: 1rem;
+    line-height: 1.15;
   }
 
   .selectionModalContent .gameChoice p {
@@ -2239,7 +2253,7 @@
 
   .selectionModalContent .gameChoice button,
   .selectionModalContent .soonBadge {
-    min-height: 38px;
+    min-height: 34px;
     margin-top: 0;
   }
 
@@ -2437,5 +2451,116 @@
   .cell:not(:disabled):hover,
   .cell:not(:disabled):focus-visible {
     transform: none;
+  }
+}
+
+/* Chess extends the existing selector without changing the established card treatment. */
+.chessChoice .gamePreview::before,
+.chessChoice .gamePreview::after {
+  display: none;
+}
+
+.selectionModalContent .chessChoice .gamePreview svg {
+  position: static;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #eee9ff, #a78bfa);
+  color: #4e2b89;
+  padding: 9px;
+  stroke-width: 2.4;
+  transform: rotate(-5deg);
+}
+
+.selectionModalContent .wordSearchChoice .gamePreview svg {
+  position: static;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #e9ffd0, #a6df81);
+  color: #3e6930;
+  padding: 10px;
+  stroke-width: 2.5;
+  transform: rotate(5deg);
+}
+
+.selectionModalContent .blockPuzzleChoice .gamePreview svg {
+  position: static;
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #ffd4c9, #e78872);
+  color: #6f302f;
+  padding: 10px;
+  stroke-width: 2.35;
+  transform: rotate(-4deg);
+}
+
+.gameMeta {
+  display: block;
+  margin-top: 6px;
+  color: #c8ff5a;
+  font-size: var(--text-label-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-label-sm);
+}
+
+@media (min-width: 961px) {
+  .selectionModalContent {
+    width: min(960px, calc(100vw - 48px));
+  }
+
+  .selectionModalContent .gameChoices {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 701px) and (max-width: 960px) {
+  .selectionModalContent {
+    overflow-y: auto;
+  }
+
+  .selectionModalContent .gameChoices {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .selectionModalContent {
+    overflow-y: auto;
+  }
+
+  .selectionModalContent .chessChoice {
+    min-height: 132px;
+  }
+
+  .selectionModalContent .chessChoice .gamePreview svg {
+    width: 40px;
+    height: 40px;
+    padding: 7px;
+  }
+
+  .selectionModalContent .wordSearchChoice {
+    min-height: 132px;
+  }
+
+  .selectionModalContent .wordSearchChoice .gamePreview svg {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+  }
+
+  .selectionModalContent .blockPuzzleChoice {
+    min-height: 132px;
+  }
+
+  .selectionModalContent .blockPuzzleChoice .gamePreview svg {
+    width: 40px;
+    height: 40px;
+    padding: 8px;
+  }
+
+  .selectionModalContent .chessChoice p {
+    max-width: 16rem;
   }
 }

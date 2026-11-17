@@ -8,7 +8,7 @@ import {
   useSpring,
   useTransform
 } from "motion/react";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { VisualEffectBoundary } from "@/components/shared/visual-effect-boundary";
 import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { cn } from "@/lib/utils";
@@ -26,6 +26,8 @@ type AnimatedHeroBackgroundProps = {
 export function AnimatedHeroBackground({ className, renderMolten = true, scale = 1 }: AnimatedHeroBackgroundProps) {
   const reduceMotion = useReducedMotionPreference();
   const webgl = useWebGLSupport();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [sceneFailed, setSceneFailed] = useState(false);
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
   const smoothX = useSpring(pointerX, { stiffness: 65, damping: 26, mass: 1 });
@@ -64,9 +66,22 @@ export function AnimatedHeroBackground({ className, renderMolten = true, scale =
     };
   }, [pointerX, pointerY, reduceMotion]);
 
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    const handleContextLoss = (event: Event) => {
+      event.preventDefault();
+      setSceneFailed(true);
+    };
+
+    root.addEventListener("webglcontextlost", handleContextLoss, true);
+    return () => root.removeEventListener("webglcontextlost", handleContextLoss, true);
+  }, []);
+
   return (
-    <div aria-hidden="true" className={cn(styles.root, className)}>
-      {!reduceMotion && renderMolten && webgl.available ? (
+    <div aria-hidden="true" className={cn(styles.root, className)} ref={rootRef}>
+      {!reduceMotion && renderMolten && webgl.available && !sceneFailed ? (
         <div className={styles.moltenLayer}>
           <VisualEffectBoundary>
             <MoltenMetal

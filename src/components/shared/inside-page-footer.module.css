@@ -119,40 +119,9 @@
   }
 }
 
-@media (max-width: 640px) {
-  .inner {
-    display: flex;
-    min-height: 0;
-    flex-direction: column;
-    gap: 0.4rem;
-    padding-block: 0.7rem calc(0.7rem + var(--safe-area-bottom));
-    text-align: center;
-  }
-
-  .navigation {
-    width: 100%;
-  }
-
-  .navigation ul {
-    flex-wrap: wrap;
-    gap: 0.25rem 1rem;
-  }
-
-  .navigation li {
-    flex: 1 1 calc(50% - 1rem);
-    justify-content: center;
-  }
-
-  .navigation a {
-    min-height: 32px;
-  }
-
-  .navigation li + li::before {
+@media (max-width: 767px) {
+  .footer {
     display: none;
-  }
-
-  .socialList {
-    justify-content: center;
   }
 }
 

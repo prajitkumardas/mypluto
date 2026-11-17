@@ -100,7 +100,7 @@ export function SiteFooter() {
     <footer className={styles.footer}>
       <div aria-hidden="true" className={styles.ambientGlow} />
       <div className={styles.inner}>
-        <div className={styles.grid}>
+        <div className={styles.grid} data-scroll-reveal-group>
           <section className={styles.brandColumn}>
             <Link aria-label="Pluto Finds home" className={styles.brand} href="/">
               <Image alt="Pluto Finds" className={styles.logoImage} height={114} src="/images/plutofinds-footer-logo.png" width={464} />
@@ -108,7 +108,7 @@ export function SiteFooter() {
             <p className={styles.brandCopy}>Discover the best AI tools, handpicked for creators, builders, and curious minds.</p>
           </section>
 
-          <nav aria-label="Footer navigation" className={styles.navigation}>
+          <nav aria-label="Footer navigation" className={styles.navigation} data-scroll-reveal-group>
           {footerGroups.map((group) => (
             <section aria-labelledby={`footer-${group.label.toLowerCase().replace(/\s+/g, "-")}`} className={styles.group} key={group.label}>
               <p className={styles.groupLabel} id={`footer-${group.label.toLowerCase().replace(/\s+/g, "-")}`}>

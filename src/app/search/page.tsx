@@ -4,6 +4,7 @@ import heroStyles from "@/components/home/pluto-hero.module.css";
 import { AnimatedHeroBackground } from "@/components/shared/animated-hero-background";
 import styles from "./page.module.css";
 import { createPageMetadata } from "@/lib/seo";
+import { StaggerText } from "@/components/ui/stagger-text";
 
 export const metadata: Metadata = createPageMetadata({ title: "Search AI Tools | Pluto Finds", description: "Search Pluto Finds' directory and continue to matching AI tools in Discover.", path: "/search" });
 
@@ -23,9 +24,9 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         <div aria-hidden="true" className={styles.heroVeil} />
         <div className={styles.heroContent}>
           <p className={heroStyles.searchGreeting}>Hey buddy, great to have you here!</p>
-          <h1 className={heroStyles.searchTitle} id="search-page-title">
+          <StaggerText as="h1" className={heroStyles.searchTitle} id="search-page-title">
             Let&apos;s Find your perfect AI tool.
-          </h1>
+          </StaggerText>
           <div className={heroStyles.searchShell}>
             <HeroSearch
               autoFocus

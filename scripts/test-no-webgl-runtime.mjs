@@ -71,6 +71,7 @@ await call("Emulation.setDeviceMetricsOverride", {
 });
 
 const routes = [
+  ["/", "#home-hero-title"],
   ["/search", "#search-page-title"],
   ["/plutos-library", "main h1"],
   ["/pluto-guides", "main h1"],
@@ -94,6 +95,20 @@ for (const [route, marker] of routes) {
   assert.equal(state.hasFailureUi, false, `${route} must not fall into an application error screen`);
   assert.equal(state.overflow, false, `${route} must not overflow at 390px`);
   assert.ok(state.title, `${route} must retain its primary content`);
+  if (route === "/") {
+    const heroActions = await evaluate(`(() => {
+      const labels = ["Discover AI Tools", "Play with Me"];
+      return labels.map((label) => {
+        const link = [...document.querySelectorAll("a")].find((item) => item.textContent.includes(label));
+        const rect = link?.getBoundingClientRect();
+        return { label, href: link?.getAttribute("href"), visible: Boolean(rect && rect.width > 0 && rect.height > 0) };
+      });
+    })()`);
+    assert.deepEqual(heroActions, [
+      { label: "Discover AI Tools", href: "/plutos-library", visible: true },
+      { label: "Play with Me", href: "/play", visible: true }
+    ], "Homepage CTAs remain visible and actionable without WebGL");
+  }
   results[route] = state;
 }
 

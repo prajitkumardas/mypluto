@@ -18,7 +18,7 @@ test("Homepage to Discover and Search to tool detail work by keyboard", async ({
   await search.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/search/);
-  const input = page.getByPlaceholder("Search all AI tools...").first();
+  const input = page.getByRole("combobox", { name: "Describe your task" });
   await input.focus();
   await page.keyboard.type("video");
   await page.keyboard.press("Enter");
@@ -55,14 +55,15 @@ test("Discover filters and Trending period support keyboard activation", async (
 
 test("Compare add and remove controls are named and keyboard operable", async ({ page }) => {
   await page.goto("/compare");
-  const add = page.getByRole("button", { name: "Add a tool" }).first();
+  const add = page.getByRole("button", { name: "Add a tool to comparison slot 1" });
   await add.focus();
   await page.keyboard.press("Enter");
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
-  const firstAdd = dialog.getByRole("button", { name: "Add", exact: true }).first();
+  const firstAdd = dialog.getByRole("button", { name: /Add .* to comparison/ }).first();
   await firstAdd.focus();
   await page.keyboard.press("Space");
+  await expect(page.getByRole("button", { name: /Change .* in comparison slot 1/ })).toBeFocused();
   const remove = page.getByRole("button", { name: /Remove .* from comparison/ }).first();
   await expect(remove).toBeVisible();
   await remove.focus();
@@ -83,7 +84,7 @@ test("Pluto Guides completes with keyboard controls", async ({ page }) => {
     const continueButton = page.getByRole("button", { name: "Continue" });
     await continueButton.focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByText(`Step ${step + 1} of 4`)).toBeVisible();
+    await expect(page.getByRole("group", { name: new RegExp(`Step ${step + 1} of 4`) })).toBeVisible();
   }
 
   await page.getByRole("button", { name: "Continue" }).focus();
@@ -128,10 +129,7 @@ test("Submit dialog traps focus, validates safely, closes with Escape and restor
   await page.keyboard.press("Enter");
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
-  const begin = dialog.getByRole("button", { name: "Let's submit" });
   await expect.poll(() => page.evaluate(() => Boolean(document.activeElement?.closest('[role="dialog"]')))).toBe(true);
-  await begin.focus();
-  await page.keyboard.press("Enter");
   await expect(dialog.locator("input").first()).toBeFocused();
   await page.keyboard.press("Shift+Tab");
   await expect(dialog.locator(":focus")).toHaveCount(1);
@@ -146,9 +144,29 @@ test("Mobile menu, scroll restoration and 404 recovery work", async ({ page }) =
   const menu = page.getByRole("button", { name: "Open menu" });
   await menu.focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("dialog", { name: "Pluto menu" })).toBeVisible();
+  const landingDialog = page.getByRole("dialog", { name: "Pluto menu" });
+  await expect(landingDialog).toBeVisible();
+  await expect(landingDialog).toHaveAttribute("data-staggered-menu", "true");
   await page.keyboard.press("Escape");
   await expect(menu).toBeFocused();
+
+  await page.goto("/trending");
+  const internalMenu = page.getByRole("button", { name: "Open menu" });
+  await internalMenu.click();
+  const internalDialog = page.getByRole("dialog", { name: "Pluto menu" });
+  await expect(internalDialog).toBeVisible();
+  await expect(internalDialog).toHaveAttribute("data-staggered-menu", "true");
+  await expect(internalDialog.getByRole("link", { name: /Discover/ })).toBeVisible();
+  await expect(internalDialog.getByRole("navigation", { name: "Submit a tool" }).getByText("Submit a Tool")).toBeVisible();
+  await expect(internalDialog.getByRole("navigation", { name: "Footer links" })).toBeVisible();
+  await expect(internalDialog.getByRole("link", { name: "Privacy Policy" })).toBeVisible();
+  await expect(internalDialog.getByRole("link", { name: "Terms & Conditions" })).toBeVisible();
+  await expect(internalDialog.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "mailto:hello@plutofinds.com");
+  await expect(internalDialog.getByText(/Pluto Finds\. All rights reserved/)).toBeVisible();
+  await expect(internalDialog.getByRole("img", { name: "LinkedIn" })).toBeVisible();
+  await expect(page.locator("footer").filter({ hasText: "All rights reserved" })).toBeHidden();
+  await page.keyboard.press("Escape");
+  await expect(internalMenu).toBeFocused();
 
   await page.goto("/this-route-does-not-exist");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

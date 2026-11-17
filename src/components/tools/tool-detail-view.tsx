@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { StaggerText } from "@/components/ui/stagger-text";
 import {
   AlertTriangle,
   ArrowRight,
@@ -119,7 +120,7 @@ export function ToolDetailView({ tool }: { tool: ToolDetailViewModel }) {
           <ToolLogo className={styles.logo} imageClassName={styles.logoImage} name={tool.name} src={tool.logoUrl} />
           <div className={styles.identity}>
             <StatusPill label={tool.verificationStatus} tone={tool.verificationTone} />
-            <h1 id="tool-title">{tool.name}</h1>
+            <StaggerText as="h1" id="tool-title">{tool.name}</StaggerText>
             <p>{tool.description}</p>
             <div className={styles.chips}>
               {tool.chips.slice(0, 3).map((chip) => <span key={chip}>{chip}</span>)}

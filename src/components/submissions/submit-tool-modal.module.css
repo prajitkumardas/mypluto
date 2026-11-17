@@ -24,7 +24,7 @@
   padding: var(--popup-padding);
   color: var(--text-primary);
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.58), 0 0 42px rgba(124, 58, 237, 0.12), inset 0 1px rgba(255, 255, 255, 0.07);
-  animation: modalIn 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: modalIn 230ms cubic-bezier(0.22, 1, 0.36, 1) both;
   outline: none;
 }
 
@@ -40,19 +40,20 @@
   top: var(--popup-padding);
   right: var(--popup-padding);
   display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.5rem;
+  height: 2.5rem;
   place-items: center;
-  border: 1px solid var(--border-default);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
   cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
 }
 
-.closeButton:hover { border-color: var(--border-brand); color: #fff; }
+.closeButton:hover { border-color: rgba(200, 255, 90, 0.36); background: rgba(255, 255, 255, 0.12); }
 .closeButton:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 3px; }
-.closeButton svg { width: 1.1rem; height: 1.1rem; }
+.closeButton svg { width: 1rem; height: 1rem; }
 
 .contentViewport {
   min-height: 310px;
@@ -60,7 +61,10 @@
 
 .animatedContent { width: 100%; }
 
-.stepper { margin: 0.2rem 3.4rem 1.5rem; }
+.modal .stepper {
+  width: min(38rem, calc(100% - 3.5rem));
+  margin: 0.2rem auto 1.5rem;
+}
 
 .centerState,
 .successState {
@@ -112,11 +116,8 @@
 }
 
 .step { display: grid; min-height: 310px; grid-template-rows: auto 1fr auto; gap: 1.35rem; }
-.stepHeading { display: flex; max-width: calc(100% - 3.5rem); align-items: flex-start; gap: 0.8rem; }
+.stepHeading { max-width: calc(100% - 3.5rem); }
 .stepHeading h2 { margin: 0; font-family: var(--font-display); font-size: var(--text-h2); font-weight: var(--font-weight-semibold); line-height: var(--leading-h2); letter-spacing: var(--tracking-h2); }
-.stepHeading p { margin: 0.3rem 0 0; color: var(--text-secondary); font-size: var(--text-body-sm); }
-.stepIcon { display: grid; width: 2.4rem; height: 2.4rem; flex: 0 0 2.4rem; place-items: center; border: 1px solid rgba(139,92,246,.35); border-radius: .8rem; background: rgba(124,58,237,.12); color: #a78bfa; }
-.stepIcon svg { width: 1.1rem; height: 1.1rem; }
 
 .fieldStack { display: grid; align-content: start; gap: 1rem; }
 .twoColumns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 1rem; }
@@ -142,7 +143,8 @@
 .platforms button:focus-visible { outline: 2px solid var(--border-focus); outline-offset: 2px; }
 
 .stepActions,
-.centerActions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem; border-top: 1px solid var(--border-default); padding-top: 1rem; }
+.centerActions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.75rem; padding-top: 1rem; }
+.stepActionsForward { justify-content: flex-end; }
 .centerActions { justify-content: center; margin-top: 0.7rem; }
 
 .scanner { position: relative; display: grid; width: 7rem; height: 7rem; place-items: center; border: 1px solid rgba(139,92,246,.3); border-radius: 50%; background: radial-gradient(circle, rgba(124,58,237,.22), transparent 70%); color: #a78bfa; }
@@ -204,7 +206,6 @@
 @media (max-width: 760px) {
   .modal { width: min(720px, calc(100vw - 40px)); }
   .mascot { width: clamp(112px, 13vw, 124px); height: clamp(124px, 14vw, 138px); }
-  .stepper { margin-inline: 2.5rem; }
 }
 
 @media (max-width: 600px) {
@@ -213,7 +214,7 @@
   .mascot { width: clamp(90px, 28vw, 105px); height: clamp(100px, 31vw, 116px); }
   .contentViewport { min-height: 0; }
   .step { min-height: 0; }
-  .stepper { margin: 0 3.2rem 1.2rem 0; }
+  .modal .stepper { margin-block: 0 1.2rem; }
   .twoColumns { grid-template-columns: 1fr; }
   .centerState,
   .successState { min-height: 430px; }

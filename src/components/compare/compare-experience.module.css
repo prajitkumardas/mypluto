@@ -413,6 +413,24 @@
 
 .matrixScroll {
   overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-color: rgba(167, 139, 250, 0.7) rgba(255, 255, 255, 0.06);
+  scrollbar-width: thin;
+}
+
+.matrixScroll:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -3px;
+}
+
+.matrixHint {
+  display: none;
+  margin: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(124, 58, 237, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  padding: 0.65rem 0.85rem;
+  font-size: var(--text-label-sm);
 }
 
 .matrix {
@@ -538,7 +556,7 @@
     inset 0 1px rgba(255, 255, 255, 0.07);
   color: var(--text-primary);
   padding: var(--popup-padding);
-  animation: selectorModalIn 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: selectorModalIn 230ms cubic-bezier(0.22, 1, 0.36, 1) both;
   outline: none;
 }
 
@@ -884,6 +902,20 @@
   .selectorTool button {
     grid-column: 1 / -1;
     width: 100%;
+  }
+
+  .matrixHint {
+    display: block;
+  }
+
+  .matrix tbody th {
+    min-width: 8.5rem;
+  }
+
+  .matrix th,
+  .matrix td {
+    padding: 0.75rem 0.7rem;
+    overflow-wrap: anywhere;
   }
 }
 

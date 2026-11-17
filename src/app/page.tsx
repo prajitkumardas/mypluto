@@ -5,10 +5,9 @@ import { PlutoHero } from "@/components/home/pluto-hero";
 import { PopularCategoriesShowcase } from "@/components/home/popular-categories-showcase";
 import { PlutoStorySection } from "@/components/home/pluto-story-section";
 import {
-  ContentBlockReveal,
-  SectionEyebrowReveal,
-  WordReveal
+  SectionEyebrowReveal
 } from "@/components/motion/scroll-reveals";
+import { StaggerText } from "@/components/ui/stagger-text";
 import { Badge } from "@/components/ui/badge";
 import { SubmitToolButton } from "@/components/submissions/submit-tool-trigger";
 import { getTrendingResponse } from "@/lib/trending";
@@ -72,15 +71,13 @@ function SubmitCta() {
                 Submit a Tool
               </Badge>
             </SectionEyebrowReveal>
-            <WordReveal
-              as="h2"
-              className="mt-4 type-h1"
-              text="Built something useful? Add it to the universe."
-            />
-            <ContentBlockReveal as="p" className="mt-4 max-w-2xl type-body-md text-white/78" delay={0.08}>
+            <StaggerText as="h2" className="mt-4 type-h1">
+              Built something useful? Add it to the universe.
+            </StaggerText>
+            <StaggerText as="p" className="mt-4 max-w-2xl type-body-md text-white/78" delay={0.12}>
               A guided submission flow will capture product details, pricing,
               platform support and verification notes without one long form.
-            </ContentBlockReveal>
+            </StaggerText>
           </div>
           <SubmitToolButton className="relative z-20" showArrow size="lg" variant="primary">
             Start submission

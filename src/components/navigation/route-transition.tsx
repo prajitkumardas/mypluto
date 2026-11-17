@@ -15,10 +15,10 @@ export function RouteTransition({ children }: { children: ReactNode }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       className="route-transition-shell"
       id="main-content"
-      initial={{ opacity: 0, scale: isSearchRoute ? 0.985 : 1, y: isSearchRoute ? 0 : 6 }}
+      initial={false}
       key={pathname}
       tabIndex={-1}
-      transition={{ duration: reduceMotion ? 0.01 : isSearchRoute ? 0.42 : 0.2, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: reduceMotion ? 0.01 : isSearchRoute ? 0.18 : 0.2, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </motion.div>

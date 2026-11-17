@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ToolLogo } from "@/components/shared/tool-logo";
 import { TrendIndicator } from "@/components/trending/trend-indicator";
 import { PlutoButton } from "@/components/ui/pluto-button";
+import { StaggerText } from "@/components/ui/stagger-text";
 import type { TrendingResponse, TrendingTool, TrendPeriod } from "@/lib/trending";
 import styles from "./home-trending-section.module.css";
 
@@ -50,7 +51,8 @@ export function HomeTrendingSection({ initialResponse }: { initialResponse: Tren
           <div className={styles.intro}>
             <p className={styles.eyebrow}>Trending tools</p>
             <h2 className={styles.title} id="home-trending-title">
-              What builders are <span>checking now.</span>
+              <StaggerText>What builders are</StaggerText>{" "}
+              <StaggerText className={styles.accent} delay={0.15}>checking now.</StaggerText>
             </h2>
             <p className={styles.copy}>See which AI tools are gaining attention right now.</p>
           </div>

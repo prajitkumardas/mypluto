@@ -10,6 +10,7 @@ import { ArrowRight, Menu, Search, X } from "lucide-react";
 import { getActivePrimaryRoute, primaryRoutes } from "@/components/navigation/primary-routes";
 import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { SubmitToolButton, SubmitToolLink } from "@/components/submissions/submit-tool-trigger";
+import { insidePageFooterLinks, insidePageSocialIcons } from "@/components/shared/inside-page-footer-content";
 import { useCompareStore } from "@/lib/compare-store";
 
 const SEARCH_HREF = "/search";
@@ -21,10 +22,8 @@ const NAV_EASING = [0.22, 1, 0.36, 1] as const;
 type NavbarState = "expanded" | "floating";
 
 const secondaryItems = [
-  ["About Pluto", "/pluto"],
-  ["Submit a Tool", "/submit-tool"],
   ["Verification", "/verification"],
-  ["Privacy", "/privacy"]
+  ...insidePageFooterLinks.map(({ label, href }) => [label, href] as const)
 ] as const;
 
 export function SiteHeader() {
@@ -36,7 +35,6 @@ export function SiteHeader() {
   const compareCount = useCompareStore((state) => state.selected.length);
   const activePrimaryRoute = getActivePrimaryRoute(pathname);
   const internalProductRoute = Boolean(activePrimaryRoute);
-  const landingRoute = pathname === "/";
   const searchRoute = pathname === SEARCH_HREF;
 
   useEffect(() => {
@@ -89,12 +87,12 @@ export function SiteHeader() {
         data-state={navbarState}
         initial={false}
         layout={!reduceMotion}
-        transition={{ layout: { duration: reduceMotion ? 0.01 : 0.48, ease: NAV_EASING } }}
+        transition={{ layout: { duration: reduceMotion ? 0.01 : 0.24, ease: NAV_EASING } }}
       >
         <motion.div
           className="site-header-logo-region"
           layout={!reduceMotion ? "position" : false}
-          transition={{ layout: { duration: 0.48, ease: NAV_EASING } }}
+          transition={{ layout: { duration: 0.24, ease: NAV_EASING } }}
         >
           <Link aria-label="PlutoFinds home" className="focus-ring site-header-logo" data-scroll-top="true" href="/">
             <Image
@@ -112,7 +110,7 @@ export function SiteHeader() {
           aria-label="Primary"
           className="site-header-nav"
           layout={!reduceMotion ? "position" : false}
-          transition={{ layout: { duration: 0.48, ease: NAV_EASING } }}
+          transition={{ layout: { duration: 0.24, ease: NAV_EASING } }}
         >
           {primaryRoutes.map(({ href, longLabel: label }) => (
             <Link
@@ -133,7 +131,7 @@ export function SiteHeader() {
         <motion.div
           className="site-header-actions"
           layout={!reduceMotion ? "position" : false}
-          transition={{ layout: { duration: 0.48, ease: NAV_EASING } }}
+          transition={{ layout: { duration: 0.24, ease: NAV_EASING } }}
         >
           <Link
             aria-current={searchRoute ? "page" : undefined}
@@ -153,7 +151,7 @@ export function SiteHeader() {
           <Link
             aria-current={searchRoute ? "page" : undefined}
             aria-label="Search AI tools"
-            className="focus-ring nav-icon-button rounded-xl border border-white/24 bg-white/8 text-white hover:border-lime-400 hover:text-lime-400"
+            className="focus-ring nav-icon-button site-header-mobile-action"
             data-search-action="true"
             href={SEARCH_HREF}
             onClick={() => setMenuOpen(false)}
@@ -164,7 +162,7 @@ export function SiteHeader() {
             <Dialog.Trigger asChild>
               <button
                 aria-label="Open menu"
-                className="focus-ring nav-icon-button rounded-xl border border-white/24 bg-white/8 text-white hover:border-lime-400 hover:text-lime-400"
+                className="focus-ring nav-icon-button site-header-mobile-action site-header-mobile-trigger"
                 type="button"
               >
                 <Menu aria-hidden="true" className="nav-icon" />
@@ -174,19 +172,17 @@ export function SiteHeader() {
               <Dialog.Overlay className="site-header-mobile-overlay" />
               <Dialog.Content
                 className="site-header-mobile-menu"
-                data-landing-route={landingRoute ? "true" : "false"}
+                data-staggered-menu="true"
                 data-product-route={internalProductRoute ? "true" : "false"}
               >
-                {landingRoute ? (
-                  <div aria-hidden="true" className="site-header-mobile-menu-layers">
-                    <span />
-                    <span />
-                  </div>
-                ) : null}
+                <div aria-hidden="true" className="site-header-mobile-menu-layers">
+                  <span />
+                  <span />
+                </div>
                 <div className="site-header-mobile-menu-surface">
                   <div className="site-header-mobile-menu-heading">
                     <div>
-                      {landingRoute ? <span className="site-header-mobile-menu-eyebrow">Explore Pluto</span> : null}
+                      <span className="site-header-mobile-menu-eyebrow">Explore Pluto</span>
                       <Dialog.Title>Pluto menu</Dialog.Title>
                     </div>
                     <Dialog.Description className="sr-only">
@@ -208,11 +204,26 @@ export function SiteHeader() {
                     ))}
                   </nav>
                   {internalProductRoute ? (
-                    <nav aria-label="Secondary" className="site-header-mobile-secondary grid gap-2">
-                      {secondaryItems.map(([label, href]) => <MenuLink href={href} key={href} label={label} />)}
-                    </nav>
+                    <>
+                      <nav aria-label="Submit a tool" className="site-header-mobile-submit">
+                        <MenuLink href="/submit-tool" label="Submit a Tool" />
+                      </nav>
+                      <nav aria-label="Footer links" className="site-header-mobile-secondary">
+                        {secondaryItems.map(([label, href]) => <MenuLink href={href} key={href} label={label} />)}
+                      </nav>
+                      <div className="site-header-mobile-footer">
+                        <p>&copy; {new Date().getFullYear()} Pluto Finds. All rights reserved.</p>
+                        <div aria-label="Social media" className="site-header-mobile-socials">
+                          {insidePageSocialIcons.map(({ label, Icon }) => (
+                            <span aria-label={label} key={label} role="img">
+                              <Icon aria-hidden="true" />
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </>
                   ) : (
-                    <nav aria-label="More" className="site-header-mobile-secondary grid gap-2">
+                    <nav aria-label="Submit a tool" className="site-header-mobile-submit">
                       <MenuLink href="/submit-tool" label="Submit a Tool" />
                     </nav>
                   )}
@@ -237,6 +248,21 @@ function MenuLink({ href, label }: { href: string; label: string }) {
       </Dialog.Close>
     );
   }
+
+  if (href.startsWith("mailto:")) {
+    return (
+      <Dialog.Close asChild>
+        <a
+          className="site-header-mobile-link focus-ring flex min-h-11 items-center justify-between rounded-xl px-3 type-label-md text-white/86 hover:bg-white/8"
+          href={href}
+        >
+          {label}
+          <ArrowRight aria-hidden="true" className="nav-icon" />
+        </a>
+      </Dialog.Close>
+    );
+  }
+
   return (
     <Dialog.Close asChild>
       <Link

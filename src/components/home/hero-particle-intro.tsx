@@ -3,6 +3,7 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import { useWebGLSupport } from "@/lib/webgl-support";
 import styles from "./pluto-hero.module.css";
 
 const PARTICLE_COUNT = 8_000;
@@ -32,8 +33,14 @@ type HeroParticleIntroProps = {
 
 export function HeroParticleIntro({ onSequenceComplete }: HeroParticleIntroProps) {
   const [targets, setTargets] = useState<ParticleTargets | null>(null);
+  const webgl = useWebGLSupport();
 
   useEffect(() => {
+    if (!webgl.available) {
+      if (webgl.reason !== "checking") onSequenceComplete();
+      return;
+    }
+
     let cancelled = false;
 
     async function prepareTargets() {
@@ -48,11 +55,11 @@ export function HeroParticleIntro({ onSequenceComplete }: HeroParticleIntroProps
     return () => {
       cancelled = true;
     };
-  }, [onSequenceComplete]);
+  }, [onSequenceComplete, webgl]);
 
   return (
     <div aria-hidden="true" className={styles.particleIntroCanvas}>
-      {targets ? (
+      {webgl.available && targets ? (
         <Canvas
           camera={{ fov: 45, position: [0, 0, 10] }}
           dpr={[1, 1.5]}
@@ -61,9 +68,9 @@ export function HeroParticleIntro({ onSequenceComplete }: HeroParticleIntroProps
         >
           <ParticleMorph onComplete={onSequenceComplete} targets={targets} />
         </Canvas>
-      ) : (
+      ) : webgl.reason === "checking" ? (
         <span className={styles.particleIntroLoading} />
-      )}
+      ) : null}
     </div>
   );
 }

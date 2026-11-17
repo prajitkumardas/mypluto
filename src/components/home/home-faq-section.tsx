@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion, type Variants } from 'motion/react';
 import { type CSSProperties, useState } from 'react';
 import { useReducedMotionPreference } from '@/components/motion/use-reduced-motion-preference';
+import { StaggerText } from '@/components/ui/stagger-text';
 import styles from './home-faq-section.module.css';
 
 export const faqItems = [
@@ -136,7 +137,8 @@ export function HomeFaqSection() {
         <div className={styles.intro}>
           <p className={styles.eyebrow}>FAQs</p>
           <h2 className={styles.title} id='home-faq-title'>
-            Questions, <span>answered.</span>
+            <StaggerText>Questions,</StaggerText>{' '}
+            <StaggerText className={styles.accent} delay={0.1}>answered.</StaggerText>
           </h2>
           <p className={styles.copy}>
             The essentials for finding, comparing and choosing AI tools with confidence.

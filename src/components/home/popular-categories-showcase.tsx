@@ -70,6 +70,7 @@ export function PopularCategoriesShowcase() {
     <section
       aria-labelledby="popular-categories-title"
       className={`${styles.section} ${reducedMotion ? styles.staticSection : ""}`}
+      data-scroll-reveal="off"
       id="categories"
       ref={sectionRef}
     >

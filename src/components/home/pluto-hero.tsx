@@ -11,6 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatedHeroBackground } from "@/components/shared/animated-hero-background";
 import { useReducedMotionPreference } from "@/components/motion/use-reduced-motion-preference";
 import { PlutoButton } from "@/components/ui/pluto-button";
+import { useWebGLSupport } from "@/lib/webgl-support";
 import { CatExperience } from "./cat-experience";
 import { HeroParticleIntro } from "./hero-particle-intro";
 import styles from "./pluto-hero.module.css";
@@ -28,6 +29,7 @@ function mapScrollRange(value: number, start: number, end: number, from: number,
 export function PlutoHero() {
   const heroRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotionPreference();
+  const webgl = useWebGLSupport();
   const [introComplete, setIntroComplete] = useState(false);
 
   const { scrollYProgress } = useScroll({
@@ -90,6 +92,12 @@ export function PlutoHero() {
   }, [finishIntro, prefersReducedMotion]);
 
   useEffect(() => {
+    if (webgl.available || webgl.reason === "checking") return;
+    const timer = window.setTimeout(finishIntro, 0);
+    return () => window.clearTimeout(timer);
+  }, [finishIntro, webgl]);
+
+  useEffect(() => {
     if (introComplete) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -114,7 +122,7 @@ export function PlutoHero() {
       <div className={styles.heroSticky}>
         <AnimatedHeroBackground renderMolten={introComplete} scale={glowScale} />
 
-        {!introComplete ? <HeroIntro onComplete={finishIntro} /> : null}
+        {!introComplete && !prefersReducedMotion && webgl.available ? <HeroIntro onComplete={finishIntro} /> : null}
 
         <motion.div
           aria-hidden="true"

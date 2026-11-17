@@ -45,7 +45,7 @@ export function LibraryToolCard({ tool }: { tool: LibraryTool }) {
 
       <div className={styles.metaLine}>
         <span className={styles.priceModel}>{tool.pricing.model || "Unknown"}</span>
-        <span aria-hidden="true" className={styles.metaDot}>Ã¢â‚¬Â¢</span>
+        <span aria-hidden="true" className={styles.metaDot}>•</span>
         <span>{formatStartingPrice(tool.pricing.startingPriceRaw)}</span>
       </div>
 
@@ -63,7 +63,7 @@ function formatStartingPrice(value: string) {
   if (!value) return "See pricing";
   if (value.length <= 26) return value;
 
-  const currencyMatch = value.match(/(?:from\s+)?(?:~)?(?:\$|Ã¢â€šÂ¬|Ã‚Â£)\s?\d[\d,.]*(?:\.\d+)?(?:\s?\/\s?(?:mo|month|yr|year))?/i);
+  const currencyMatch = value.match(/(?:from\s+)?(?:~)?(?:\$|€|£)\s?\d[\d,.]*(?:\.\d+)?(?:\s?\/\s?(?:mo|month|yr|year))?/i);
   if (currencyMatch) return `From ${currencyMatch[0].replace(/^from\s+/i, "")}`;
 
   if (/free/i.test(value)) return "Free plan";

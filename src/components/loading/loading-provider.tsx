@@ -15,7 +15,6 @@ import {
 } from "react";
 import { GlobalLoader } from "./global-loader";
 
-const SHOW_DELAY_MS = 120;
 const MIN_VISIBLE_MS = 380;
 const COMPLETE_HOLD_MS = 220;
 const STUCK_TIMEOUT_MS = 10_000;
@@ -134,8 +133,7 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
       schedule(() => setProgress(88), 2_500);
     };
 
-    if (visibleRef.current) show();
-    else schedule(show, SHOW_DELAY_MS);
+    show();
 
     schedule(() => {
       if (pendingRef.current) finishLoading();

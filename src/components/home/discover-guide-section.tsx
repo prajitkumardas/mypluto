@@ -24,7 +24,7 @@ const guideHighlights = [
 
 export function DiscoverGuideSection() {
   return (
-    <section aria-labelledby="discover-guide-title" className={styles.section} id="library">
+    <section aria-labelledby="discover-guide-title" className={styles.section} data-scroll-reveal="off" id="library">
       <ScrollExpand
         alt="Pluto watching a sunset from a city window"
         className={styles.scrollExpand}

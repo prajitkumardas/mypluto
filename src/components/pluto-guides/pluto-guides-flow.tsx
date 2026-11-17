@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import {
   BookOpen,
   CheckCircle2,
@@ -232,6 +232,12 @@ function GuideQuestionScreen({
   step: number;
   updateAnswers: (partial: Partial<GuideAnswers>) => void;
 }) {
+  const questionRegionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    questionRegionRef.current?.focus();
+  }, [step]);
+
   return (
     <section className="mx-auto max-w-6xl">
       <div className="mx-auto max-w-4xl text-center">
@@ -244,7 +250,7 @@ function GuideQuestionScreen({
 
       <Progress step={step} />
 
-      <div className="mt-7 rounded-[1.35rem] border border-[rgba(255,255,255,0.16)] bg-[rgba(29,29,42,0.72)] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.26),inset_0_1px_0_rgba(255,255,255,0.045)] backdrop-blur-[18px] sm:p-7">
+      <div aria-label={`Step ${step + 1} of ${steps.length}: ${steps[step]}`} className="mt-7 rounded-[1.35rem] border border-[rgba(255,255,255,0.16)] bg-[rgba(29,29,42,0.72)] p-5 shadow-[0_20px_60px_rgba(0,0,0,0.26),inset_0_1px_0_rgba(255,255,255,0.045)] backdrop-blur-[18px] focus:outline-none sm:p-7" ref={questionRegionRef} tabIndex={-1}>
         {step === 0 ? <GoalQuestion answers={answers} updateAnswers={updateAnswers} /> : null}
         {step === 1 ? <TaskQuestion answers={answers} currentGoal={currentGoal} updateAnswers={updateAnswers} /> : null}
         {step === 2 ? <PreferencesQuestion answers={answers} updateAnswers={updateAnswers} /> : null}

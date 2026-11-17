@@ -14,6 +14,7 @@ import { plutosLibrary } from "@/lib/plutos-library";
 import { StructuredData } from "@/components/seo/structured-data";
 import { SITE_URL } from "@/lib/seo";
 import { HydrationMarker } from "@/components/shared/hydration-marker";
+import { SiteScrollReveal } from "@/components/motion/site-scroll-reveal";
 import "./globals.css";
 import "@/styles/typography.css";
 
@@ -125,6 +126,7 @@ export default function RootLayout({
           </Suspense>
           <SiteHeader />
           <RouteTransition>{children}</RouteTransition>
+          <SiteScrollReveal />
           <ComparisonTray />
           <PwaShell />
           <Suspense fallback={null}>

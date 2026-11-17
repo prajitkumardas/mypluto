@@ -4,10 +4,11 @@ import * as Dialog from "@radix-ui/react-dialog";
 import * as Select from "@radix-ui/react-select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Check, ChevronDown, Copy, Loader2, Plus, Search, Trash2, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { PlutoButton } from "@/components/ui/pluto-button";
 import { HeroVeil } from "@/components/shared/hero-veil";
 import { ToolLogo } from "@/components/shared/tool-logo";
+import { StaggerText } from "@/components/ui/stagger-text";
 import { MAX_COMPARE_TOOLS, type RecentToolRecord, useCompareStore } from "@/lib/compare-store";
 import { compareTools, getCompareTool, getValidCompareSlugs, searchCompareTools, type CompareTool } from "@/lib/compare-tools";
 import { cn } from "@/lib/utils";
@@ -49,6 +50,8 @@ export function CompareExperience() {
   const setFeedback = useCompareStore((state) => state.setFeedback);
   const recentlyViewed = useCompareStore((state) => state.recentlyViewed);
   const [selector, setSelector] = useState<SelectorState | null>(null);
+  const selectorSlotRef = useRef(0);
+  const slotTriggerRefs = useRef(new Map<number, HTMLButtonElement>());
   const seededFromUrlRef = useRef(false);
   const pendingUrlSeedRef = useRef<string | null>(null);
   const [hasCompared, setHasCompared] = useState(false);
@@ -93,6 +96,25 @@ export function CompareExperience() {
     setHasCompared(false);
   };
 
+  const openSelector = (next: SelectorState) => {
+    selectorSlotRef.current = next.slotIndex;
+    setSelector(next);
+  };
+
+  const closeSelector = () => {
+    setSelector(null);
+  };
+
+  const restoreSelectorFocus = () => {
+    window.requestAnimationFrame(() => {
+      slotTriggerRefs.current.get(selectorSlotRef.current)?.focus();
+    });
+  };
+
+  const registerSlotTrigger = (index: number, node: HTMLButtonElement | null) => {
+    if (node) slotTriggerRefs.current.set(index, node);
+  };
+
   const handleRemoveTool = (tool: CompareTool) => {
     removeTool(tool.slug, tool.name);
     if (selectedTools.length <= 2) setHasCompared(false);
@@ -122,7 +144,7 @@ export function CompareExperience() {
       <section className={styles.shell}>
         <div className={styles.hero}>
           <p className={styles.eyebrow}>COMPARE AI TOOLS</p>
-          <h1 className={styles.title}>Compare tools. Choose with confidence.</h1>
+          <StaggerText as="h1" className={styles.title}>Compare tools. Choose with confidence.</StaggerText>
           <p className={styles.copy}>Review features, pricing and strengths side by side&mdash;up to four tools.</p>
         </div>
 
@@ -153,12 +175,14 @@ export function CompareExperience() {
                 return tool ? (
                   <SelectedSlot
                     key={tool.slug}
+                    index={index}
                     onRemove={() => handleRemoveTool(tool)}
-                    onReplace={() => setSelector({ mode: "replace", oldSlug: tool.slug, slotIndex: index })}
+                    onReplace={() => openSelector({ mode: "replace", oldSlug: tool.slug, slotIndex: index })}
+                    registerTrigger={registerSlotTrigger}
                     tool={tool}
                   />
                 ) : (
-                  <EmptySlot key={`empty-${index}`} onSelect={() => setSelector({ mode: "add", slotIndex: index })} />
+                  <EmptySlot index={index} key={`empty-${index}`} onSelect={() => openSelector({ mode: "add", slotIndex: index })} registerTrigger={registerSlotTrigger} />
                 );
               })}
             </div>
@@ -192,14 +216,15 @@ export function CompareExperience() {
         recentlyViewed={recentlyViewed}
         selectedSlugs={validSlugs}
         selector={selector}
-        onClose={() => setSelector(null)}
+        onClose={closeSelector}
+        onCloseAutoFocus={restoreSelectorFocus}
         onSelect={(tool) => {
           if (!selector) return;
           const result = selector.mode === "replace"
             ? replaceTool(selector.oldSlug, tool.slug, tool.name)
             : addTool(tool.slug, tool.name);
           if (result.status === "added") {
-            setSelector(null);
+            closeSelector();
             setHasCompared((current) => current && result.selected.length >= 2);
           }
         }}
@@ -221,9 +246,9 @@ function BuilderSkeleton() {
   );
 }
 
-function EmptySlot({ onSelect }: { onSelect: () => void }) {
+function EmptySlot({ index, onSelect, registerTrigger }: { index: number; onSelect: () => void; registerTrigger: (index: number, node: HTMLButtonElement | null) => void }) {
   return (
-    <button className={styles.emptySlot} onClick={onSelect} type="button">
+    <button aria-label={`Add a tool to comparison slot ${index + 1}`} className={styles.emptySlot} onClick={onSelect} ref={(node) => registerTrigger(index, node)} type="button">
       <span aria-hidden="true" className={styles.addIcon}><Plus /></span>
       <span className={styles.emptySlotTitle}>Add a tool</span>
       <small>Search the Pluto library</small>
@@ -231,7 +256,7 @@ function EmptySlot({ onSelect }: { onSelect: () => void }) {
   );
 }
 
-function SelectedSlot({ onRemove, onReplace, tool }: { onRemove: () => void; onReplace: () => void; tool: CompareTool }) {
+function SelectedSlot({ index, onRemove, onReplace, registerTrigger, tool }: { index: number; onRemove: () => void; onReplace: () => void; registerTrigger: (index: number, node: HTMLButtonElement | null) => void; tool: CompareTool }) {
   return (
     <article className={styles.selectedSlot}>
       <button aria-label={`Remove ${tool.name} from comparison`} className={styles.removeSlot} onClick={onRemove} type="button">
@@ -243,7 +268,7 @@ function SelectedSlot({ onRemove, onReplace, tool }: { onRemove: () => void; onR
         <p>{tool.category}</p>
         <span>{tool.pricing || "Pricing not verified"}</span>
       </div>
-      <button className={styles.changeButton} onClick={onReplace} type="button">Change tool</button>
+      <button aria-label={`Change ${tool.name} in comparison slot ${index + 1}`} className={styles.changeButton} onClick={onReplace} ref={(node) => registerTrigger(index, node)} type="button">Change tool</button>
     </article>
   );
 }
@@ -266,11 +291,14 @@ function PlutoInsight({ tools }: { tools: CompareTool[] }) {
 }
 
 function ComparisonMatrix({ tools }: { tools: CompareTool[] }) {
+  const matrixStyle = { minWidth: `${11 + tools.length * 14}rem` } as CSSProperties;
+
   return (
     <section className={styles.matrixShell} aria-labelledby="comparison-matrix-title">
       <h2 className="sr-only" id="comparison-matrix-title">Comparison details</h2>
-      <div className={styles.matrixScroll}>
-        <table className={styles.matrix} style={{ minWidth: `${13 + tools.length * 17}rem` }}>
+      <p className={styles.matrixHint} id="comparison-scroll-hint">Scroll horizontally to compare every tool.</p>
+      <div aria-describedby="comparison-scroll-hint" aria-label="Tool comparison table" className={styles.matrixScroll} role="region" tabIndex={0}>
+        <table className={styles.matrix} style={matrixStyle}>
           <thead>
             <tr>
               <th scope="col">Feature</th>
@@ -316,12 +344,14 @@ function formatMatrixValue(tool: CompareTool, field: (typeof rows)[number][1]) {
 
 function ToolSelector({
   onClose,
+  onCloseAutoFocus,
   onSelect,
   recentlyViewed,
   selectedSlugs,
   selector
 }: {
   onClose: () => void;
+  onCloseAutoFocus: () => void;
   onSelect: (tool: CompareTool) => void;
   recentlyViewed: RecentToolRecord[];
   selectedSlugs: string[];
@@ -341,7 +371,7 @@ function ToolSelector({
     <Dialog.Root open={Boolean(selector)} onOpenChange={(open) => !open && onClose()}>
       <Dialog.Portal>
         <Dialog.Overlay className={styles.selectorOverlay} />
-        <Dialog.Content className={styles.selectorContent}>
+        <Dialog.Content className={styles.selectorContent} onCloseAutoFocus={(event) => { event.preventDefault(); onCloseAutoFocus(); }}>
           <div className={styles.selectorHeader}>
             <div>
               <Dialog.Title>{selector?.mode === "replace" ? "Change tool" : "Add a tool"}</Dialog.Title>
@@ -424,7 +454,7 @@ function SelectorTool({ onSelect, selected, tool }: { onSelect: (tool: CompareTo
         <p>{tool.category}</p>
         <small>{tool.bestFor}</small>
       </div>
-      <button disabled={selected} onClick={() => onSelect(tool)} type="button">
+      <button aria-label={selected ? `${tool.name} already added` : `Add ${tool.name} to comparison`} disabled={selected} onClick={() => onSelect(tool)} type="button">
         {selected ? "Added" : "Add"}
       </button>
     </article>

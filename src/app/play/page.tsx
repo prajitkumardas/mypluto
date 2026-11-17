@@ -3,7 +3,7 @@ import { PlutoPlayground, type PlayRewardTool } from "@/components/play/pluto-pl
 import { plutosLibrary, type LibraryTool } from "@/lib/plutos-library";
 import { createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = createPageMetadata({ title: "Play with Pluto | Pluto Finds", description: "Play Tic-Tac-Toe with Pluto and discover a surprise underrated AI tool if you win.", path: "/play" });
+export const metadata: Metadata = createPageMetadata({ title: "Play with Pluto | Pluto Finds", description: "Play Tic-Tac-Toe, Chess, Word Search, or fit colorful blocks in Pluto's Block Puzzle.", path: "/play" });
 
 export default function PlayPage() {
   const rewardTools = getRewardTools();

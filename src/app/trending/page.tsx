@@ -4,6 +4,7 @@ import { TrendingLeaderboard } from "@/components/trending/trending-leaderboard"
 import { getTrendingResponse } from "@/lib/trending";
 import styles from "@/components/trending/trending.module.css";
 import { createPageMetadata } from "@/lib/seo";
+import { StaggerText } from "@/components/ui/stagger-text";
 
 export const metadata: Metadata = createPageMetadata({ title: "Trending AI Tools | Pluto Finds", description: "Explore AI tools gaining momentum across research, development, design, productivity and creative workflows.", path: "/trending" });
 
@@ -28,7 +29,7 @@ export default async function TrendingPage({ searchParams }: TrendingPageProps) 
       <div className={styles.shell}>
         <section className={styles.hero} aria-labelledby="trending-title">
           <p className={styles.eyebrow}>Trending now</p>
-          <h1 className={styles.title} id="trending-title">See what the AI world is using right now.</h1>
+          <StaggerText as="h1" className={styles.title} id="trending-title">See what the AI world is using right now.</StaggerText>
           <p className={styles.copy}>
             Real momentum, measured through discovery, comparisons and community interest.
           </p>

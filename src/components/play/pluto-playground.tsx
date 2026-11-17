@@ -2,16 +2,20 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import { CSSProperties, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
+  Blocks,
   Circle,
+  Crown,
   Gamepad2,
   Gift,
   Lightbulb,
   Lock,
   PawPrint,
   RotateCcw,
+  Search,
   Share2,
   Trophy,
   X
@@ -24,15 +28,23 @@ import { HeroVeil } from "@/components/shared/hero-veil";
 import { getFaviconLogoUrl } from "@/lib/tool-logo";
 import { cn } from "@/lib/utils";
 import { readLocalRecord, writeLocalRecord } from "@/lib/local-persistence";
+import { ChessGame } from "./chess/chess-game";
 import styles from "./pluto-playground.module.css";
+
+const WordSearchGame = dynamic(() => import("./word-search/word-search-game").then((module) => module.WordSearchGame));
+const BlockPuzzleGame = dynamic(() => import("./block-puzzle/block-puzzle-game").then((module) => module.BlockPuzzleGame));
 
 type Mark = "X" | "O" | null;
 type Player = "user" | "pluto";
 type Outcome = "user" | "pluto" | "draw" | null;
+type SelectedGame = "tic-tac-toe" | "chess";
 type FlowState =
   | "landing"
   | "game-selection"
   | "name-entry"
+  | "chess"
+  | "word-search"
+  | "block-puzzle"
   | "versus"
   | "playing"
   | "user-won"
@@ -147,6 +159,7 @@ function confettiValue(index: number, salt: number, minimum: number, maximum: nu
 
 export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[] }) {
   const [flowState, setFlowState] = useState<FlowState>("landing");
+  const [selectedGame, setSelectedGame] = useState<SelectedGame>("tic-tac-toe");
   const [board, setBoard] = useState<Mark[]>(emptyBoard);
   const [turn, setTurn] = useState<Player>("user");
   const [winningLine, setWinningLine] = useState<number[]>([]);
@@ -165,16 +178,19 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
   const resultOpen = flowState === "user-won" || flowState === "pluto-won" || flowState === "draw" || flowState === "reward-reveal";
   const popupOpen = modalOpen || resultOpen;
   const gameVisible = isGameVisible(flowState);
-  const scrollLocked = popupOpen || flowState === "versus" || gameVisible;
+  const chessVisible = flowState === "chess";
+  const wordSearchVisible = flowState === "word-search";
+  const blockPuzzleVisible = flowState === "block-puzzle";
+  const scrollLocked = popupOpen || flowState === "versus" || gameVisible || chessVisible || wordSearchVisible || blockPuzzleVisible;
   const thinking = flowState === "playing" && turn === "pluto";
   const outcome = getOutcomeFromState(flowState);
   const status = getStatusText(flowState, turn, thinking);
   const rewardLogo = useMemo(() => getFaviconLogoUrl(selectedReward?.domain), [selectedReward?.domain]);
 
   useEffect(() => {
-    document.documentElement.toggleAttribute("data-play-immersive", flowState === "versus" || gameVisible || resultOpen);
+    document.documentElement.toggleAttribute("data-play-immersive", flowState === "versus" || gameVisible || chessVisible || wordSearchVisible || blockPuzzleVisible || resultOpen);
     return () => document.documentElement.removeAttribute("data-play-immersive");
-  }, [flowState, gameVisible, resultOpen]);
+  }, [blockPuzzleVisible, chessVisible, flowState, gameVisible, resultOpen, wordSearchVisible]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -332,7 +348,21 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
   }
 
   function chooseTicTacToe() {
+    setSelectedGame("tic-tac-toe");
     setFlowState("name-entry");
+  }
+
+  function chooseChess() {
+    setSelectedGame("chess");
+    setFlowState("name-entry");
+  }
+
+  function chooseWordSearch() {
+    setFlowState("word-search");
+  }
+
+  function chooseBlockPuzzle() {
+    setFlowState("block-puzzle");
   }
 
   function startGame(event?: FormEvent<HTMLFormElement>) {
@@ -342,7 +372,7 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
     resetBoard();
     setSelectedReward(null);
     setGiftOpening(false);
-    setFlowState("versus");
+    setFlowState(selectedGame === "chess" ? "chess" : "versus");
   }
 
   function resetBoard() {
@@ -436,7 +466,7 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
   }
 
   return (
-    <main className={cn(styles.stage, flowState === "landing" && styles.landingStage, gameVisible && styles.gameStage)}>
+    <main className={cn(styles.stage, flowState === "landing" && styles.landingStage, (gameVisible || chessVisible || wordSearchVisible || blockPuzzleVisible) && styles.gameStage)}>
       {flowState === "landing" || modalOpen ? (
         <div className={styles.videoLayer} aria-hidden="true">
           <video
@@ -561,6 +591,28 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
         </section>
       ) : null}
 
+      {chessVisible ? (
+        <ChessGame
+          onChooseGame={() => setFlowState("game-selection")}
+          onExit={() => setFlowState("landing")}
+          playerName={playerName}
+        />
+      ) : null}
+
+      {wordSearchVisible ? (
+        <WordSearchGame
+          onChooseGame={() => setFlowState("game-selection")}
+          onExit={() => setFlowState("landing")}
+        />
+      ) : null}
+
+      {blockPuzzleVisible ? (
+        <BlockPuzzleGame
+          onChooseGame={() => setFlowState("game-selection")}
+          onExit={() => setFlowState("landing")}
+        />
+      ) : null}
+
       <Dialog.Root open={modalOpen} onOpenChange={(open) => !open && closeGameModal()}>
         <Dialog.Portal>
           <Dialog.Overlay className={styles.modalOverlay} />
@@ -606,10 +658,49 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
                     </div>
                     <div>
                       <h3>Tic-Tac-Toe</h3>
-                      <p>A quick match against Pluto.</p>
+                      <span className={styles.gameMeta}>Classic · Single Player</span>
                     </div>
                     <PlutoButton onClick={chooseTicTacToe} showArrow type="button" variant="primary">
                       Play now
+                    </PlutoButton>
+                  </article>
+
+                  <article className={cn(styles.gameChoice, styles.gameChoiceAvailable, styles.chessChoice)}>
+                    <div className={styles.gamePreview} aria-hidden="true">
+                      <Crown />
+                    </div>
+                    <div>
+                      <h3>Chess with Pluto</h3>
+                      <span className={styles.gameMeta}>Strategy · Single Player</span>
+                    </div>
+                    <PlutoButton onClick={chooseChess} showArrow type="button" variant="primary">
+                      Play Chess
+                    </PlutoButton>
+                  </article>
+
+                  <article className={cn(styles.gameChoice, styles.gameChoiceAvailable, styles.wordSearchChoice)}>
+                    <div className={styles.gamePreview} aria-hidden="true">
+                      <Search />
+                    </div>
+                    <div>
+                      <h3>Word Search</h3>
+                      <span className={styles.gameMeta}>Word Puzzle · Single Player</span>
+                    </div>
+                    <PlutoButton ariaLabel="Play Word Search" onClick={chooseWordSearch} showArrow type="button" variant="primary">
+                      Play Now
+                    </PlutoButton>
+                  </article>
+
+                  <article className={cn(styles.gameChoice, styles.gameChoiceAvailable, styles.blockPuzzleChoice)}>
+                    <div className={styles.gamePreview} aria-hidden="true">
+                      <Blocks />
+                    </div>
+                    <div>
+                      <h3>Block Puzzle</h3>
+                      <span className={styles.gameMeta}>Logic · Single Player</span>
+                    </div>
+                    <PlutoButton ariaLabel="Play Block Puzzle" onClick={chooseBlockPuzzle} showArrow type="button" variant="primary">
+                      Play Now
                     </PlutoButton>
                   </article>
 
@@ -619,7 +710,7 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
                     </div>
                     <div>
                       <h3>Memory Match</h3>
-                      <p>Flip cards with Pluto.</p>
+                      <span className={styles.gameMeta}>Memory · Single Player</span>
                     </div>
                     <span className={styles.soonBadge}><Lock aria-hidden="true" />Coming soon</span>
                   </article>
@@ -630,7 +721,7 @@ export function PlutoPlayground({ rewardTools }: { rewardTools: PlayRewardTool[]
                     </div>
                     <div>
                       <h3>Prompt Puzzle</h3>
-                      <p>A tiny AI riddle room.</p>
+                      <span className={styles.gameMeta}>AI Puzzle · Single Player</span>
                     </div>
                     <span className={styles.soonBadge}><Lock aria-hidden="true" />Coming soon</span>
                   </article>

@@ -25,7 +25,7 @@ export function ProgressStepper({ className, current, steps }: ProgressStepperPr
   if (!activeStep) return null;
 
   return (
-    <div className={cn(styles.stepper, className)} aria-label={`Step ${current + 1} of ${steps.length}: ${activeStep.label}`}>
+    <div className={cn(styles.stepper, className)} aria-label={`Step ${current + 1} of ${steps.length}: ${activeStep.label}`} role="group">
       <div className={styles.stepTrack} aria-hidden="true" style={{ "--step-count": steps.length } as CSSProperties}>
         {steps.map((step, index) => (
           <div className={styles.stepItem} data-state={index < current ? "complete" : index === current ? "active" : "upcoming"} key={step.id}>

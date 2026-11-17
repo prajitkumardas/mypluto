@@ -2,7 +2,7 @@
 
 import * as Select from "@radix-ui/react-select";
 import { Check, ChevronDown } from "lucide-react";
-import type { ChangeEvent, ReactNode } from "react";
+import type { ChangeEvent } from "react";
 import styles from "./submit-tool-modal.module.css";
 
 export function SubmissionField({ error, label, name, onChange, placeholder, type = "text", value, autoFocus, inputMode }: {
@@ -68,6 +68,6 @@ export function SubmissionSelect({ error, label, name, onChange, options, placeh
   );
 }
 
-export function StepHeading({ icon, title, copy }: { icon: ReactNode; title: string; copy: string }) {
-  return <header className={styles.stepHeading}><span className={styles.stepIcon}>{icon}</span><div><h2>{title}</h2><p>{copy}</p></div></header>;
+export function StepHeading({ title }: { title: string }) {
+  return <header className={styles.stepHeading}><h2>{title}</h2></header>;
 }

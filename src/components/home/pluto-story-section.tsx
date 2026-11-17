@@ -32,6 +32,7 @@ export function PlutoStorySection() {
     <section
       aria-labelledby="pluto-story-title"
       className={`${styles.storySection} ${reducedMotion ? styles.reducedMotion : ""}`}
+      data-scroll-reveal="off"
       ref={sectionRef}
     >
       <div className={styles.storySticky}>

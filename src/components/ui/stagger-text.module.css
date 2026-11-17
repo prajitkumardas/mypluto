@@ -1,0 +1,18 @@
+.mask {
+  display: inline-block;
+  overflow: hidden;
+  margin-bottom: -0.08em;
+  padding-bottom: 0.08em;
+  vertical-align: top;
+}
+
+.item {
+  display: inline-block;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transform: none !important;
+  }
+}

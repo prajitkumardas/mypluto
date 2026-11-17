@@ -14,7 +14,7 @@ const columnsClass = {
 
 export function CardGrid({ children, className, columns = "three", ...props }: CardGridProps) {
   return (
-    <div className={cn("mt-10 grid gap-5", columnsClass[columns], className)} {...props}>
+    <div data-scroll-reveal-group className={cn("mt-10 grid gap-5", columnsClass[columns], className)} {...props}>
       {children}
     </div>
   );
